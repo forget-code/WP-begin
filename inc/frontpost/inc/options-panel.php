@@ -10,7 +10,7 @@ function fep_menu_item()
 		'投稿设置 Settings',
 		'投稿设置',
 		'manage_options',
-		'fep_settings',
+		'front_settings',
 		'fep_render_settings_page',
 		'dashicons-welcome-write-blog'
 	);
@@ -42,7 +42,7 @@ function fep_render_settings_page()
 		<div class="clearfix paddingtop20">
 			<div class="first ninecol">
 				<form method="post" action="options.php">
-					<?php settings_fields('fep_settings'); ?>
+					<?php settings_fields('front_settings'); ?>
 					<?php do_meta_boxes('fep_metaboxes', 'advanced', null); ?>
 					<?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false); ?>
 					<?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false); ?>
@@ -54,12 +54,12 @@ function fep_render_settings_page()
 
 function fep_create_options()
 {
-	add_settings_section('fep_restrictions_section', null, null, 'fep_settings');
-	add_settings_section('fep_role_section', null, null, 'fep_settings');
-	add_settings_section('fep_misc_section', null, null, 'fep_settings');
+	add_settings_section('fep_restrictions_section', null, null, 'front_settings');
+	add_settings_section('fep_role_section', null, null, 'front_settings');
+	add_settings_section('fep_misc_section', null, null, 'front_settings');
 
 	add_settings_field(
-		'title_word_count', '', 'fep_render_settings_field', 'fep_settings', 'fep_restrictions_section',
+		'title_word_count', '', 'fep_render_settings_field', 'front_settings', 'fep_restrictions_section',
 		array(
 			'title' => '标题字数',
 			'desc'  => '文章标题字数要求',
@@ -73,7 +73,7 @@ function fep_create_options()
 		)
 	);
 	add_settings_field(
-		'content_word_count', '', 'fep_render_settings_field', 'fep_settings', 'fep_restrictions_section',
+		'content_word_count', '', 'fep_render_settings_field', 'front_settings', 'fep_restrictions_section',
 		array(
 			'title' => '文章字数',
 			'desc'  => '文章内容字数要求',
@@ -87,7 +87,7 @@ function fep_create_options()
 		)
 	);
 	add_settings_field(
-		'tag_count', '', 'fep_render_settings_field', 'fep_settings', 'fep_restrictions_section',
+		'tag_count', '', 'fep_render_settings_field', 'front_settings', 'fep_restrictions_section',
 		array(
 			'title' => '标签数',
 			'desc'  => '标签数量要求',
@@ -101,7 +101,7 @@ function fep_create_options()
 		)
 	);
 	add_settings_field(
-		'max_links', '', 'fep_render_settings_field', 'fep_settings', 'fep_restrictions_section',
+		'max_links', '', 'fep_render_settings_field', 'front_settings', 'fep_restrictions_section',
 		array(
 			'title' => '允许文章中的超链接数',
 			'desc'  => '',
@@ -111,7 +111,7 @@ function fep_create_options()
 		)
 	);
 	add_settings_field(
-		'thumbnail_required', '', 'fep_render_settings_field', 'fep_settings', 'fep_restrictions_section',
+		'thumbnail_required', '', 'fep_render_settings_field', 'front_settings', 'fep_restrictions_section',
 		array(
 			'title' => '使用特色图像',
 			'desc'  => '',
@@ -129,7 +129,7 @@ function fep_create_options()
 		'read'                 => '订阅者',
 	);
 	add_settings_field(
-		'no_check', '', 'fep_render_settings_field', 'fep_settings', 'fep_role_section',
+		'no_check', '', 'fep_render_settings_field', 'front_settings', 'fep_role_section',
 		array(
 			'title'   => '禁用检查',
 			'desc'    => '等于或者高于当前选择角色时，将不检查',
@@ -140,7 +140,7 @@ function fep_create_options()
 		)
 	);
 	add_settings_field(
-		'instantly_publish', '', 'fep_render_settings_field', 'fep_settings', 'fep_role_section',
+		'instantly_publish', '', 'fep_render_settings_field', 'front_settings', 'fep_role_section',
 		array(
 			'title'   => '立即发布贴子',
 			'desc'    => '等于或者高于当前选择角色时，文章将立即发表',
@@ -154,7 +154,7 @@ function fep_create_options()
 	$media_roles = $user_roles;
 	$media_roles[0] = __('所有人', 'frontend-publishing');
 	add_settings_field(
-		'enable_media', '', 'fep_render_settings_field', 'fep_settings', 'fep_role_section',
+		'enable_media', '', 'fep_render_settings_field', 'front_settings', 'fep_role_section',
 		array(
 			'title'   => '显示媒体按钮',
 			'desc'    => '等于或者高于当前选择角色时，将显示媒体按钮',
@@ -165,7 +165,7 @@ function fep_create_options()
 		)
 	);
 	add_settings_field(
-		'nofollow_body_links', '', 'fep_render_settings_field', 'fep_settings', 'fep_misc_section',
+		'nofollow_body_links', '', 'fep_render_settings_field', 'front_settings', 'fep_misc_section',
 		array(
 			'title' => '文章中的链接添加Nofollow',
 			'desc'  => '文章中所有链接自动添加nofollow属性',
@@ -175,7 +175,7 @@ function fep_create_options()
 		)
 	);
 	add_settings_field(
-		'disable_login_redirection', '', 'fep_render_settings_field', 'fep_settings', 'fep_misc_section',
+		'disable_login_redirection', '', 'fep_render_settings_field', 'front_settings', 'fep_misc_section',
 		array(
 			'title' => '禁止重定向到登录页面',
 			'desc'  => '当用户无权限查看投稿页面时，将显示一条错误消息，而不是定向到登录页面',
@@ -185,7 +185,7 @@ function fep_create_options()
 		)
 	);
 	add_settings_field(
-		'posts_per_page', '', 'fep_render_settings_field', 'fep_settings', 'fep_misc_section',
+		'posts_per_page', '', 'fep_render_settings_field', 'front_settings', 'fep_misc_section',
 		array(
 			'title' => '作者所有文章页面显示篇数',
 			'desc'  => '新建页面添加短代码 [fep_article_list]将显示当前登录者所有的文章',
@@ -195,9 +195,9 @@ function fep_create_options()
 		)
 	);
 	// Finally, we register the fields with WordPress
-	register_setting('fep_settings', 'fep_post_restrictions', 'fep_settings_validation');
-	register_setting('fep_settings', 'fep_role_settings', 'fep_settings_validation');
-	register_setting('fep_settings', 'fep_misc', 'fep_settings_validation');
+	register_setting('front_settings', 'fep_post_restrictions', 'fep_settings_validation');
+	register_setting('front_settings', 'fep_role_settings', 'fep_settings_validation');
+	register_setting('front_settings', 'fep_misc', 'fep_settings_validation');
 
 } // end sandbox_initialize_theme_options 
 add_action('admin_init', 'fep_create_options');
@@ -218,7 +218,7 @@ add_action('admin_init', 'fep_add_meta_boxes');
 
 function fep_metaboxes_callback($post, $args)
 {
-	do_settings_fields("fep_settings", $args['args']['settings_section']);
+	do_settings_fields("front_settings", $args['args']['settings_section']);
 	submit_button('保存更改', 'secondary');
 }
 

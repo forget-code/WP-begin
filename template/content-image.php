@@ -27,6 +27,13 @@
 			<div class="clear"></div>
 
 		<?php else : ?>
+
+			<?php if (zm_get_option('meta_b')) {
+				begin_single_meta();
+			} else {
+				begin_entry_meta();
+			} ?>
+
 			<div class="single-content">
 				<?php if ( has_excerpt() ) { ?><span class="abstract"><fieldset><legend>摘 要</legend><?php the_excerpt() ?><div class="clear"></div></fieldset></span><?php }?>
 				<?php get_template_part('ad/ads', 'single'); ?>
@@ -41,11 +48,11 @@
 			<?php wp_link_pages(array('before' => '', 'after' => '</div>', 'next_or_number' => 'next', 'previouspagelink' => '', 'nextpagelink' => "<span>下一页</span>")); ?>
 
 				<?php if (zm_get_option('single_weixin')) { ?>
-					<?php get_template_part( 'inc/weixin' ); ?>
+					<?php get_template_part( 'template/weixin' ); ?>
 				<?php } ?>
 
 				<?php if (zm_get_option('zm_like')) { ?>
-					<?php get_template_part( 'inc/social' ); ?>
+					<?php get_template_part( 'template/social' ); ?>
 				<?php } else { ?>
 					<div id="social"></div>
 				<?php } ?>
@@ -53,7 +60,9 @@
 				<?php get_template_part('ad/ads', 'single-b'); ?>
 
 			<footer class="single-footer">
-				<?php begin_entry_meta(); ?>
+				<?php if (zm_get_option('meta_b')) {
+					begin_single_cat();
+				} ?>
 			</footer><!-- .entry-footer -->
 
 		<?php endif; ?>

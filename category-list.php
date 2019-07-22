@@ -10,12 +10,8 @@ get_header(); ?>
 	width: 100%;
 }
 #main {
-	background: #fff;
+	background: transparent;
 	margin: 0 0 10px 0;
-	padding: 20px;
-	border: 1px solid #ddd;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
-    border-radius: 2px;
 }
 .post {
 	margin: 0;
@@ -25,9 +21,9 @@ get_header(); ?>
     border-radius: 0;
 }
 .archive-list {
-	margin: 0 -20px;
+	margin: 0 0 -1px 0;
 	padding: 0 20px;
-	border-bottom: 1px solid #dadada;
+	border: 1px solid #dadada;
 }
 .list-title {
 	width: 80%;
@@ -40,13 +36,12 @@ get_header(); ?>
 .archive-list-inf {
 	float: right;
 	color: #999;
+	line-height: 280%;
 }
-.ias-trigger-next {
-	margin: 35px 0 0 -20px;
+.ias-trigger-next, .ias-spinner {
+	margin: 15px 0 0 0;
 }
-.ias-spinner {
-	margin: 30px 0 0 -20px;
-}
+
 @media screen and (max-width: 420px) {
 	.list-title {
 		width: 99%;

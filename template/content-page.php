@@ -27,7 +27,6 @@
 			<footer class="single-footer">
 				<?php begin_page_meta(); ?>
 			</footer><!-- .entry-footer -->
-
 	</div><!-- .entry-content -->
 
 </article><!-- #page -->

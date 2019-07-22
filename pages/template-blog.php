@@ -10,7 +10,7 @@ Template Name: 博客页面
 			<?php if (zm_get_option('slider')) { ?>
 				<?php
 					if ( !is_paged() ) :
-						get_template_part( 'inc/slider' );
+						get_template_part( 'template/slider' );
 					endif;
 				?>
 			<?php } ?>

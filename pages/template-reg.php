@@ -3,6 +3,7 @@
 Template Name: 用户注册
 */
 ?>
+
 <?php
 	if( !empty($_POST['user_reg']) ) {
 		$error = '';
@@ -206,6 +207,13 @@ p.user_is {
 #scroll .scroll-c, .ad-site {
 	display: none;
 }
+.reg-error {
+	color: #fff;
+	font-size: 16px;
+	font-size: 1.6rem;
+	text-align: center;
+	margin: 50px 0;
+}
 @media screen and (max-width: 900px) {
 	#primary .single-content {
 		display: none;
@@ -226,12 +234,18 @@ p.user_is {
 		display: block;
 	}
 }
+.si_captcha_small {
+	margin: 0 0 10px 0;
+}
 </style>
 
 <div id="primary" class="content-reg">
 	<main id="main" class="site-main" role="main">
 	<?php while ( have_posts() ) : the_post(); ?>
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+			<?php if ( !get_option('users_can_register') )  { ?>
+				<p class="reg-error"><i class="fa fa-exclamation-circle"></i> 提示：进入后台→设置→常规→常规选项页面，勾选“任何人都可以注册”！</p>
+			<?php } else { ?>
 			<div class="reg-main">
 				<div class="reg-page">
 					<?php if(!empty($error)) {
@@ -240,37 +254,30 @@ p.user_is {
 					if (!is_user_logged_in()) { ?>
 						<form name="registerform" method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" class="user_reg">
 						    <p>
-								<label for="user_login"><?php _e( '用户名', 'begin' ); ?><br />
+								<label for="user_login"><?php _e( '用户名', 'begin' ); ?> *<br />
 						        <input type="text" name="user_login" tabindex="1" id="user_login" class="input" value="<?php if(!empty($sanitized_user_login)) echo $sanitized_user_login; ?>" size="30" />
 						      </label>
 						    </p>
 
 						    <p>
-								<label for="user_email"><?php _e( '电子邮件地址', 'begin' ); ?><br />
+								<label for="user_email"><?php _e( '电子邮件地址', 'begin' ); ?> *<br />
 						        <input type="text" name="user_email" tabindex="2" id="user_email" class="input" value="<?php if(!empty($user_email)) echo $user_email; ?>" size="30" />
 						      </label>
 						    </p>
 
-							<?php if (zm_get_option('invitation_code')) { ?>
-							<p>
-								<label for="invitation_code"><?php _e( '邀请码', 'begin' ); ?><br />
-								<input name="invitation_code" tabindex="3" type="text" class="input" id="invitation_code" style="text-transform: uppercase" />
-								<span class="to-code"><a href="<?php echo zm_get_option('to-code'); ?>" target="_blank"><?php _e( '获取邀请码', 'begin' ); ?></a></span>								
-								</label>
-							</p>
-							<?php } ?>
-
 						    <p>
-								<label for="user_pwd1"><?php _e( '密码(至少6位)', 'begin' ); ?><br />
+								<label for="user_pwd1"><?php _e( '密码(至少6位)', 'begin' ); ?> *<br />
 						        <input id="user_pwd1" class="input" tabindex="3" type="password" tabindex="21" size="30" value="" name="user_pass" />
 						      </label>
 						    </p>
 
 						    <p>
-								<label for="user_pwd2"><?php _e( '重复密码', 'begin' ); ?><br />
+								<label for="user_pwd2"><?php _e( '重复密码', 'begin' ); ?> *<br />
 						        <input id="user_pwd2" class="input" tabindex="4" type="password" tabindex="21" size="30" value="" name="user_pass2" />
 						      </label>
 						    </p>
+
+							<?php do_action('register_form'); ?>
 
 						    <p class="submit">
 								<input type="hidden" name="user_reg" value="ok" />
@@ -302,8 +309,9 @@ p.user_is {
 			</div>
 			<div class="clear"></div>
 		</article>
+		<?php } ?>
 	<?php endwhile; ?>
 	</main>
 </div>
 
-<?php get_footer(); ?> 
+<?php get_footer(); ?>

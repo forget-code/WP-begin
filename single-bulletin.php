@@ -23,7 +23,7 @@
 						<?php wp_link_pages(array('before' => '', 'after' => '</div>', 'next_or_number' => 'next', 'previouspagelink' => '', 'nextpagelink' => '<span><i class="fa fa-angle-right"></i></span> ')); ?>
 
 						<?php if (zm_get_option('zm_like')) { ?>
-							<?php get_template_part( 'inc/social' ); ?>
+							<?php get_template_part( 'template/social' ); ?>
 						<?php } else { ?>
 							<div id="social"></div>
 						<?php } ?>
@@ -52,7 +52,7 @@
 				</article><!-- #post -->
 
 				<?php if (zm_get_option('copyright')) { ?>
-					<?php get_template_part( 'inc/copyright' ); ?>
+					<?php get_template_part( 'template/copyright' ); ?>
 				<?php } ?>
 
 				<nav class="nav-single wow fadeInUp" data-wow-delay="0.3s">

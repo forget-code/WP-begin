@@ -3,6 +3,7 @@
 Template Name: 立即注册
 */
 ?>
+
 <?php
 	if( !empty($_POST['user_reg']) ) {
 		$error = '';
@@ -242,6 +243,13 @@ p.user_is {
 .ad-site {
 	display: none;
 }
+.reg-error {
+	color: #fff;
+	font-size: 16px;
+	font-size: 1.6rem;
+	text-align: center;
+	margin: 50px 0;
+}
 @media screen and (max-width: 900px) {
 	#primary .single-content {
 		display: none;
@@ -262,6 +270,9 @@ p.user_is {
 		display: block;
 	}
 }
+.si_captcha_small {
+	margin: 0 0 10px 0;
+}
 </style>
 
 <div id="clipbg" style="display: block;">
@@ -278,6 +289,9 @@ p.user_is {
 	<main id="main" class="site-main" role="main">
 	<?php while ( have_posts() ) : the_post(); ?>
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+			<?php if ( !get_option('users_can_register') )  { ?>
+				<p class="reg-error"><i class="fa fa-exclamation-circle"></i> 提示：进入后台→设置→常规→常规选项页面，勾选“任何人都可以注册”！</p>
+			<?php } else { ?>
 			<div class="reg-main">
 				<div class="reg-page">
 					<?php if(!empty($error)) {
@@ -286,53 +300,46 @@ p.user_is {
 					if (!is_user_logged_in()) { ?>
 						<form name="registerform" method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" class="user_reg">
 						    <p>
-								<label for="user_login">用户名<br />
-						        <input type="text" name="user_login" tabindex="1" id="user_login" class="input" placeholder="请输入用户名" value="<?php if(!empty($sanitized_user_login)) echo $sanitized_user_login; ?>" size="30" />
+								<label for="user_login"><?php _e( '用户名', 'begin' ); ?> *<br />
+						        <input type="text" name="user_login" tabindex="1" id="user_login" class="input" value="<?php if(!empty($sanitized_user_login)) echo $sanitized_user_login; ?>" size="30" />
 						      </label>
 						    </p>
 
 						    <p>
-								<label for="user_email">电子邮件<br />
-						        <input type="text" name="user_email" tabindex="2" id="user_email" class="input" placeholder="请输入电子邮件" value="<?php if(!empty($user_email)) echo $user_email; ?>" size="30" />
-						      </label>
-						    </p>
-
-							<?php if (zm_get_option('invitation_code')) { ?>
-							<p>
-								<label for="invitation_code">邀请码<br />
-								<input name="invitation_code" tabindex="3" type="text" class="input" id="invitation_code" style="text-transform: uppercase" placeholder="请输入邀请码" />
-								<span class="to-code"><a href="<?php echo zm_get_option('to-code'); ?>" target="_blank">获取邀请码</a></span>
-								</label>
-							</p>
-							<?php } ?>
-
-						    <p>
-								<label for="user_pwd1">密码(至少6位)<br />
-						        <input id="user_pwd1" class="input" tabindex="3" type="password" tabindex="21" size="30" placeholder="请输入密码(至少6位)" value="" name="user_pass" />
+								<label for="user_email"><?php _e( '电子邮件地址', 'begin' ); ?> *<br />
+						        <input type="text" name="user_email" tabindex="2" id="user_email" class="input" value="<?php if(!empty($user_email)) echo $user_email; ?>" size="30" />
 						      </label>
 						    </p>
 
 						    <p>
-								<label for="user_pwd2">重复密码<br />
-						        <input id="user_pwd2" class="input" tabindex="4" type="password" tabindex="21" size="30" placeholder="重复密码" value="" name="user_pass2" />
+								<label for="user_pwd1"><?php _e( '密码(至少6位)', 'begin' ); ?> *<br />
+						        <input id="user_pwd1" class="input" tabindex="3" type="password" tabindex="21" size="30" value="" name="user_pass" />
 						      </label>
 						    </p>
+
+						    <p>
+								<label for="user_pwd2"><?php _e( '重复密码', 'begin' ); ?> *<br />
+						        <input id="user_pwd2" class="input" tabindex="4" type="password" tabindex="21" size="30" value="" name="user_pass2" />
+						      </label>
+						    </p>
+
+							<?php do_action('register_form'); ?>
 
 						    <p class="submit">
 								<input type="hidden" name="user_reg" value="ok" />
-						        <input id="submit" name="submit" type="submit" value="提交注册"/>
+						        <input id="submit" name="submit" type="submit" value="<?php _e( '提交注册', 'begin' ); ?>"/>
 						    </p>
 						</form>
 
 					<?php } else { ?>
 						<p class="user_is">
-							欢迎 <strong><?php echo $user_identity; ?></strong>！您已登录！<br/>
-					         <a href="<?php echo wp_logout_url( home_url() ); ?>" title="">退出登录</a>
+							<?php _e( '欢迎', 'begin' ); ?> <strong><?php echo $user_identity; ?></strong><br/>
+					         <a href="<?php echo wp_logout_url( home_url() ); ?>" title=""><?php _e( '退出登录', 'begin' ); ?></a>
 							<?php
 							    if (current_user_can('manage_options')) {
-							        echo '&nbsp;&nbsp;<a href="' . admin_url() . '">管理站点</a>';
+							        echo '&nbsp;&nbsp;<a href="' . admin_url() . '">' . sprintf(__( '管理站点', 'begin' )) . '</a>';
 							    } else {
-							    	echo '&nbsp;&nbsp;<a href="' . get_permalink( zm_get_option('user_url') ) . '" target="_blank">个人中心</a>';
+							    	echo '&nbsp;&nbsp;<a href="' . get_permalink( zm_get_option('user_url') ) . '" target="_blank">' . sprintf(__( '用户中心', 'begin' )) . '</a>';
 							    }
 							?>
 						</p>
@@ -348,8 +355,9 @@ p.user_is {
 			</div>
 			<div class="clear"></div>
 		</article>
+		<?php } ?>
 	<?php endwhile; ?>
 	</main>
 </div>
 
-<?php get_footer(); ?> 
+<?php get_footer(); ?>

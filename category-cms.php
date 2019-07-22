@@ -20,7 +20,13 @@ get_header(); ?>
 		});
 	});
 </script>
-
+<!-- 
+<style type="text/css">
+#primary {
+	width: 100%;
+}
+</style>
+ -->
 <div id="slideshow">
 	<ul class="rslides" id="slider-cat">
 		<!-- 幻灯调用指定文章，修改下面"include=1,2,3"中的数字为文章ID -->
@@ -44,7 +50,7 @@ get_header(); ?>
 			<?php endwhile; ?>
 			<div class="clear"></div>
 
-			<?php get_template_part('ad/ads', 'cms'); ?>
+			<!-- <?php get_template_part('ad/ads', 'cms'); ?> -->
 
 			<div class="line-small">
 
@@ -54,7 +60,7 @@ get_header(); ?>
 				<?php query_posts( array( 'showposts' => 1, 'cat' => $category, 'post__not_in' => $do_not_duplicate ) ); ?>
 				<div class="xl2 xm2">
 					<div class="cat-box wow fadeInUp" data-wow-delay="0.3s">
-						<h3 class="cat-title"><a href="<?php echo get_category_link($category);?>" title="<?php echo strip_tags(category_description($category)); ?>"><i class="fa fa-bars"></i><?php single_cat_title(); ?></a></h3>
+						<h3 class="cat-title"><a href="<?php echo get_category_link($category);?>" title="<?php echo strip_tags(category_description($category)); ?>"><i class="fa fa-bars"></i><?php single_cat_title(); ?><i class="fa fa-angle-right"></i></a></h3>
 						<div class="clear"></div>
 						<div class="cat-site">
 							<?php while ( have_posts() ) : the_post(); ?>

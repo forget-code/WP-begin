@@ -86,9 +86,10 @@ if ( post_password_required() ) {
 							<input type="text" name="url" id="url" class="commenttext" value="<?php echo $comment_author_url; ?>" tabindex="4" />
 						</p>
 						<?php if (zm_get_option('qq_info')) { ?>
-							<p class="comment-form-author">
-								<label><?php _e( 'QQ', 'begin' ); ?></label>
-								<input id="qqinfo" maxlength="12" name="u" type="text"  placeholder="输入QQ号码可以快速填写" onblur="qiuye()" value="" />
+							<p class="comment-form-qq">
+								<label for="qq"><?php _e( 'QQ', 'begin' ); ?></label>
+								<input id="qq" name="qq" type="text" value="" size="30" placeholder="输入QQ号码可以快速填写" />
+								<span id="loging"></span>
 							</p>
 						<?php } ?>
 					</div>

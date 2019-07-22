@@ -4,7 +4,7 @@
 		<main id="main" class="site-main" role="main">
 			<!-- 幻灯 -->
 			<?php if (zm_get_option('slider')) { ?>
-				<?php require get_template_directory() . '/inc/slider.php'; ?>
+				<?php require get_template_directory() . '/template/slider.php'; ?>
 			<?php } ?>
 			<!-- 置顶 -->
 			<?php if (zm_get_option('cms_top')) { ?><?php get_template_part( 'template/cms-top' ); ?><?php } ?>

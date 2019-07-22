@@ -17,7 +17,12 @@
 				<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 			<?php } ?>
 		<?php else : ?>
-			<h2 class="entry-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></h2>
+			<?php if ( get_post_meta($post->ID, 'direct', true) ) { ?>
+				<?php $direct = get_post_meta($post->ID, 'direct', true); ?>
+				<h2 class="entry-title"><a href="<?php echo $direct ?>" target="_blank" rel="nofollow"><?php the_title(); ?></a></h2>
+			<?php } else { ?>
+				<h2 class="entry-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></h2>
+			<?php } ?>
 		<?php endif; ?>
 	</header><!-- .entry-header -->
 
@@ -34,18 +39,31 @@
 				?>
 			</div>
 			<span class="title-l"></span>
-			<span class="post-format"><i class="fa fa-link"></i></span>
+			<span class="post-format">
+				<?php if ( get_post_meta($post->ID, 'direct', true) ) { ?>
+					<a href="<?php the_permalink(); ?>" target="_blank"><i class="fa fa-link"></i></a>
+				<?php } else { ?>
+					<i class="fa fa-link"></i>
+				<?php } ?>
+			</span>
 			<span class="entry-meta">
 				<?php if ( get_post_meta($post->ID, 'link_inf', true) ) { ?>
 				<?php $link_inf = get_post_meta($post->ID, 'link_inf', true); ?>
 				<span class="link-price"><?php echo $link_inf; ?></span>
 				<span class="date"><?php time_ago( $time_type ='post' ); ?>&nbsp;</span>
-				<?php if( function_exists( 'the_views' ) ) { the_views( true, '<span class="views">人气 ','</span>' ); } ?>
+				<?php if (zm_get_option('favorite_p')) { ?><?php wpzm_links(); ?><?php } ?>
 				<?php } else { ?>
 					<?php begin_entry_meta(); ?>
 				<?php } ?>
 			</span>
 		<?php else : ?>
+
+			<?php if (zm_get_option('meta_b')) {
+				begin_single_meta();
+			} else {
+				begin_entry_meta();
+			} ?>
+
 			<div class="single-content">
 				<?php if ( has_excerpt() ) { ?><span class="abstract"><fieldset><legend>摘 要</legend><?php the_excerpt() ?><div class="clear"></div></fieldset></span><?php }?>
 
@@ -73,11 +91,11 @@
 			<?php } ?>
 
 				<?php if (zm_get_option('single_weixin')) { ?>
-					<?php get_template_part( 'inc/weixin' ); ?>
+					<?php get_template_part( 'template/weixin' ); ?>
 				<?php } ?>
 
 				<?php if (zm_get_option('zm_like')) { ?>
-					<?php get_template_part( 'inc/social' ); ?>
+					<?php get_template_part( 'template/social' ); ?>
 				<?php } else { ?>
 					<div id="social"></div>
 				<?php } ?>
@@ -85,7 +103,9 @@
 				<?php get_template_part('ad/ads', 'single-b'); ?>
 
 			<footer class="single-footer">
-				<?php begin_entry_meta(); ?>
+				<?php if (zm_get_option('meta_b')) {
+					begin_single_cat();
+				} ?>
 			</footer><!-- .entry-footer -->
 
 		<?php endif; ?>

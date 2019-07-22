@@ -73,7 +73,7 @@
 				title : '添加代码',
 				icon: 'code',
 				onclick : function() {
-					ed.selection.setContent('[code]代码' + ed.selection.getContent() + '[/code]');
+					ed.selection.setContent('[code]' + ed.selection.getContent() + '[/code]');
 				}
 			});
 

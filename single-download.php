@@ -38,7 +38,7 @@
 					</div>
 
 						<?php if (zm_get_option('zm_like')) { ?>
-							<?php get_template_part( 'inc/social' ); ?>
+							<?php get_template_part( 'template/social' ); ?>
 						<?php } else { ?>
 							<div id="social"></div>
 						<?php } ?>

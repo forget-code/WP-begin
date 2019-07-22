@@ -6,8 +6,8 @@ if(! defined('MEMORY_LIMIT') )                          define ('MEMORY_LIMIT', 
 if(! defined('BLOCK_EXTERNAL_LEECHERS') )       define ('BLOCK_EXTERNAL_LEECHERS', false);                              // If the image or webshot is being loaded on an external site, display a red "No Hotlinking" gif.
 if(! defined('DISPLAY_ERROR_MESSAGES') )        define ('DISPLAY_ERROR_MESSAGES', true);                                // Display error messages. Set to false to turn off errors (good for production websites)
 //Image fetching and caching
-if(! defined('ALLOW_EXTERNAL') )                        define ('ALLOW_EXTERNAL', true);                               // 允许从外部获取图片
-if(! defined('ALLOW_ALL_EXTERNAL_SITES') )      define ('ALLOW_ALL_EXTERNAL_SITES', false);                             // 允许获取所有外部站点url
+if(! defined('ALLOW_EXTERNAL') )                        define ('ALLOW_EXTERNAL', true);                               // 改为“false”将禁止裁剪外链图片
+if(! defined('ALLOW_ALL_EXTERNAL_SITES') )      define ('ALLOW_ALL_EXTERNAL_SITES', false);                             // 需要添加外链图片域名，改为“true”则裁剪所有外链图片
 if(! defined('FILE_CACHE_ENABLED') )            define ('FILE_CACHE_ENABLED', TRUE);                                    // Should we store resized/modified images on disk to speed things up?
 if(! defined('FILE_CACHE_TIME_BETWEEN_CLEANS')) define ('FILE_CACHE_TIME_BETWEEN_CLEANS', 2592000);       // How often the cache is cleaned 
 
@@ -67,13 +67,13 @@ if(! defined('WEBSHOT_PLUGINS_ON') )    define ('WEBSHOT_PLUGINS_ON', true);    
 if(! defined('WEBSHOT_PROXY') )         define ('WEBSHOT_PROXY', '');                           //In case you're behind a proxy server. 
 if(! defined('WEBSHOT_XVFB_RUNNING') )  define ('WEBSHOT_XVFB_RUNNING', false);                 //ADVANCED: Enable this if you've got Xvfb running in the background.
 
-// 添加外链图片域名
+// 添加外链图片地址域名
 if(! isset($ALLOWED_SITES)){
 		$ALLOWED_SITES = array (
-				'ww1.sinaimg.cn',
-				'ww2.sinaimg.cn',
-				'ww3.sinaimg.cn',
-				'ww4.sinaimg.cn',
+			'ww1.sinaimg.cn',
+			'ww2.sinaimg.cn',
+			'ww3.sinaimg.cn',
+			'ww4.sinaimg.cn',
 		);
 }
 // -------------------------------------------------------------
@@ -139,7 +139,7 @@ class timthumb {
                         }
                         $this->cacheDirectory = FILE_CACHE_DIRECTORY;
                         if (!touch($this->cacheDirectory . '/index.html')) {
-                                $this->error("Could not create the index.html file - to fix this create an empty file named index.html file in the cache directory.");
+                                $this->error("无法创建缩略图，需要将主题根目录的cache文件夹，设置权限755以上。");
                         }
                 } else {
                         $this->cacheDirectory = sys_get_temp_dir();
@@ -192,7 +192,7 @@ class timthumb {
                                         }
                                 }
                                 if(! $allowed){
-                                        return $this->error("You may not fetch images from that site. To enable this site in timthumb, you can either add it to \$ALLOWED_SITES and set ALLOW_EXTERNAL=true. Or you can set ALLOW_ALL_EXTERNAL_SITES=true, depending on your security needs.");
+                                        return $this->error("出于安全考虑，该外链图片不能自动裁剪，需要按主题使用说明，手动添加外链图片网站域名！");
                                 }
                         }
                 }

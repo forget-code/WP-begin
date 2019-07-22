@@ -69,6 +69,95 @@ body {
 	padding: 30px;
 	background: #fff;
 }
+
+.small-img {
+	position: absolute;
+	max-width: 28%;
+	top: 15%;
+	left: 20%;
+}
+
+@-webkit-keyframes small-img {
+  16.65% {
+    -webkit-transform: translateY(8px);
+    transform: translateY(8px);
+  }
+
+  33.3% {
+    -webkit-transform: translateY(-6px);
+    transform: translateY(-6px);
+  }
+
+  49.95% {
+    -webkit-transform: translateY(4px);
+    transform: translateY(4px);
+  }
+
+  66.6% {
+    -webkit-transform: translateY(-2px);
+    transform: translateY(-2px);
+  }
+
+  83.25% {
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px);
+  }
+
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes small-img {
+  16.65% {
+    -webkit-transform: translateY(8px);
+    transform: translateY(8px);
+  }
+
+  33.3% {
+    -webkit-transform: translateY(-6px);
+    transform: translateY(-6px);
+  }
+
+  49.95% {
+    -webkit-transform: translateY(4px);
+    transform: translateY(4px);
+  }
+
+  66.6% {
+    -webkit-transform: translateY(-2px);
+    transform: translateY(-2px);
+  }
+
+  83.25% {
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px);
+  }
+
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+.small-img {
+  display: inline-block;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+}
+
+#slideshow:hover .small-img{
+  -webkit-animation-name: small-img;
+  animation-name: small-img;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-timing-function: ease-in-out;
+  animation-timing-function: ease-in-out;
+  -webkit-animation-iteration-count: 1;
+  animation-iteration-count: 1;
+}
 </style>
 
 <div class="container">
@@ -88,10 +177,10 @@ body {
 		<?php if (zm_get_option('group_contact')) { ?>
 		<div class="contact">
 			<div class="g-row">
-					<div class="g-col">
-						<?php get_template_part( '/group/group-contact' ); ?>
-						<div class="clear"></div>
-					</div>
+				<div class="g-col">
+					<?php get_template_part( '/group/group-contact' ); ?>
+					<div class="clear"></div>
+				</div>
 			</div>
 		</div>
 		<?php } ?>

@@ -4,10 +4,25 @@
 <article id="post-<?php the_ID(); ?>" <?php post_class('wow fadeInUp'); ?> data-wow-delay="0.3s">
 <?php endif; ?>
 	<?php if ( ! is_single() ) : ?>
-		<figure class="thumbnail">
-			<?php if (zm_get_option('lazy_s')) { zm_thumbnail_h(); } else { zm_thumbnail(); } ?>
-			<span class="cat"><?php zm_category(); ?></span>
-		</figure>
+
+		<?php if (zm_get_option('no_rand_img')) { ?>
+			<?php 
+				$content = $post->post_content;
+				preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
+				$n = count($strResult[1]);
+				if($n > 0) { ?>
+				<figure class="thumbnail">
+					<?php if (zm_get_option('lazy_s')) { zm_thumbnail_h(); } else { zm_thumbnail(); } ?>
+					<span class="cat"><?php zm_category(); ?></span>
+				</figure>
+			<?php } ?>
+		<?php } else { ?>
+			<figure class="thumbnail">
+				<?php if (zm_get_option('lazy_s')) { zm_thumbnail_h(); } else { zm_thumbnail(); } ?>
+				<span class="cat"><?php zm_category(); ?></span>
+			</figure>
+		<?php } ?>
+
 	<?php endif; ?>
 	<header class="entry-header">
 		<?php if ( is_single() ) : ?>
@@ -39,10 +54,35 @@
 			<?php } else { ?>
 				<?php get_template_part( 'inc/new' ); ?>
 			<?php } ?>
-			<span class="entry-meta">
-				<?php begin_entry_meta(); ?>
-			</span>
+
+			<?php if (zm_get_option('no_rand_img')) { ?>
+				<?php 
+					$content = $post->post_content;
+					preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
+					$n = count($strResult[1]);
+					if($n > 0) : ?>
+					<span class="entry-meta">
+						<?php begin_entry_meta(); ?>
+					</span>
+				<?php else : ?>
+					<span class="entry-meta-no">
+						<?php begin_format_meta(); ?>
+					</span>
+				<?php endif; ?>
+			<?php } else { ?>
+				<span class="entry-meta">
+					<?php begin_entry_meta(); ?>
+				</span>
+			<?php } ?>
+
 		<?php else : ?>
+
+			<?php if (zm_get_option('meta_b')) {
+				begin_single_meta();
+			} else {
+				begin_entry_meta();
+			} ?>
+
 			<div class="single-content">
 				<?php if ( has_excerpt() ) { ?><span class="abstract"><fieldset><legend><?php _e( '摘要', 'begin' ); ?></legend><?php the_excerpt() ?><div class="clear"></div></fieldset></span><?php }?>
 
@@ -65,11 +105,11 @@
 			<?php } ?>
 
 				<?php if (zm_get_option('single_weixin')) { ?>
-					<?php get_template_part( 'inc/weixin' ); ?>
+					<?php get_template_part( 'template/weixin' ); ?>
 				<?php } ?>
 
 				<?php if (zm_get_option('zm_like')) { ?>
-					<?php get_template_part( 'inc/social' ); ?>
+					<?php get_template_part( 'template/social' ); ?>
 				<?php } else { ?>
 					<div id="social"></div>
 				<?php } ?>
@@ -77,7 +117,9 @@
 				<?php get_template_part('ad/ads', 'single-b'); ?>
 
 			<footer class="single-footer">
-				<?php begin_entry_meta(); ?>
+				<?php if (zm_get_option('meta_b')) {
+					begin_single_cat();
+				} ?>
 			</footer><!-- .entry-footer -->
 
 		<?php endif; ?>

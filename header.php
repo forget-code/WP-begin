@@ -28,7 +28,7 @@
 	<nav class="breadcrumb">
 		<?php begin_crumbs(); ?><?php type_breadcrumb(); ?>
 	</nav>
-	<?php get_template_part( 'inc/header-slider' ); ?>
+	<?php get_template_part( 'template/header-slider' ); ?>
 	<?php get_template_part('ad/ads', 'header'); ?>
-	<?php get_template_part( 'inc/header-sub' ); ?>
+	<?php get_template_part( 'template/header-sub' ); ?>
 	<div id="content" class="site-content">

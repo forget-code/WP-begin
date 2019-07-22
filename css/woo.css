@@ -18,7 +18,7 @@ Description: woocommerce商城插件配套样式.
 	padding: 0 0 10px 0;
 }
 
-.woocommerce span.onsale, .tao-h-img .onsale {
+.woocommerce span.onsale {
 /** 促销文字 **/
 	background: #ff4400;
 	top: 2em;
@@ -33,14 +33,16 @@ Description: woocommerce商城插件配套样式.
 	position: absolute;
 	background: #ff4400;
 	top: 1em;
-	left: 1em;
+	right: 1em;
+	font-size: 11px;
+	font-size: 1.1rem;
 	color: #fff;
 	text-align: center;
 	font-weight: 500;
-	min-height: 3.236em;
+	min-height: 3.8em;
 	min-width: 3.8em;
 	border-radius: 100%;
-	line-height: 3.236;
+	line-height: 3.8em;
 	z-index: 2;
 }
 
@@ -77,7 +79,6 @@ Description: woocommerce商城插件配套样式.
 }
 
 .woocommerce .woocommerce-ordering {
-	margin: 0;
 }
 
 /** 列表样式 **/
@@ -391,4 +392,96 @@ Description: woocommerce商城插件配套样式.
 
 .woocommerce form.checkout_coupon, .woocommerce form.login, .woocommerce form.register {
 	border-radius: 2px;
+}
+
+/** 小工具 **/
+.woocommerce ul.product_list_widget {
+	padding: 15px;
+}
+
+ul.product_list_widget li {
+	white-space: inherit;
+}
+
+.widget ul.product_list_widget li a {
+	font-weight: 500;
+}
+
+ul.product_list_widget li del, ul.product_list_widget li ins {
+	display: none;
+}
+
+.widget_product_search {
+	padding: 15px;
+}
+
+#woocommerce-product-search-field {
+	float: left;
+	width: 75%;
+	height: 37px;
+	line-height: 37px;
+	font: 14px "Microsoft YaHei", Helvetica;
+	color: #444;
+	padding: 2px 10px;
+	background: #ebebeb;
+	border: 1px solid #ebebeb;
+	border-radius: 2px 0 0 2px;
+	-webkit-appearance: none;
+}
+
+#woocommerce-product-search-field:focus {
+	outline: 0;
+	background: #fff;
+}
+
+.woocommerce-product-search input {
+	overflow: visible;
+	position: relative;
+	border: 0;
+	height: 37px;
+	width: 25%;
+	color: #fff;
+	background: #2f889a;
+	border-radius: 0 2px 2px 0;
+}
+
+.woocommerce-product-search input:hover {
+	background: #595959;
+}
+
+.woocommerce #respond .comment-form-author label,
+.woocommerce #respond .comment-form-email label,
+.woocommerce #respond .comment-form-comment label {
+	width: 100px;
+	z-index: 1;
+}
+
+.woocommerce #commentform .comment-form-author input, 
+.woocommerce #commentform .comment-form-email input{
+	background: #fff;
+	position: relative;
+	width: 300px;
+	height: 38px;
+	line-height: 38px;
+	margin: 0 10px 10px 0;
+	padding: 0 10px;
+	border: 1px solid #ddd;
+	display: block;
+	text-indent: 100px;
+}
+
+.woocommerce #respond input:focus, 
+.woocommerce #respond textarea:focus {
+	text-indent: 0;
+	z-index: 2;
+	border: 1px solid #2f889a;
+}
+
+.woocommerce .comment-form-comment label {
+	position: inherit !important;
+	margin: 0 0 -1px 0;
+}
+
+.woocommerce #respond input#submit {
+	width: 140px;
 }

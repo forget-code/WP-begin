@@ -24,11 +24,11 @@
 							<?php the_content(); ?>
 						</div>
 						<?php if (zm_get_option('single_weixin')) { ?>
-							<?php get_template_part( 'inc/weixin' ); ?>
+							<?php get_template_part( 'template/weixin' ); ?>
 						<?php } ?>
 
 						<?php if (zm_get_option('zm_like')) { ?>
-							<?php get_template_part( 'inc/social' ); ?>
+							<?php get_template_part( 'template/social' ); ?>
 						<?php } else { ?>
 							<div id="social"></div>
 						<?php } ?>

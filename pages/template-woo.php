@@ -13,18 +13,26 @@ Template Name: Woo商城
 	z-index: 2;
     border-radius: 2px 0 0 0;
 }
+
 .tao-cat a {
 	font-size: 16px;
 	font-size: 1.6rem;
 	color: #fff;
 }
+
 .tao-cat a:hover {
 	color: #fff;
 }
+
 .tao-cat .fa-bookmark-o {
 	font-size: 18px;
 	font-size: 1.8rem;
 	margin: 0 5px 0 0;
+}
+
+#edd {
+	float: left;
+	width: 70.4%;
 }
 
 .picture-title {
@@ -47,10 +55,19 @@ Template Name: Woo商城
 #edd .w4 {
 	position: relative;
 	float: left;
-	width: 25%;
+	width: 33.333333333333333%;
 	min-height: 1px;
 	padding: 0 5px;
 	transition-duration: .5s;
+}
+
+@media screen and (max-width:900px) {
+	#edd {
+		width: 100%;
+	}
+	#edd .w4 {
+		width: 25%;
+	}
 }
 
 @media screen and (max-width:720px) {
@@ -116,4 +133,5 @@ Template Name: Woo商城
 	<div class="clear"></div>
 </section>
 
+<?php get_sidebar(); ?>
 <?php get_footer(); ?>

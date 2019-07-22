@@ -8,7 +8,7 @@
 				<?php get_template_part( 'template/content', get_post_format() ); ?>
 
 				<?php if (zm_get_option('copyright')) { ?>
-					<?php get_template_part( 'inc/copyright' ); ?>
+					<?php get_template_part( 'template/copyright' ); ?>
 				<?php } ?>
 
 				<?php if (zm_get_option('single_tao')) { ?>
@@ -19,7 +19,7 @@
 					<?php get_template_part( 'template/related-img' ); ?>
 				<?php } ?>
 
-				<?php get_template_part( 'inc/single-widget' ); ?>
+				<?php get_template_part( 'template/single-widget' ); ?>
 
 				<?php get_template_part('ad/ads', 'comments'); ?>
 

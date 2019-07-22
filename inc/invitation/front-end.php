@@ -7,12 +7,11 @@ function baweic_register_form_add_field() {
 	$baweic_fields = get_option( 'baweic_fields' );
 ?>
 	<p>
-		<label><?php _e( '邀请码', 'begin' ); ?> *
-		<!--// Get this plugin "BAW Easy Invitation Codes" , thank you. //-->
-		<input name="invitation_code" tabindex="0" type="text" class="input" id="invitation_code" style="text-transform: uppercase" /></label>
+		<label for="invitation_code"><?php _e( '邀请码', 'begin' ); ?> *<br />
+		<input name="invitation_code" tabindex="3" type="text" class="input" id="invitation_code" style="text-transform: uppercase" />
+		</label>
 		<?php if ( ! empty( $baweic_fields['link'] ) && $baweic_fields['link'] == 'on' ) { ?>
-		<style>.baweic_fields_text_link{font-style:italic;position:relative;top:-15px}</style>
-		<span id="baweic_fields_text_link" class="baweic_fields_text_link"><?php echo ! empty( $baweic_fields['text_link'] ) ? wp_kses_post( $baweic_fields['text_link'], $allowedposttags ) : ''; ?></span>
+		<span class="to-code"><a href="<?php echo ! empty( $baweic_fields['text_link'] ) ? wp_kses_post( $baweic_fields['text_link'], $allowedposttags ) : ''; ?>" target="_blank"><?php _e( '获取邀请码', 'begin' ); ?></a></span>
 		<?php } ?>
 	</p>
  <?php

@@ -22,7 +22,7 @@
 								</div>
 
 								<div class="video-inf">
-									<span class="date">日期：<?php the_time('Y年m月d日') ?></span>
+									<span class="date">日期：<?php the_time('Y年m月d日 H:i:s'); ?></span>
 									<span class="category">分类：<?php echo get_the_term_list($post->ID,  'videos', '', ', ', ''); ?></span>
 									<?php if ( post_password_required() ) { ?>
 										<span class="comment">评论：<a href="#comments">密码保护</a></span>
@@ -44,7 +44,7 @@
 						<?php wp_link_pages(array('before' => '', 'after' => '</div>', 'next_or_number' => 'next', 'previouspagelink' => '', 'nextpagelink' => '<span><i class="fa fa-angle-right"></i></span> ')); ?>
 
 						<?php if (zm_get_option('zm_like')) { ?>
-							<?php get_template_part( 'inc/social' ); ?>
+							<?php get_template_part( 'template/social' ); ?>
 						<?php } else { ?>
 							<div id="social"></div>
 						<?php } ?>
@@ -70,7 +70,7 @@
 				<div class="single-tag"><?php echo get_the_term_list($post->ID,  'videotag', '<ul class="wow fadeInUp" data-wow-delay="0.3s"><li>', '</li><li>', '</li></ul>' ); ?></div>
 
 				<?php if (zm_get_option('copyright')) { ?>
-					<?php get_template_part( 'inc/copyright' ); ?>
+					<?php get_template_part( 'template/copyright' ); ?>
 				<?php } ?>
 
 				<?php if (zm_get_option('related_img')) { ?>

@@ -32,7 +32,7 @@ Template Name: 文章归档
 	margin: 0 0 0 10px;
 }
 </style>
-<?php require get_template_directory() . '/inc/function/archives.php'; ?>
+<?php require get_template_directory() . '/inc/archives.php'; ?>
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
 

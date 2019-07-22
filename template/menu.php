@@ -3,7 +3,7 @@
 	<nav id="top-header">
 		<div class="top-nav">
 			<?php if (zm_get_option('profile')) { ?>
-				<?php get_template_part( 'inc/user-profile' ); ?>
+				<?php get_template_part( 'inc/user/user-profile' ); ?>
 			<?php } ?>
 
 			<?php
@@ -97,6 +97,6 @@
 
 <div id="search-main">
 	<?php if (zm_get_option('wp_s')) { ?><?php get_search_form(); ?><?php } ?>
-	<?php if (zm_get_option('baidu_s')) { ?><?php get_template_part( 'inc/search-baidu' ); ?><?php } ?>
+	<?php if (zm_get_option('baidu_s')) { ?><?php get_template_part( 'template/search-baidu' ); ?><?php } ?>
 	<div class="clear"></div>
 </div>

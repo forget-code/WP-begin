@@ -101,7 +101,7 @@ Template Name: 联系方式
 							<p id="bademail" class="errormsg" style="display:none;"><?php _e( '请输入您的姓名和一个有效的电子邮件地址及邮件内容。', 'begin' ); ?></p>
 							<p id="badserver" class="errormsg" style="display:none;"><?php _e( '您的电子邮件发送失败，请稍后再试。', 'begin' ); ?></p>
 
-							<form id="contact" action="<?php echo esc_url( get_template_directory_uri() ); ?>/inc/function/sendmail.php" method="post">
+							<form id="contact" action="<?php echo esc_url( get_template_directory_uri() ); ?>/inc/sendmail.php" method="post">
 								<label for="name"><?php _e( '名字', 'begin' ); ?></label>
 								<input type="text" id="nameinput" name="name" value=""/>
 								<label for="email"><?php _e( '邮箱', 'begin' ); ?></label>

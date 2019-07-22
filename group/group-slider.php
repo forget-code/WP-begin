@@ -8,7 +8,7 @@
 			speed: 800,
 			timeout: 5000,
 			pause: true,
-			maxwidth: 2000,
+			// maxwidth: 3000,
 			namespace: "callbacks"
 		});
 	});
@@ -26,13 +26,15 @@
 		<?php while (have_posts()) : the_post(); ?>
 		<?php $image = get_post_meta($post->ID, 'guide_img', true); ?>
 		<?php $group_slider_url = get_post_meta($post->ID, 'group_slider_url', true); ?>
+		<?php $small_img = get_post_meta($post->ID, 'small_img', true); ?>
 			<li>
 				<?php if (zm_get_option('group_slider_url')) { ?>
+					<?php if ( get_post_meta($post->ID, 'small_img', true) ) : ?><a href="<?php if ( get_post_meta($post->ID, 'group_slider_url', true) ) { ?><?php echo $group_slider_url; ?><?php } else { ?><?php the_permalink() ?><?php } ?>" rel="bookmark"><ul class="small-img"><img src="<?php echo $small_img; ?>"></ul></a><?php endif; ?>
 					<a href="<?php if ( get_post_meta($post->ID, 'group_slider_url', true) ) { ?><?php echo $group_slider_url; ?><?php } else { ?><?php the_permalink() ?><?php } ?>" rel="bookmark"><img src="<?php echo $image; ?>" alt="<?php the_title(); ?>" /></a>
 				<?php } else { ?>
+					<?php if ( get_post_meta($post->ID, 'small_img', true) ) : ?><ul class="small-img"><img src="<?php echo $small_img; ?>"></ul><?php endif; ?>
 					<img src="<?php echo $image; ?>" />
 				<?php } ?>
-
 
 				<?php if (zm_get_option('group_slider_t')) { ?>
 					<span class="group-slider-main wow fadeInUp" data-wow-delay="0.5s">
