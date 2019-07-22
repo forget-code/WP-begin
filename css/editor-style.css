@@ -4,12 +4,12 @@ Description: Used to style the TinyMCE editor.
 */
 
 body {
-	font: 15px "Microsoft YaHei", 微软雅黑, Helvetica;
+	font: 16px "Microsoft YaHei", 微软雅黑, Helvetica;
 	color: #555;
 	line-height: 1.8;
 	margin: 10px 20px 10px 10px;
 	padding: 10px 20px 0 20px;
-	max-width: 715px;
+	max-width: 746px;
 	border: 1px solid #ddd;
 }
 
@@ -81,7 +81,7 @@ p, ul, ol, dd, pre {
 	-ms-hyphens: auto;
 	hyphens: auto;
 	word-wrap: break-word;
-	word-break: break-all;
+	text-align: justify;
 	text-justify: inter-ideograph;
 }
 
@@ -166,6 +166,15 @@ img {
 	font-size: 14px;
 	text-align: center !important;
 }
+
+blockquote.wp-embedded-content {
+	display: none;
+}
+
+.wp-embedded-content {
+	width: 100%;
+}
+
 /** 图文混排 **/
 img.centered {
 	display: block;

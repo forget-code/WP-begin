@@ -171,7 +171,9 @@ function fep_process_form_input()
 		$data['success'] = true;
 		$data['post_id'] = $new_post_id;
 		$data['message'] = sprintf(
-			'%s<br/><a href="#" id="fep-continue-editing">%s</a>',
+			'%s<br/><a href="#" id="fep-continue-editing">%s</a><br/>
+			<a title="关闭投稿页面" href="javascript:close();">点此关闭</a><br/><br/>
+			<button id="fep-submit-post" class="btn-continue" type="button" onclick="renovates()">再写一篇</button><br/>',
 			sprintf(__('您的文章已提交!', 'frontend-publishing'), $post_action),
 			'继续编辑'
 		);

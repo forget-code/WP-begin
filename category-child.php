@@ -16,30 +16,6 @@ get_header(); ?>
 	border-radius: 2px;
 }
 
-.archive-title {
-	position: absolute;
-	background: #c40000;
-	top: 20px;
-	left: 20px;
-	font-size: 16px;
-	font-size: 1.6rem;
-	color: #fff;
-	line-height: 35px;
-	padding: 0 20px;
-	filter: alpha(opacity=70);
-	background: none repeat scroll 0 0 rgba(216, 0, 0, 0.7);
-}
-
-.archive-l {
-	position: absolute;
-	background: #c40000;
-	top: 20px;
-	left: -1px;
-	width: 5px;
-	height: 35px;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-}
-
 .child-inf {
 	float: right;
 	color: #bbbbbb;
@@ -58,24 +34,12 @@ get_header(); ?>
 	display: block;
 }
 
-.child-title .fa-angle-right {
-	color: #999;
+.child-title .be-more {
 	float: right;
-	font-size: 18px;
+	font-size: 30px !important;
+	font-weight: normal;
 	line-height: 40px;
 	margin-right: 15px;
-}
-
-.child-title .fa-bars {
-	float: left;
-	font-size: 16px;
-	width: 40px;
-	height: 40px;
-	line-height: 40px;
-	text-align: center;
-	margin-right: 10px;
-	padding: 1px 0;
-	border-right: 1px solid #ddd;
 }
 
 .child-list {
@@ -101,14 +65,6 @@ get_header(); ?>
 	vertical-align: middle;
 }
 
-.child-img img {
-	max-width: 100%;
-	width: auto\9;
-	height: auto;
-	display: block;
-	margin: 0 0 10px 0;
-}
-
 @media screen and (max-width:900px) {
 	.child-box {
 		margin-top: 10px;
@@ -116,10 +72,6 @@ get_header(); ?>
 }
 
 @media screen and (max-width: 440px) {
-	.archive-title {
-		margin: 0 -20px 10px -20px;
-	}
-
 	.child-inf {
 		display: none;
 	}
@@ -129,11 +81,6 @@ get_header(); ?>
 <section id="primary" class="content-area">
 	<main id="main" class="site-main" role="main">
 		<article id="post-<?php the_ID(); ?>" <?php post_class('wow fadeInUp'); ?> data-wow-delay="0.3s">
-			<div class="archive-l"></div>
-			<h1 class="archive-title"><?php printf( '%s', single_cat_title( '', false ) ); ?></h1>
- 			<div class="child-img">
-				<img alt="<?php printf( '%s', single_cat_title( '', false ) ); ?>" src="http://ww3.sinaimg.cn/large/703be3b1jw1etrprt3qioj20u00acwiw.jpg"><!-- 替换图片链接 -->
-			</div>
 			<?php if ( category_description() ) :  ?>
 			<div class="archive-meta"><?php echo category_description(); ?></div>
 			<?php endif; ?>
@@ -165,11 +112,11 @@ get_header(); ?>
 					if(!empty($posts)){
 						echo '
 						<div class="child-post wow fadeInUp" data-wow-delay="0.3s">
-							<h3 class="child-title cat-title"><i class="fa fa-bars"></i><a href="'.get_category_link($the_cat).'">'.$the_cat->name.'<i class="fa fa-angle-right"></i></a></h3>
+							<h3 class="child-title cat-title"><span class="title-i"><span class="title-i-t"></span><span class="title-i-b"></span><span class="title-i-b"></span><span class="title-i-t"></span></span><a href="'.get_category_link($the_cat).'">'.$the_cat->name.'<i class="be be-more"></i></a></h3>
 							<ul class="child-list">';
 								foreach($posts as $post){
 									echo '<li class="child-inf">'.mysql2date('m月d日', $post->post_date).'</li><li>
-									<i class="fa fa-angle-right"></i><a href="'.get_permalink($post->ID).'">'.$post->post_title.'</a></li>';
+									<i class="be be-arrowright"></i><a href="'.get_permalink($post->ID).'">'.$post->post_title.'</a></li>';
 								}
 							echo '</ul>
 						</div>';

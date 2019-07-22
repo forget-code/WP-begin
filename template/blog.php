@@ -14,7 +14,7 @@
 			<?php if (zm_get_option('cms_top')) { ?>
 				<?php
 					if ( !is_paged() ) :
-						get_template_part( 'template/cms-top' );
+						get_template_part( 'template/b-top' );
 					endif;
 				?>
 			<?php } ?>

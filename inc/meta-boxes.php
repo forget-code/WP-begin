@@ -505,25 +505,13 @@ array(
 	"button1" => array(
 		"name" => "button1",
 		"std" => "",
-		"title" => "下载按钮名称",
+		"title" => "下载按钮名称（ 弹窗中的按钮名称 ）",
 		"type"=>"text"),
 
 	"url1" => array(
 		"name" => "url1",
 		"std" => "",
-		"title" => "下载链接",
-		"type"=>"text"),
-
-	"file_os" => array(
-		"name" => "file_os",
-		"std" => "",
-		"title" => "适用平台，仅用于软件文章形式",
-		"type"=>"text"),
-
-	"file_inf" => array(
-		"name" => "file_inf",
-		"std" => "",
-		"title" => "软件版本，仅用于软件文章形式",
+		"title" => "下载链接（ 弹窗中的下载链接 ）",
 		"type"=>"text"),
 );
 
@@ -600,6 +588,123 @@ function save_other_post_postdata($post_id) {
 add_action('admin_menu', 'other_post_meta_box');
 add_action('save_post', 'save_other_post_postdata');
 
+
+// 仅用于公司服务模块
+$pr_post_meta_boxes =
+array(
+	"pr_b" => array(
+		"name" => "pr_b",
+		"std" => "",
+		"title" => "第二行文字",
+		"type"=>"text"),
+
+	"pr_a" => array(
+		"name" => "pr_a",
+		"std" => "",
+		"title" => "第三行图片上的文字 ( 必填 )",
+		"type"=>"text"),
+
+	"pr_c" => array(
+		"name" => "pr_c",
+		"std" => "",
+		"title" => "第四行文字",
+		"type"=>"text"),
+
+	"pr_d" => array(
+		"name" => "pr_d",
+		"std" => "",
+		"title" => "输入按钮链接地址",
+		"type"=>"text"),
+
+	"pr_e" => array(
+		"name" => "pr_e",
+		"std" => "",
+		"title" => "按钮名称，可以在文字前面输入图标字体，需要将双引号改成单引号",
+		"type"=>"text"),
+
+	"pr_f" => array(
+		"name" => "pr_f",
+		"std" => "",
+		"title" => "输入图片地址",
+		"type"=>"text"),
+);
+
+// 面板内容
+function pr_post_meta_boxes() {
+	global $post, $pr_post_meta_boxes;
+	//获取保存
+	foreach ($pr_post_meta_boxes as $meta_box) {
+		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		if ($meta_box_value != "")
+		//将默认值替换为已保存的值
+		$meta_box['std'] = $meta_box_value;
+		echo '<input type="hidden" name="' . $meta_box['name'] . '_noncename" id="' . $meta_box['name'] . '_noncename" value="' . wp_create_nonce(plugin_basename(__FILE__)) . '" />';
+		//选择类型输出不同的html代码
+		switch ($meta_box['type']) {
+			case 'title':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+			break;
+			case 'text':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<span class="form-field"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /></span><br />';
+			break;
+			case 'textarea':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<textarea id="seo-excerpt" cols="40" rows="2" name="' . $meta_box['name'] . '">' . $meta_box['std'] . '</textarea><br />';
+			break;
+			case 'radio':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				$counter = 1;
+				foreach ($meta_box['buttons'] as $radiobutton) {
+					$checked = "";
+					if (isset($meta_box['std']) && $meta_box['std'] == $counter) {
+						$checked = 'checked = "checked"';
+					}
+					echo '<input ' . $checked . ' type="radio" class="kcheck" value="' . $counter . '" name="' . $meta_box['name'] . '_value"/>' . $radiobutton;
+					$counter++;
+				}
+			break;
+			case 'checkbox':
+				if (isset($meta_box['std']) && $meta_box['std'] == 'true') $checked = 'checked = "checked"';
+				else $checked = '';
+				echo '<br /><input type="checkbox" name="' . $meta_box['name'] . '" value="true"  ' . $checked . ' />';
+				echo '<label>' . $meta_box['title'] . '</label><br />';
+				break;
+			}
+		}
+}
+// 创建面板
+function pr_post_meta_box() {
+	global $theme_name;
+	if (function_exists('add_meta_box')) {
+		add_meta_box('pr_post_meta_box', '仅用于公司主页服务模块', 'pr_post_meta_boxes', 'post', 'normal', 'high');
+	}
+}
+// 保存数据
+function pr_seo_post_postdata($post_id) {
+	global $post, $pr_post_meta_boxes;
+	foreach ($pr_post_meta_boxes as $meta_box) {
+		if (!wp_verify_nonce($_POST[$meta_box['name'] . '_noncename'], plugin_basename(__FILE__))) {
+			return $post_id;
+		}
+		if ('page' == $_POST['post_type']) {
+			if (!current_user_can('edit_page', $post_id)) return $post_id;
+		} else {
+			if (!current_user_can('edit_post', $post_id)) return $post_id;
+		}
+		$data = $_POST[$meta_box['name'] . ''];
+		if (get_post_meta($post_id, $meta_box['name'] . '') == "") add_post_meta($post_id, $meta_box['name'] . '', $data, true);
+		elseif ($data != get_post_meta($post_id, $meta_box['name'] . '', true)) update_post_meta($post_id, $meta_box['name'] . '', $data);
+		elseif ($data == "") delete_post_meta($post_id, $meta_box['name'] . '', get_post_meta($post_id, $meta_box['name'] . '', true));
+	}
+}
+
+// 触发
+if (zm_get_option('dean')) {
+add_action('admin_menu', 'pr_post_meta_box');
+add_action('save_post', 'pr_seo_post_postdata');
+}
+
 // 页面相关自定义栏目
 $new_meta_page_boxes =
 array(
@@ -630,13 +735,13 @@ array(
 	"button1" => array(
 		"name" => "button1",
 		"std" => "",
-		"title" => "下载按钮名称",
+		"title" => "下载按钮名称（ 弹窗中的按钮名称 ）",
 		"type"=>"text"),
 
 	"url1" => array(
 		"name" => "url1",
 		"std" => "",
-		"title" => "下载链接",
+		"title" => "下载链接（ 弹窗中的下载链接 ）",
 		"type"=>"text")
 );
 
@@ -731,6 +836,37 @@ array(
 		"std" => "",
 		"title" => "输入链接地址，可让幻灯跳转到任意链接页面",
 		"type"=>"text"),
+
+	"s_t_a" => array(
+		"name" => "s_t_a",
+		"std" => "",
+		"title" => "幻灯上第一行文字",
+		"type"=>"text"),
+
+	"s_t_b" => array(
+		"name" => "s_t_b",
+		"std" => "",
+		"title" => "幻灯上第二行文字（大字）",
+		"type"=>"text"),
+
+	"s_t_c" => array(
+		"name" => "s_t_c",
+		"std" => "",
+		"title" => "幻灯上第三行文字",
+		"type"=>"text"),
+
+	"s_n_b" => array(
+		"name" => "s_n_b",
+		"std" => "",
+		"title" => "按钮名称",
+		"type"=>"text"),
+
+	"s_n_b_l" => array(
+		"name" => "s_n_b_l",
+		"std" => "",
+		"title" => "按钮链接",
+		"type"=>"text"),
+
 );
 
 // 面板内容
@@ -803,8 +939,10 @@ function save_page_slider_post_postdata($post_id) {
 	}
 }
 // 触发
+if (zm_get_option('group_slider')) {
 add_action('admin_menu', 'page_slider_post_meta_box');
 add_action('save_post', 'save_page_slider_post_postdata');
+}
 
 // 页面标题幻灯
 $header_show_page_meta_boxes =
@@ -812,7 +950,7 @@ array(
 	"header_img" => array(
 		"name" => "header_img",
 		"std" => "",
-		"title" => "输入图片地址，一行一个不能有回行和空格，图片尺寸必须相同",
+		"title" => "输入图片地址，一行一个不能有多余的回行和空格，图片尺寸必须相同",
 		"type"=>"textarea"),
 );
 
@@ -889,6 +1027,119 @@ function save_header_show_page_postdata($post_id) {
 add_action('admin_menu', 'header_show_page_meta_box');
 add_action('save_post', 'save_header_show_page_postdata');
 
+// 仅用于公司主页服务模块
+$pr_meta_page_boxes =
+array(
+	"pr_b" => array(
+		"name" => "pr_b",
+		"std" => "",
+		"title" => "第二行文字",
+		"type"=>"text"),
+
+	"pr_a" => array(
+		"name" => "pr_a",
+		"std" => "",
+		"title" => "第三行图片上的文字 ( 必填 )",
+		"type"=>"text"),
+
+	"pr_c" => array(
+		"name" => "pr_c",
+		"std" => "",
+		"title" => "第四行文字",
+		"type"=>"text"),
+
+	"pr_d" => array(
+		"name" => "pr_d",
+		"std" => "",
+		"title" => "输入按钮链接地址",
+		"type"=>"text"),
+
+	"pr_e" => array(
+		"name" => "pr_e",
+		"std" => "",
+		"title" => "按钮名称，可以在文字前面输入图标字体，需要将双引号改成单引号",
+		"type"=>"text"),
+
+	"pr_f" => array(
+		"name" => "pr_f",
+		"std" => "",
+		"title" => "输入图片地址",
+		"type"=>"text"),
+);
+
+// 面板内容
+function pr_meta_page_boxes() {
+	global $post, $pr_meta_page_boxes;
+	//获取保存
+	foreach ($pr_meta_page_boxes as $meta_box) {
+		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		if ($meta_box_value != "")
+		//将默认值替换为已保存的值
+		$meta_box['std'] = $meta_box_value;
+		echo '<input type="hidden" name="' . $meta_box['name'] . '_noncename" id="' . $meta_box['name'] . '_noncename" value="' . wp_create_nonce(plugin_basename(__FILE__)) . '" />';
+		//选择类型输出不同的html代码
+		switch ($meta_box['type']) {
+			case 'title':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+			break;
+			case 'text':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<span class="form-field"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /></span><br />';
+			break;
+			case 'textarea':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<textarea id="seo-excerpt" cols="40" rows="2" name="' . $meta_box['name'] . '">' . $meta_box['std'] . '</textarea><br />';
+			break;
+			case 'radio':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				$counter = 1;
+				foreach ($meta_box['buttons'] as $radiobutton) {
+					$checked = "";
+					if (isset($meta_box['std']) && $meta_box['std'] == $counter) {
+						$checked = 'checked = "checked"';
+					}
+					echo '<input ' . $checked . ' type="radio" class="kcheck" value="' . $counter . '" name="' . $meta_box['name'] . '_value"/>' . $radiobutton;
+					$counter++;
+				}
+			break;
+			case 'checkbox':
+				if (isset($meta_box['std']) && $meta_box['std'] == 'true') $checked = 'checked = "checked"';
+				else $checked = '';
+				echo '<br /><input type="checkbox" name="' . $meta_box['name'] . '" value="true"  ' . $checked . ' />';
+				echo '<label>' . $meta_box['title'] . '</label><br />';
+				break;
+			}
+		}
+}
+
+function pr_meta_page_box() {
+	global $theme_name;
+	if (function_exists('add_meta_box')) {
+		add_meta_box('pr_new-meta-boxes', '仅用于公司主页服务模块', 'pr_meta_page_boxes', 'page', 'normal', 'high');
+	}
+}
+function pr_save_page_postdata($post_id) {
+	global $post, $pr_meta_page_boxes;
+	foreach ($pr_meta_page_boxes as $meta_box) {
+		if (!wp_verify_nonce($_POST[$meta_box['name'] . '_noncename'], plugin_basename(__FILE__))) {
+			return $post_id;
+		}
+		if ('page' == $_POST['post_type']) {
+			if (!current_user_can('edit_page', $post_id)) return $post_id;
+		} else {
+			if (!current_user_can('edit_post', $post_id)) return $post_id;
+		}
+		$data = $_POST[$meta_box['name'] . ''];
+		if (get_post_meta($post_id, $meta_box['name'] . '') == "") add_post_meta($post_id, $meta_box['name'] . '', $data, true);
+		elseif ($data != get_post_meta($post_id, $meta_box['name'] . '', true)) update_post_meta($post_id, $meta_box['name'] . '', $data);
+		elseif ($data == "") delete_post_meta($post_id, $meta_box['name'] . '', get_post_meta($post_id, $meta_box['name'] . '', true));
+	}
+}
+if (zm_get_option('dean')) {
+add_action('admin_menu', 'pr_meta_page_box');
+add_action('save_post', 'pr_save_page_postdata');
+}
+
 // 图片日志
 $new_meta_picture_boxes =
 array(
@@ -925,13 +1176,13 @@ array(
 	"button1" => array(
 		"name" => "button1",
 		"std" => "",
-		"title" => "下载按钮名称",
+		"title" => "下载按钮名称（ 弹窗中的按钮名称 ）",
 		"type"=>"text"),
 
 	"url1" => array(
 		"name" => "url1",
 		"std" => "",
-		"title" => "下载链接",
+		"title" => "下载链接（ 弹窗中的下载链接 ）",
 		"type"=>"text"),
 );
 
@@ -1048,13 +1299,13 @@ array(
 	"button1" => array(
 		"name" => "button1",
 		"std" => "",
-		"title" => "下载按钮名称",
+		"title" => "下载按钮名称（ 弹窗中的按钮名称 ）",
 		"type"=>"text"),
 
 	"url1" => array(
 		"name" => "url1",
 		"std" => "",
-		"title" => "下载链接",
+		"title" => "下载链接（ 弹窗中的下载链接 ）",
 		"type"=>"text"),
 );
 
@@ -1461,3 +1712,182 @@ function save_sites_postdata($post_id) {
 }
 add_action('admin_menu', 'create_meta_sites_box');
 add_action('save_post', 'save_sites_postdata');
+
+// 下载链接（文章）
+$down_post_meta_boxes =
+array(
+	"down_start" => array(
+		"name" => "down_start",
+		"std" => "",
+		"title" => "启用下载",
+		"type" => "checkbox"
+	),
+
+	"down_name" => array(
+		"name" => "down_name",
+		"std" => "",
+		"title" => "资源名称",
+		"type"=>"text"
+	),
+
+	"file_os" => array(
+		"name" => "file_os",
+		"std" => "",
+		"title" => "应用平台",
+		"type"=>"text"
+	),
+
+	"file_inf" => array(
+		"name" => "file_inf",
+		"std" => "",
+		"title" => "资源版本",
+		"type"=>"text"
+	),
+
+	"down_size" => array(
+		"name" => "down_size",
+		"std" => "",
+		"title" => "资源大小",
+		"type"=>"text"
+	),
+
+	"down_demo" => array(
+		"name" => "down_demo",
+		"std" => "",
+		"title" => "演示链接",
+		"type"=>"text"
+	),
+
+	"baidu_pan" => array(
+		"name" => "baidu_pan",
+		"std" => "",
+		"title" => "网盘下载链接",
+		"type"=>"text"
+	),
+
+	"baidu_password" => array(
+		"name" => "baidu_password",
+		"std" => "",
+		"title" => "网盘密码",
+		"type"=>"text"
+	),
+
+	"down_local" => array(
+		"name" => "down_local",
+		"std" => "",
+		"title" => "本站下载链接",
+		"type"=>"text"
+	),
+
+	"rar_password" => array(
+		"name" => "rar_password",
+		"std" => "",
+		"title" => "解压密码",
+		"type"=>"text"
+	),
+
+	"down_official" => array(
+		"name" => "down_official",
+		"std" => "",
+		"title" => "官网下载链接",
+		"type"=>"text"
+	),
+
+	"down_img" => array(
+		"name" => "down_img",
+		"std" => "",
+		"title" => "输入演示图地址",
+		"type"=>"text"
+	),
+
+	"password_start" => array(
+		"name" => "password_start",
+		"std" => "",
+		"title" => "启用密码回复可见",
+		"type" => "checkbox"
+	),
+
+	"r_baidu_password" => array(
+		"name" => "r_baidu_password",
+		"std" => "",
+		"title" => "网盘密码 (回复可见)",
+		"type"=>"text"
+	),
+
+	"r_rar_password" => array(
+		"name" => "r_rar_password",
+		"std" => "",
+		"title" => "解压密码 (回复可见)",
+		"type"=>"text"
+	),
+
+);
+
+function down_post_meta_boxes() {
+	global $post, $down_post_meta_boxes;
+	foreach ($down_post_meta_boxes as $meta_box) {
+		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		if ($meta_box_value != "")
+		$meta_box['std'] = $meta_box_value;
+		echo '<input type="hidden" name="' . $meta_box['name'] . '_noncename" id="' . $meta_box['name'] . '_noncename" value="' . wp_create_nonce(plugin_basename(__FILE__)) . '" />';
+		switch ($meta_box['type']) {
+			case 'title':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+			break;
+			case 'text':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<span class="form-field"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /></span><br />';
+			break;
+			case 'textarea':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<textarea id="seo-excerpt" cols="40" rows="2" name="' . $meta_box['name'] . '">' . $meta_box['std'] . '</textarea><br />';
+			break;
+			case 'radio':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				$counter = 1;
+				foreach ($meta_box['buttons'] as $radiobutton) {
+					$checked = "";
+					if (isset($meta_box['std']) && $meta_box['std'] == $counter) {
+						$checked = 'checked = "checked"';
+					}
+					echo '<input ' . $checked . ' type="radio" class="kcheck" value="' . $counter . '" name="' . $meta_box['name'] . '_value"/>' . $radiobutton;
+					$counter++;
+				}
+			break;
+			case 'checkbox':
+				if (isset($meta_box['std']) && $meta_box['std'] == 'true') $checked = 'checked = "checked"';
+				else $checked = '';
+				echo '<br /><input type="checkbox" name="' . $meta_box['name'] . '" value="true"  ' . $checked . ' />';
+				echo '<label>' . $meta_box['title'] . '</label><br />';
+				break;
+			}
+		}
+}
+
+function down_post_meta_box() {
+	global $theme_name;
+	if (function_exists('add_meta_box')) {
+		add_meta_box('down_post_meta_box', '下载信息', 'down_post_meta_boxes', 'post', 'normal', 'high');
+	}
+}
+
+function save_down_post_postdata($post_id) {
+	global $post, $down_post_meta_boxes;
+	foreach ($down_post_meta_boxes as $meta_box) {
+		if (!wp_verify_nonce($_POST[$meta_box['name'] . '_noncename'], plugin_basename(__FILE__))) {
+			return $post_id;
+		}
+		if ('page' == $_POST['post_type']) {
+			if (!current_user_can('edit_page', $post_id)) return $post_id;
+		} else {
+			if (!current_user_can('edit_post', $post_id)) return $post_id;
+		}
+		$data = $_POST[$meta_box['name'] . ''];
+		if (get_post_meta($post_id, $meta_box['name'] . '') == "") add_post_meta($post_id, $meta_box['name'] . '', $data, true);
+		elseif ($data != get_post_meta($post_id, $meta_box['name'] . '', true)) update_post_meta($post_id, $meta_box['name'] . '', $data);
+		elseif ($data == "") delete_post_meta($post_id, $meta_box['name'] . '', get_post_meta($post_id, $meta_box['name'] . '', true));
+	}
+}
+
+add_action('admin_menu', 'down_post_meta_box');
+add_action('save_post', 'save_down_post_postdata');

@@ -127,18 +127,18 @@ function videos_thumbnail_h() {
 		$image = get_post_meta($post->ID, 'small', true);
 		echo '<span class="load"><a class="videos" href="'.get_permalink().'"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original=';
 		echo $image;
-		echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a></span>';
+		echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a></span>';
 	} else {
 		$content = $post->post_content;
 		preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 		$n = count($strResult[1]);
 		if($n > 0){
 			echo '<span class="load"><a class="videos" href="'.get_permalink().'"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" ';
-			echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a></span>';
+			echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a></span>';
 		} else { 
 			$random = mt_rand(1, 20);
 			echo '<span class="load"><a class="videos" href="'.get_permalink().'"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original="'.get_template_directory_uri().'/img/random/'. $random .'.jpg" ';
-			echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a></span>';
+			echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a></span>';
 		}
 	}
 }
@@ -149,41 +149,41 @@ function videos_thumbnail() {
 		$image = get_post_meta($post->ID, 'small', true);
 		echo '<a class="videos" href="'.get_permalink().'"><img src=';
 		echo $image;
-		echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+		echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 	} else {
 		$content = $post->post_content;
 		preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 		$n = count($strResult[1]);
 		if($n > 0){
 			echo '<a class="videos" href="'.get_permalink().'"><img src="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" ';
-			echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+			echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 		} else { 
 			$random = mt_rand(1, 20);
 			echo '<a class="videos" href="'.get_permalink().'"><img src="'.get_template_directory_uri().'/img/random/'. $random .'.jpg" ';
-			echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+			echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 		}
 	}
 }
 
-function video_thumbnail() {
+function videoe_thumbnail() {
 	global $post;
 	$img = get_post_meta($post->ID, 'big', true);
 	if ( get_post_meta($post->ID, 'small', true) ) {
 		$image = get_post_meta($post->ID, 'small', true);
 		echo '<a class="videos" href="'.$img.'"><img src=';
 		echo $image;
-		echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+		echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 	} else {
 		$content = $post->post_content;
 		preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 		$n = count($strResult[1]);
 		if($n > 0){
 			echo '<a class="videos" href="'.$img.'"><img src="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" ';
-			echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+			echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 		} else { 
 			$random = mt_rand(1, 20);
 			echo '<a class="videos" href="'.$img.'"><img src="'.get_template_directory_uri().'/img/random/'. $random .'.jpg" ';
-			echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+			echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 		}
 	}
 }
@@ -194,18 +194,18 @@ function videor_thumbnail_h() {
 		$image = get_post_meta($post->ID, 'small', true);
 		echo '<span class="load"><a class="videor" href="'.get_permalink().'"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original=';
 		echo $image;
-		echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a></span>';
+		echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a></span>';
 	} else {
 		$content = $post->post_content;
 		preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 		$n = count($strResult[1]);
 		if($n > 0){
 			echo '<span class="load"><a class="videor" href="'.get_permalink().'"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" ';
-			echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a></span>';
+			echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a></span>';
 		} else { 
 			$random = mt_rand(1, 20);
 			echo '<span class="load"><a class="videor" href="'.get_permalink().'"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original="'.get_template_directory_uri().'/img/random/'. $random .'.jpg" ';
-			echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a></span>';
+			echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a></span>';
 		}
 	}
 }
@@ -216,18 +216,18 @@ function videor_thumbnail() {
 		$image = get_post_meta($post->ID, 'small', true);
 		echo '<a class="videor" href="'.get_permalink().'"><img src=';
 		echo $image;
-		echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+		echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 	} else {
 		$content = $post->post_content;
 		preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 		$n = count($strResult[1]);
 		if($n > 0){
 			echo '<a class="videor" href="'.get_permalink().'"><img src="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" ';
-			echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+			echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 		} else { 
 			$random = mt_rand(1, 20);
 			echo '<a class="videor" href="'.get_permalink().'"><img src="'.get_template_directory_uri().'/img/random/'. $random .'.jpg" ';
-			echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+			echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 		}
 	}
 }
@@ -387,7 +387,7 @@ function zm_full_thumbnail() {
 		preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 		$n = count($strResult[1]);
 		if($n > 0){
-			echo '<header class="full-header"><figure class="full-thumbnail"><span class="load"><img src="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w=900&h=350&a=t&zc=1" alt="'.$post->post_title .'" /></span></figure>';
+			echo '<header class="full-header"><figure class="full-thumbnail"><img src="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w=900&h=350&a=t&zc=1" alt="'.$post->post_title .'" /></figure><div class="clear"></div>';
 			echo ''.the_title( sprintf( '<h2 class="entry-title-img"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ).'</header>';
 		} else {
 			the_title( sprintf( '<h2 class="entry-title-full"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' );
@@ -409,7 +409,7 @@ function zm_full_thumbnail_h() {
 		preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 		$n = count($strResult[1]);
 		if($n > 0){
-			echo '<header class="full-header"><figure class="full-thumbnail"><span class="load"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w=900&h=350&a=t&zc=1" alt="'.$post->post_title .'" /></span></figure>';
+			echo '<header class="full-header"><figure class="full-thumbnail"><span class="load"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w=900&h=350&a=t&zc=1" alt="'.$post->post_title .'" /></span></figure><div class="clear"></div>';
 			echo ''.the_title( sprintf( '<h2 class="entry-title-img"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ).'</header>';
 		} else {
 			the_title( sprintf( '<h2 class="entry-title-full"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' );

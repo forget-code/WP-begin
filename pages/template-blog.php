@@ -43,15 +43,4 @@ Template Name: 博客页面
 	</div><!-- .content-area -->
 
 <?php get_sidebar(); ?>
-<?php if (zm_get_option('scroll')) { ?>
-<script type="text/javascript">var ias=$.ias({container:"#main",item:"article",pagination:"#nav-below",next:"#nav-below .nav-previous a",});ias.extension(new IASTriggerExtension({text:'<i class="fa fa-chevron-circle-down"></i>更多',offset:<?php echo zm_get_option('scroll_n');?>,}));ias.extension(new IASSpinnerExtension());ias.extension(new IASNoneLeftExtension({text:'已是最后',}));ias.on('rendered',function(items){$("img").lazyload({effect: "fadeIn",failure_limit: 10});});ias.on('rendered',function(items){$(".picture-img,.img-box").hover(function(){$(this).find(".hide-box,.hide-excerpt,.img-title").fadeIn(500);},function(){$(this).find(".hide-box,.hide-excerpt,.img-title").hide();})})</script>
-<?php } ?>
-<script type="text/javascript">
-    document.onkeydown = chang_page;function chang_page(e) {
-        var e = e || event,
-        keycode = e.which || e.keyCode;
-        if (keycode == 37) location = '<?php echo get_previous_posts_page_link(); ?>';
-        if (keycode == 39) location = '<?php echo get_next_posts_page_link(); ?>';
-    }
-</script>
 <?php get_footer(); ?>

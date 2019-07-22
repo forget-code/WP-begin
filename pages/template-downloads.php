@@ -21,7 +21,7 @@ Template Name: 下载分类
 .tao-cat a:hover {
 	color: #fff;
 }
-.tao-cat .fa-bookmark-o {
+.tao-cat .be-basket {
 	font-size: 18px;
 	font-size: 1.8rem;
 	margin: 0 5px 0 0;
@@ -95,7 +95,7 @@ Template Name: 下载分类
 		$query = new WP_Query($args);
 		if( $query->have_posts() ) { ?>
 		<div class="clear"></div>
-		<h3 class="tao-cat"><a href="<?php echo get_term_link( $cat ); ?>" ><i class="fa fa-bookmark-o"></i><?php echo $cat->name; ?></a></h3>
+		<h3 class="tao-cat"><a href="<?php echo get_term_link( $cat ); ?>" ><i class="be be-basket"></i><?php echo $cat->name; ?></a></h3>
 		<div class="clear"></div>
 		<?php while ($query->have_posts()) : $query->the_post();?>
 			<article id="post-<?php the_ID(); ?>" class="w4">
@@ -106,7 +106,7 @@ Template Name: 下载分类
 					<?php the_title( sprintf( '<h3 class="picture-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h3>' ); ?>
 					<div class="group-tab-meta">
 						<div class="group-date"><?php time_ago( $time_type ='post' ); ?></div>
-						<?php if( function_exists( 'the_views' ) ) { the_views( true, '<div class="group-views"><i class="fa fa-eye"></i> ','</div>' ); } ?>
+						<?php if( function_exists( 'the_views' ) ) { the_views( true, '<div class="group-views"><i class="be be-eye"></i> ','</div>' ); } ?>
 						<div class="clear"></div>
 					</div>
 				</div>

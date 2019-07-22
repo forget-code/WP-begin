@@ -22,7 +22,7 @@
 				<a href="<?php the_permalink() ?>" rel="bookmark"><?php if (zm_get_option('lazy_s')) { format_image_thumbnail_h(); } else { format_image_thumbnail(); } ?></a>
 			</figure>
 			<span class="title-l"></span>
-			<span class="post-format"><i class="fa fa-picture-o"></i></span>
+			<span class="post-format"><i class="be be-picture"></i></span>
 			<?php the_title( sprintf( '<h2 class="post-format-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?><span class="img-number">共 <?php echo get_post_images_number().' 张图片' ?></span>
 			<div class="clear"></div>
 
@@ -41,7 +41,7 @@
 			</div>
 
 			<?php get_template_part( 'inc/file' ); ?>
-			<?php if ( get_post_meta($post->ID, 'no_sidebar', true) ) : ?><style>	#primary {width: 100%;}#sidebar,.r-hide {display: none;}</style><?php endif; ?>
+			<?php if ( get_post_meta($post->ID, 'no_sidebar', true) ) : ?><style>#primary {width: 100%;}#sidebar, .r-hide, .s-hide {display: none;}</style><?php endif; ?>
 
 			<?php wp_link_pages(array('before' => '<div class="page-links">', 'after' => '', 'next_or_number' => 'next', 'previouspagelink' => '<span>上一页</span>', 'nextpagelink' => "")); ?>
 			<?php wp_link_pages(array('before' => '', 'after' => '', 'next_or_number' => 'number', 'link_before' =>'<span>', 'link_after'=>'</span>')); ?>

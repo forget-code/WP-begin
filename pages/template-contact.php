@@ -110,7 +110,7 @@ Template Name: 联系方式
 								<textarea cols="20" rows="7" id="commentinput" name="comment"></textarea><br />
 
 								<input type="submit" id="submitinput" name="submit" class="submit" value="<?php _e( '发送邮件', 'begin' ); ?>"/>
-								<input type="hidden" id="receiver" name="receiver" value="<?php echo zm_get_option('email')?>"/>
+								<input type="hidden" id="receiver" name="receiver" value="<?php echo zm_get_option('email'); ?>"/>
 								<!--<input type="hidden" id="from_email" name="from_email" value="<?php echo zm_get_option('example_email')?>"/>-->
 							</form>
 						</div>

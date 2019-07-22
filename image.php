@@ -31,7 +31,7 @@
 					<footer class="single-footer">
 						<ul class="single-meta">
 							<?php edit_post_link('编辑', '<li class="edit-link">', '</li>' ); ?>
-							<?php if( function_exists( 'the_views' ) ) { the_views(true, '<li class="views"><i class="fa fa-eye"></i> ','</li>');  } ?>
+							<?php if( function_exists( 'the_views' ) ) { the_views(true, '<li class="views"><i class="be be-eye"></i> ','</li>');  } ?>
 						</ul>
 
 						<ul id="fontsize">A+</ul>

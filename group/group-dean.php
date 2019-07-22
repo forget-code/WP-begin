@@ -1,92 +1,53 @@
+<?php if (zm_get_option('dean')) { ?>
 <?php
 /**
- * 企业布局“服务”模块，因没有预设主题选项，需要手动修改模板中的文字
- * 修改中如果没有相应的文字添加，可以用“&nbsp;”空格符号代替文字，但不能删除文字，否则会错位
+ * 企业布局“服务”模块
  */
 ?>
-
-<div class="deanm">
-	<div class="group-title wow fadeInUp" data-wow-delay="0.3s">
-		<h3><?php echo zm_get_option('dean_t'); ?></h3>
-		<div><?php echo zm_get_option('dean_des'); ?></div>
-		<div class="clear"></div>
-	</div>
-	<div class="deanm-main wow fadeInUp" data-wow-delay="0.3s">
-		<!-- box1 -->
-		<div class="deanm1 deanmove">
-			<div class="deanm-t">网站建设</div>
-			<div class="clear"></div>
-			<div>前期指导、服务器购买</div>
-			<div class="deanquan">
-				<a href="链接地址" target="_blank">
-					<div class="x-back">
-						<div class="x-1">网站程序</div>
-						<div class="x-2">网站维护</div>
-						<div class="x-3">网站程序</div>
-					</div>
-				</a>
+<div class="g-row <?php if (zm_get_option('bg_2')) { ?>g-line<?php } ?> sort" name="<?php echo zm_get_option('dean_s'); ?>">
+	<div class="g-col">
+		<div class="deanm">
+			<div class="group-title wow fadeInDown" data-wow-delay="0.3s">
+				<?php if ( zm_get_option('dean_t') == '' ) { ?>
+				<?php } else { ?>
+					<h3><i class="be be-skyatlas"></i> <?php echo zm_get_option('dean_t'); ?> <i class="be be-skyatlas"></i></h3>
+				<?php } ?>
+				<div class="group-des"><?php echo zm_get_option('dean_des'); ?></div>
+				<div class="clear"></div>
 			</div>
-			<div>指导+系统+网络+维护+营销</div>
-			<div class="x-b"><a href="链接地址" target="_blank"><i class="fa fa-sticky-note-o"></i>详细查看</a></div>
-		</div>
-
-		<!-- box2 -->
-		<div class="deanm2 deanmove">
-			<div class="deanm-t">网站建设</div>
-			<div class="clear"></div>
-			<div>前期指导、服务器购买</div>
-			<div class="deanquan">
-				<a href="链接地址" target="_blank">
-					<div class="x-back">
-						<div class="x-1">网站程序</div>
-						<div class="x-2">网站维护</div>
-						<div class="x-3">网站程序</div>
+			<div class="deanm-main wow fadeInUp" data-wow-delay="0.3s">
+				<?php $posts = get_posts( array( 'post_type' => any, 'meta_key' => 'pr_a') ); if($posts) : foreach( $posts as $post ) : setup_postdata( $post ); ?>
+					<?php 
+						$pr_a = get_post_meta($post->ID, 'pr_a', true);
+						$pr_b = get_post_meta($post->ID, 'pr_b', true);
+						$pr_c = get_post_meta($post->ID, 'pr_c', true);
+						$pr_d = get_post_meta($post->ID, 'pr_d', true);
+						$pr_e = get_post_meta($post->ID, 'pr_e', true);
+						$pr_f = get_post_meta($post->ID, 'pr_f', true);
+					?>
+				<div class="deanm deanmove">
+					<?php the_title( sprintf( '<div class="de-t wow fadeIn" data-wow-delay="0.5s"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></div>' ); ?>
+					<div class="clear"></div>
+					<div class="de-a wow fadeIn" data-wow-delay="0.7s"><?php echo $pr_b; ?></div>
+					<div class="deanquan">
+						<a href="<?php echo $pr_d; ?>" target="_blank">
+							<div class="de-back">
+								<?php if ( get_post_meta($post->ID, 'pr_f', true) ) { ?><img src="<?php echo $pr_f; ?>" alt="<?php the_title(); ?>"><?php } else { ?><img src="http://wx1.sinaimg.cn/large/0066LGKLly1fgbmwz3draj305u05uabc.jpg" alt="广告也精彩" /><?php } ?>
+								<div class="de-b wow fadeIn" data-wow-delay="0.8s"><?php echo $pr_a; ?></div>
+							</div>
+						</a>
 					</div>
-				</a>
-			</div>
-			<div>指导+系统+网络+维护+营销</div>
-			<div class="x-b"><a href="链接地址" target="_blank"><i class="fa fa-gift"></i>我想购买</a></div>
-		</div>
-
-		<!-- box3 -->
-		<div class="deanm3 deanmove">
-			<div class="deanm-t">网站建设</div>
-			<div class="clear"></div>
-			<div>前期指导、服务器购买</div>
-			<div class="deanquan">
-				<a href="链接地址" target="_blank">
-					<div class="x-back">
-						<div class="x-1">网站程序</div>
-						<div class="x-2">网站维护</div>
-						<div class="x-3">网站程序</div>
+					<div class="de-c wow fadeIn" data-wow-delay="0.9s"><?php echo $pr_c; ?></div>
+					<div class="de-button wow fadeIn" data-wow-delay="1s">
+						<a href="<?php echo $pr_d; ?>" target="_blank"><?php if ( get_post_meta($post->ID, 'pr_e', true) ) { ?><?php echo $pr_e; ?><?php } else { ?><i class="be be-stack"></i>按钮名称<?php } ?></a>
 					</div>
-				</a>
+				</div>
+				<?php endforeach; endif; ?>
+				<?php wp_reset_query(); ?>
+				<div class="clear"></div>
 			</div>
-			<div>指导+系统+网络+维护+营销</div>
-			<div class="x-b"><a href="链接地址" target="_blank"><i class="fa fa-envelope-o"></i>联系我们</a></div>
-		</div>
-
-		<!-- box4 -->
-		<div class="deanm4 deanmove">
-			<div class="deanm-t">网站建设</div>
-			<div class="clear"></div>
-			<div>前期指导、服务器购买</div>
-			<div class="deanquan">
-				<a href="链接地址" target="_blank">
-					<div class="x-back">
-						<div class="x-1">网站程序</div>
-						<div class="x-2">网站维护</div>
-						<div class="x-3">网站程序</div>
-					</div>
-				</a>
-			</div>
-			<div>指导+系统+网络+维护+营销</div>
-			<!-- 用于电脑端 -->
-			<span class="p-button x-b"><a href="链接地址" target="_blank"><i class="fa fa-phone"></i>立即咨询</a></span>
-			<!-- 用于移动端 -->
-			<span class="m-button x-b"><a href="tel:123456789" target="_blank"><i class="fa fa-phone"></i>电话咨询</a></span>
 		</div>
 		<div class="clear"></div>
 	</div>
 </div>
-<div class="clear"></div>
+<?php } ?>

@@ -9,9 +9,14 @@ Template Name: 公司主页
 body {
 	background: #fff;
 }
+
 #content {
 	width: 100%;
 	margin: 0 auto;
+}
+
+#masthead {
+	background: #fff;
 }
 
 #primary {
@@ -78,238 +83,136 @@ body {
 }
 
 @-webkit-keyframes small-img {
-  16.65% {
-    -webkit-transform: translateY(8px);
-    transform: translateY(8px);
-  }
+	16.65% {
+		-webkit-transform: translateY(8px);
+		transform: translateY(8px);
+	}
 
-  33.3% {
-    -webkit-transform: translateY(-6px);
-    transform: translateY(-6px);
-  }
+	33.3% {
+		-webkit-transform: translateY(-6px);
+		transform: translateY(-6px);
+	}
 
-  49.95% {
-    -webkit-transform: translateY(4px);
-    transform: translateY(4px);
-  }
+	49.95% {
+		-webkit-transform: translateY(4px);
+		transform: translateY(4px);
+	}
 
-  66.6% {
-    -webkit-transform: translateY(-2px);
-    transform: translateY(-2px);
-  }
+	66.6% {
+		-webkit-transform: translateY(-2px);
+		transform: translateY(-2px);
+	}
 
-  83.25% {
-    -webkit-transform: translateY(1px);
-    transform: translateY(1px);
-  }
+	83.25% {
+		-webkit-transform: translateY(1px);
+		transform: translateY(1px);
+	}
 
-  100% {
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-  }
+	100% {
+		-webkit-transform: translateY(0);
+		transform: translateY(0);
+	}
 }
 
 @keyframes small-img {
-  16.65% {
-    -webkit-transform: translateY(8px);
-    transform: translateY(8px);
-  }
+	16.65% {
+		-webkit-transform: translateY(8px);
+		transform: translateY(8px);
+	}
 
-  33.3% {
-    -webkit-transform: translateY(-6px);
-    transform: translateY(-6px);
-  }
+	33.3% {
+		-webkit-transform: translateY(-6px);
+		transform: translateY(-6px);
+	}
 
-  49.95% {
-    -webkit-transform: translateY(4px);
-    transform: translateY(4px);
-  }
+	49.95% {
+		-webkit-transform: translateY(4px);
+		transform: translateY(4px);
+	}
 
-  66.6% {
-    -webkit-transform: translateY(-2px);
-    transform: translateY(-2px);
-  }
+	66.6% {
+		-webkit-transform: translateY(-2px);
+		transform: translateY(-2px);
+	}
 
-  83.25% {
-    -webkit-transform: translateY(1px);
-    transform: translateY(1px);
-  }
+	83.25% {
+		-webkit-transform: translateY(1px);
+		transform: translateY(1px);
+	}
 
-  100% {
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-  }
+	100% {
+		-webkit-transform: translateY(0);
+		transform: translateY(0);
+	}
 }
 
 .small-img {
-  display: inline-block;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+	display: inline-block;
+	-webkit-transform: translateZ(0);
+	transform: translateZ(0);
+	box-shadow: 0 0 1px rgba(0, 0, 0, 0);
 }
 
-#slideshow:hover .small-img{
-  -webkit-animation-name: small-img;
-  animation-name: small-img;
-  -webkit-animation-duration: 1s;
-  animation-duration: 1s;
-  -webkit-animation-timing-function: ease-in-out;
-  animation-timing-function: ease-in-out;
-  -webkit-animation-iteration-count: 1;
-  animation-iteration-count: 1;
+#slideshow:hover .small-img {
+	-webkit-animation-name: small-img;
+	animation-name: small-img;
+	-webkit-animation-duration: 1s;
+	animation-duration: 1s;
+	-webkit-animation-timing-function: ease-in-out;
+	animation-timing-function: ease-in-out;
+	-webkit-animation-iteration-count: 1;
+	animation-iteration-count: 1;
 }
 </style>
 
 <div class="container">
-
 	<!-- 幻灯 -->
-	<?php if (zm_get_option('group_slider')) { ?>
-	<div class="g-row">
-		<div class="home-slider">
-			<?php get_template_part( '/group/group-slider' ); ?>
-		</div>
-	</div>
-	<?php } ?>
-
+	<?php get_template_part( '/group/group-slider' ); ?>
 	<div id="group-section">
-
-		<!-- 关于 -->
-		<?php if (zm_get_option('group_contact')) { ?>
-		<div class="contact">
-			<div class="g-row">
-				<div class="g-col">
-					<?php get_template_part( '/group/group-contact' ); ?>
-					<div class="clear"></div>
-				</div>
-			</div>
-		</div>
-		<?php } ?>
-
-		<!-- 服务 -->
-		<?php if (zm_get_option('dean')) { ?>
-		<div class="g-row">
-			<div class="g-col">
-				<?php get_template_part( '/group/group-dean' ); ?>
-				<div class="clear"></div>
-			</div>
-		</div>
-		<?php } ?>
-
-		<!-- 简介 -->
-		<?php if (zm_get_option('group_features')) { ?>
-		<div class="g-row">
-			<div class="g-col">
-				<?php get_template_part( '/group/group-features' ); ?>
-				<div class="clear"></div>
-			</div>
-		</div>
-		<?php } ?>
-
-		<!-- 说明 -->
-		<?php if (zm_get_option('group_explain')) { ?>
-		<div class="explain">
-			<div class="g-row">
-					<div class="g-col">
-						<?php get_template_part( '/group/group-explain' ); ?>
-						<div class="clear"></div>
-					</div>
-			</div>
-		</div>
-		<?php } ?>
-
-		<!-- 一栏小工具 -->
-		<?php get_template_part( '/group/group-widget-one' ); ?>
-
-		<!-- 下载 -->
-		<?php if (zm_get_option('cms_edd')) { ?>
-		<div class="g-row">
-			<div class="g-col line-tab">
-				<?php get_template_part( '/cms/cms-dow-tab' ); ?>
-				<div class="clear"></div>
-			</div>
-		</div>
-		<?php } ?>
-
-		<!-- 最新文章 -->
-		<?php if (zm_get_option('group_new')) { ?>
-		<div class="g-row">
-			<div class="g-col">
-				<?php require get_template_directory() . '/group/group-news.php'; ?>
-				<div class="clear"></div>
-			</div>
-		</div>
-		<?php } ?>
-
-		<!-- 三栏小工具 -->
-		<?php get_template_part( '/group/group-widget-three' ); ?>
-
-		<!-- 新闻资讯A -->
-		<?php if (zm_get_option('group_cat_a')) { ?>
-		<div class="g-row">
-			<div class="g-col">
-				<div class="group-cat">
-					<?php require get_template_directory() . '/group/group-cat-a.php'; ?>
-				</div>
-			</div>
-		</div>
-		<?php } ?>
-
-		<!-- 两栏小工具 -->
-		<?php get_template_part( '/group/group-widget-two' ); ?>
-
-		<!-- 新闻资讯B -->
-		<?php if (zm_get_option('group_cat_b')) { ?>
-		<div class="g-row">
-			<div class="g-col">
-				<div class="group-cat">
-					<?php require get_template_directory() . '/group/group-cat-b.php'; ?>
-				</div>
-			</div>
-		</div>
-		<?php } ?>
-
-		<!-- 产品案例 -->
-		<?php if (zm_get_option('group_tab')) { ?>
-		<div class="g-row">
-			<div class="g-col">
-				<?php require get_template_directory() . '/group/group-tab.php'; ?>
-				<div class="clear"></div>
-			</div>
-		</div>
-		<?php } ?>
-
-		<!-- 新闻资讯 C-->
-		<?php if (zm_get_option('group_cat_c')) { ?>
-		<div class="g-row">
-			<div class="g-col">
-				<div class="group-cat">
-					<?php require get_template_directory() . '/group/group-cat-c.php'; ?>
-				</div>
-			</div>
-		</div>
-		<?php } ?>
-
+		<?php 
+			// 关于
+			get_template_part( '/group/group-contact' );
+			// 服务
+			get_template_part( '/group/group-dean' );
+			// 产品
+			get_template_part( '/group/group-show' );
+			// 项目
+			get_template_part( '/group/group-service' );
+			// WOO产品
+			get_template_part( '/group/group-woo' );
+			// 简介
+			get_template_part( '/group/group-features' );
+			// 分类左图
+			get_template_part( '/group/group-wd-l' );
+			// 分类右图 
+			get_template_part( '/group/group-wd-r' );
+			// 说明
+			get_template_part( '/group/group-explain' );
+			// 一栏小工具
+			get_template_part( '/group/group-widget-one' );
+			// EDD下载
+			get_template_part( '/group/group-dow-tab' );
+			// 最新文章
+			require get_template_directory() . '/group/group-news.php';
+			// 三栏小工具
+			get_template_part( '/group/group-widget-three' );
+			// 新闻资讯A
+			require get_template_directory() . '/group/group-cat-a.php';
+			// 两栏小工具
+			get_template_part( '/group/group-widget-two' );
+			// 新闻资讯B
+			require get_template_directory() . '/group/group-cat-b.php';
+			// 产品案例
+			require get_template_directory() . '/group/group-tab.php';
+			// 新闻资讯 C
+			require get_template_directory() . '/group/group-cat-c.php';
+		 ?>
 	</div>
 	<div class="clear"></div>
 
 	<!-- 滚动 -->
-	<?php if (zm_get_option('group_carousel')) { ?>
-	<div id="section-gtg">
-		<div class="g-row">
-			<div class="g-col">
-				<?php require get_template_directory() . '/group/group-carousel.php'; ?>
-				<div class="clear"></div>
-			</div>
-		</div>
-		<div class="gtg"></div>
-	</div>
-	<?php } ?>
+	<?php require get_template_directory() . '/group/group-carousel.php'; ?>
 
-</div><!--  container end -->
-
-
-<script type="text/javascript">
-$("#group-section .g-row:even").addClass("g-line");
-</script>
+</div><!-- container end -->
 
 <?php get_footer(); ?>

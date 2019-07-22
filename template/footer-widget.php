@@ -1,5 +1,5 @@
 <?php if (zm_get_option('footer_w')) { ?>
-<div id="footer-widget-box" class="site-footer wow fadeInUp" data-wow-delay="0.3s">
+<div id="footer-widget-box" class="site-footer">
 	<div class="footer-widget">
 		<?php if ( ! dynamic_sidebar( 'sidebar-f' ) ) : ?>
 			<aside class="add-widgets">

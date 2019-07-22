@@ -33,7 +33,7 @@ function wpzm_add_favorite($post_id = "") {
 		// added, now?
 		do_action('wpzm_after_add', $post_id);
 		wpzm_update_post_meta($post_id, 1);
-		wpzm_die_or_go('<span class="favorite-o"><i class="fa fa-star"></i>已收藏</span>');
+		wpzm_die_or_go('<span class="favorite-o"><i class="be be-star"></i>已收藏</span>');
 	}
 }
 function wpzm_do_add_to_list($post_id) {
@@ -52,7 +52,7 @@ function wpzm_remove_favorite($post_id = "") {
 		// removed, now?
 		do_action('wpzm_after_remove', $post_id);
 		wpzm_update_post_meta($post_id, -1);
-			wpzm_die_or_go('<span class="favorite-o"><i class="fa fa-times"></i>已删除</span>');
+			wpzm_die_or_go('<span class="favorite-o"><i class="be be-favorite"></i>已删除</span>');
 	}
 	else return false;
 }
@@ -103,9 +103,9 @@ function wpzm_link( $return = 0, $action = "", $show_span = 1, $args = array() )
 	elseif ($action == "add"):
 		$str .= wpzm_link_html($post_id, '收藏本文', "add");
 	elseif (wpzm_check_favorited($post_id)):
-		$str .= wpzm_link_html($post_id, '<i class="fa fa-star"></i> '. __( '已收藏', 'begin' ) . '', "remove");
+		$str .= wpzm_link_html($post_id, '<i class="be be-star"></i> '. __( '已收藏', 'begin' ) . '', "remove");
 	else:
-		$str .= wpzm_link_html($post_id, ' '. __( '收 <i class="fa-heart fa"></i> 藏', 'begin' ) . '', "add");
+		$str .= wpzm_link_html($post_id, ' '. __( '收 <i class="be be-favorite"></i> 藏', 'begin' ) . '', "add");
 	endif;
 	if ($show_span)
 		$str .= "</span></div>";
@@ -125,9 +125,9 @@ function wpzm_links( $return = 0, $action = "", $show_span = 1, $args = array() 
 	elseif ($action == "add"):
 		$str .= wpzm_links_html($post_id, ' 收藏本文', "add");
 	elseif (wpzm_check_favorited($post_id)):
-		$str .= wpzm_links_html($post_id, ' <i class="fa fa-star-o"></i>', "remove");
+		$str .= wpzm_links_html($post_id, ' <i class="be be-star"></i>', "remove");
 	else:
-		$str .= wpzm_links_html($post_id, ' <i class="fa fa-heart-o"></i> <span>'. __( '收藏', 'begin' ) . '</span>', "add");
+		$str .= wpzm_links_html($post_id, ' <i class="be be-favorite"></i>'. __( '收藏', 'begin' ) . '</span>', "add");
 	endif;
 	if ($show_span)
 		$str .= "</span>";
@@ -240,7 +240,7 @@ function wpzm_shortcode_func() {
 add_shortcode('wp-favorite-posts', 'wpzm_shortcode_func');
 
 function wpfp_add_js_script() {
-	wp_enqueue_script( "wpzm", get_template_directory_uri() . "/js/wpzm.js", array( 'jquery' ) );
+	wp_enqueue_script( "wpzm", get_template_directory_uri() . "/js/wpzm.js", array( 'jquery' ), version, true );
 }
 
 if (zm_get_option('favorite_js')) {
@@ -258,7 +258,7 @@ function wpzm_update_post_meta($post_id, $val) {
 	if ($val == -1 && $oldval == 0) {
     	$val = 0;
 	} else {
-		$val = $oldval + $val;
+		// $val = $oldval + $val;
 	}
 	return add_post_meta($post_id, WPZM_META_KEY, $val, true) or update_post_meta($post_id, WPZM_META_KEY, $val);
 }

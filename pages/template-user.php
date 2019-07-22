@@ -30,17 +30,17 @@ $(document).ready(function() {
 	<div id="container">
 		<div id="usertab">
 			<ul class="resp-tabs-list hor_1">
-				<li><i class="fa fa-address-card-o"></i><?php _e( '我的信息', 'begin' ); ?></li>
-				<li><i class="fa fa-user-o"></i><?php _e( '修改资料', 'begin' ); ?></li>
-				<li><i class="fa fa-comment-o"></i><?php _e( '我的评论', 'begin' ); ?></li>
-				<li><i class="fa fa-file-text-o"></i><?php _e( '我的文章', 'begin' ); ?></li>
-				<?php if ( zm_get_option('favorite_p')) { ?><li><i class="fa fa-heart-o"></i><?php _e( '我的收藏', 'begin' ); ?></li><?php } ?>
+				<li><i class="be be-businesscard"></i><?php _e( '我的信息', 'begin' ); ?></li>
+				<li><i class="be be-personoutline"></i><?php _e( '修改资料', 'begin' ); ?></li>
+				<li><i class="be be-speechbubble"></i><?php _e( '我的评论', 'begin' ); ?></li>
+				<li><i class="be be-file"></i><?php _e( '我的文章', 'begin' ); ?></li>
+				<?php if ( zm_get_option('favorite_p')) { ?><li><i class="be be-favoriteoutline"></i><?php _e( '我的收藏', 'begin' ); ?></li><?php } ?>
 				<?php if (function_exists( 'fep_get_plugin_caps' )) { ?>
-				<li><i class="fa fa-envelope-o"></i><?php _e( '站内消息', 'begin' ); ?></li>
+				<li><i class="be be-email"></i><?php _e( '站内消息', 'begin' ); ?></li>
 				<?php } ?>
 				<?php if ( zm_get_option('tou_url') == '' ) { ?>
 				<?php } else { ?>
-				<li><a href="<?php echo get_permalink( zm_get_option('tou_url') ); ?>" target="_blank"><i class="fa fa-pencil-square-o"></i><?php _e( '我要投稿', 'begin' ); ?></a></li>
+				<li><a href="<?php echo get_permalink( zm_get_option('tou_url') ); ?>" target="_blank"><i class="be be-edit"></i><?php _e( '我要投稿', 'begin' ); ?></a></li>
 				<?php } ?>
 			</ul>
 

@@ -57,3 +57,8 @@ if (isset($_GET['fep_id']) && isset($_GET['fep_action']) && $_GET['fep_action'] 
 		<button type="button" id="fep-submit-post" class="active-btn">提 交</button>
 	</form>
 </div>
+<script type="text/javascript">
+function renovates(){
+    document.location.reload();
+}
+</script>

@@ -12,11 +12,11 @@ var edit_mode = '1', // 再编辑模式( '1'=打开; '0'=关闭 )
 		pic_sb = wp_url + 'wp-admin/images/wpspin_dark.gif', // 提交 icon
 		pic_no = wp_url + 'wp-admin/images/no.png',      // 错误 icon
 		pic_ys = wp_url + 'wp-admin/images/yes.png',     // 成功 icon
-		txt1 = '<div id="loading"><i class="fa fa-spinner"></i>正在提交, 请稍候...</div>',
+		txt1 = '<div id="loading"><i class="be be-loader"></i>正在提交, 请稍候...</div>',
 		txt2 = '<div id="error">#</div>',
-		txt3 = '"> <div id="edita"><i class="fa fa-check-square"></i>提交成功！',
-		edt1 = '刷新页面之前您可以<a rel="nofollow" class="comment-reply-link_a" href="#edit" onclick=\'return addComment.moveForm("',
-		edt2 = ')\'><i class="fa fa-pencil-square-o"></i>重新编辑</a></div> ',
+		txt3 = '"> <div id="edita"><i class="be be-thumbs-up"></i>提交成功！<br />',
+		edt1 = '<a rel="nofollow" class="comment-reply-link_a" href="#edit" onclick=\'return addComment.moveForm("',
+		edt2 = ')\'><i class="be be-editor"></i>重新编辑</a></div> ',
 		cancel_edit = '取消编辑',
 		edit, num = 1, comm_array=[]; comm_array.push('');
 

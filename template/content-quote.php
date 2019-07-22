@@ -34,7 +34,7 @@
 				?>
 			</div>
 			<span class="title-l"></span>
-			<span class="post-format"><i class="fa fa-laptop" aria-hidden="true"></i></span>
+			<span class="post-format"><i class="be be-display" aria-hidden="true"></i></span>
 			<span class="entry-meta">
 				<?php begin_entry_meta(); ?>
 			</span>
@@ -49,10 +49,10 @@
 					</div>
 
 					<div class="video-inf">
-						<span class="category">所属分类：<?php the_category( '&nbsp;&nbsp;' ); ?></span>
+						<span class="category"><strong>所属分类：</strong><?php the_category( '&nbsp;&nbsp;' ); ?></span>
 						<span><?php $file_os = get_post_meta($post->ID, 'file_os', true); ?><?php echo $file_os; ?></span>
 						<span><?php $file_inf = get_post_meta($post->ID, 'file_inf', true); ?><?php echo $file_inf; ?></span>
-						<span class="date">最后更新：<?php the_modified_date('Y年m月d日'); ?></ul>
+						<span class="date"><strong>最后更新：</strong><?php the_modified_date('Y年m月d日'); ?></ul>
 					</div>
 					<div class="clear"></div>
 				</div>
@@ -61,11 +61,11 @@
 			</div>
 
 			<?php get_template_part( 'inc/file' ); ?>
-			<?php if ( get_post_meta($post->ID, 'no_sidebar', true) ) : ?><style>	#primary {width: 100%;}#sidebar,.r-hide {display: none;}</style><?php endif; ?>
+			<?php if ( get_post_meta($post->ID, 'no_sidebar', true) ) : ?><style>#primary {width: 100%;}#sidebar, .r-hide, .s-hide {display: none;}</style><?php endif; ?>
 
-			<?php wp_link_pages(array('before' => '<div class="page-links">', 'after' => '', 'next_or_number' => 'next', 'previouspagelink' => '<span><i class="fa fa-angle-left"></i></span>', 'nextpagelink' => "")); ?>
+			<?php wp_link_pages(array('before' => '<div class="page-links">', 'after' => '', 'next_or_number' => 'next', 'previouspagelink' => '<span><i class="be be-arrowleft"></i></span>', 'nextpagelink' => "")); ?>
 			<?php wp_link_pages(array('before' => '', 'after' => '', 'next_or_number' => 'number', 'link_before' =>'<span>', 'link_after'=>'</span>')); ?>
-			<?php wp_link_pages(array('before' => '', 'after' => '</div>', 'next_or_number' => 'next', 'previouspagelink' => '', 'nextpagelink' => '<span><i class="fa fa-angle-right"></i></span> ')); ?>
+			<?php wp_link_pages(array('before' => '', 'after' => '</div>', 'next_or_number' => 'next', 'previouspagelink' => '', 'nextpagelink' => '<span><i class="be be-arrowright"></i></span> ')); ?>
 
 				<?php if (zm_get_option('single_weixin')) { ?>
 					<?php get_template_part( 'template/weixin' ); ?>

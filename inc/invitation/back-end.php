@@ -331,7 +331,7 @@ function baweic_admin_notice_noone() {
 	$baweic_options = get_option( 'baweic_options' );
 
 	$codes = $baweic_options['codes'];
-	foreach ( $codes as $code => $val )
+	// foreach ( $codes as $code => $val )
 		if ( ! $val['leftcount'] ) {
 			unset( $codes[$code] );
 		}

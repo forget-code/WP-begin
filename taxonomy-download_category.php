@@ -11,7 +11,7 @@
 					<?php the_title( sprintf( '<h3 class="picture-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h3>' ); ?>
 					<div class="group-tab-meta">
 						<div class="group-date"><?php the_time( 'm月d日' ); ?></div>
-						<?php if( function_exists( 'the_views' ) ) { the_views( true, '<div class="group-views"><i class="fa fa-eye"></i> ','</div>' ); } ?>
+						<?php if( function_exists( 'the_views' ) ) { the_views( true, '<div class="group-views"><i class="be be-eye"></i> ','</div>' ); } ?>
 						<div class="clear"></div>
 					</div>
 				</div>

@@ -83,6 +83,9 @@
 .my-info ul li {
 	float: left;
 	width: 33.333333333333333333%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 	padding: 12px 10px;
 	margin: 0 0 -1px -1px;
 	border: 1px solid #ddd;

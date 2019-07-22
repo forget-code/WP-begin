@@ -12,7 +12,8 @@ get_header(); ?>
 
 			<article id="post-<?php the_ID(); ?>" <?php post_class('full-text wow fadeInUp'); ?>>
 				<?php if (zm_get_option('lazy_s')) { zm_full_thumbnail_h(); } else { zm_full_thumbnail(); } ?>
-
+				<span class="full-cat"><?php zm_category(); ?></span>
+				<div class="clear"></div>
 				<div class="full-archive-content">
 					<!-- <?php the_content( sprintf( 继续阅读 ) ); ?> -->
 					<?php if (has_excerpt('')){
@@ -27,7 +28,7 @@ get_header(); ?>
 				<div class="full-meta">
 					<div class="full-entry-meta">
 						<?php begin_entry_meta(); ?>
-						<span class="full-entry-more"><a href="<?php the_permalink(); ?>" rel="bookmark"> 继续阅读</a></span>
+						<span class="full-entry-more"><a href="<?php the_permalink(); ?>" rel="bookmark"><i class="be be-more"></i></a></span>
 					</div>
 				</div>
 				<div class="clear"></div>

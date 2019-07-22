@@ -33,7 +33,7 @@ Template Name: 视频分类
 		$query = new WP_Query($args);
 		if( $query->have_posts() ) { ?>
 		<div class="clear"></div>
-		<h3 class="grid-cat"><a href="<?php echo get_term_link( $cat ); ?>" ><i class="fa fa-film"></i><?php echo $cat->name; ?></a></h3>
+		<h3 class="grid-cat"><a href="<?php echo get_term_link( $cat ); ?>" ><i class="be be-video"></i><?php echo $cat->name; ?></a></h3>
 		<div class="clear"></div>
 		<?php while ($query->have_posts()) : $query->the_post();?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>

@@ -18,12 +18,12 @@ function Qaptcha_comment($comment) {
 		return($comment);
 	} else {
 		if (isset($_POST['isajaxtype']) && $_POST['isajaxtype'] > -1) {
-			die("<i class='fa fa-exclamation-circle'></i>请滑动滚动条解锁");
+			die("<i class='be be-info'></i>请滑动滚动条解锁");
 		} else {
 			if(function_exists('err'))
-				err("<i class='fa fa-exclamation-circle'></i>滑动解锁才能提交");
+				err("<i class='be be-info'></i>滑动解锁才能提交");
 			else
-				err("<i class='fa fa-exclamation-circle'></i>请滑动滚动条解锁");
+				err("<i class='be be-info'></i>请滑动滚动条解锁");
 		}
 	}
 }

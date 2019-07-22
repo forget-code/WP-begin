@@ -31,11 +31,11 @@ get_header(); ?>
 					</figure>
 					<?php the_title( sprintf( '<h2 class="grid-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 					<span class="grid-inf">
-						<span class="g-cat"><i class="fa fa-folder-o"></i> <?php zm_category(); ?></span>
+						<span class="g-cat"><i class="be be-folder"></i> <?php zm_category(); ?></span>
 						<span class="grid-inf-l">
-							<span class="date"><i class="fa fa-clock-o"></i> <?php the_time( 'm/d' ); ?></span>
-							<?php if( function_exists( 'the_views' ) ) { the_views( true, '<span class="views"><i class="fa fa-eye"></i> ','</span>' ); } ?>
-							<?php if ( get_post_meta($post->ID, 'zm_like', true) ) : ?><span class="grid-like"><span class="fa fa-thumbs-o-up">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
+							<span class="date"><i class="be be-schedule"></i> <?php the_time( 'm/d' ); ?></span>
+							<?php if( function_exists( 'the_views' ) ) { the_views( true, '<span class="views"><i class="be be-eye"></i> ','</span>' ); } ?>
+							<?php if ( get_post_meta($post->ID, 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
 						</span>
 		 			</span>
 		 			<div class="clear"></div>

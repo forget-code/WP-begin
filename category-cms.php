@@ -60,7 +60,7 @@ get_header(); ?>
 				<?php query_posts( array( 'showposts' => 1, 'cat' => $category, 'post__not_in' => $do_not_duplicate ) ); ?>
 				<div class="xl2 xm2">
 					<div class="cat-box wow fadeInUp" data-wow-delay="0.3s">
-						<h3 class="cat-title"><a href="<?php echo get_category_link($category);?>" title="<?php echo strip_tags(category_description($category)); ?>"><i class="fa fa-bars"></i><?php single_cat_title(); ?><i class="fa fa-angle-right"></i></a></h3>
+						<h3 class="cat-title"><a href="<?php echo get_category_link($category);?>" title="<?php echo strip_tags(category_description($category)); ?>"><span class="title-i"><span class="title-i-t"></span><span class="title-i-b"></span><span class="title-i-b"></span><span class="title-i-t"></span></span><?php single_cat_title(); ?><i class="be be-more"></i></a></h3>
 						<div class="clear"></div>
 						<div class="cat-site">
 							<?php while ( have_posts() ) : the_post(); ?>
@@ -86,7 +86,7 @@ get_header(); ?>
 
 								<?php while ( have_posts() ) : the_post(); ?>
 									<?php if (zm_get_option('list_date')) { ?><li class="list-date"><?php the_time('m/d') ?></li><?php } ?>
-									<?php the_title( sprintf( '<li class="list-title"><i class="fa fa-angle-right"></i><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></li>' ); ?>
+									<?php the_title( sprintf( '<li class="list-title"><i class="be be-arrowright"></i><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></li>' ); ?>
 								<?php endwhile; ?>
 								<?php wp_reset_query(); ?>
 							</ul>

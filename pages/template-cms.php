@@ -4,110 +4,69 @@ Template Name: 杂志布局
 */
 ?>
 <?php get_header(); ?>
+<!-- 通栏幻灯 -->
+<?php 
+	if (!zm_get_option('slider_l') || (zm_get_option("slider_l") == 'slider_w')) {
+		require get_template_directory() . '/template/slider.php';
+	}
+?>
+<div id="primary" class="content-area">
+	<main id="main" class="site-main" role="main">
+		<?php 
+			// 幻灯
+			if (zm_get_option('slider_l') == 'slider_n') {
+				require get_template_directory() . '/template/slider.php';
+			}
+			// 置顶
+			get_template_part( '/cms/cms-top' );
+			// 最新文章
+			require get_template_directory() . '/cms/cms-news.php';
+			// 单栏小工具
+			get_template_part( '/cms/cms-widget-one' );
+			// 单栏分类5篇
+			require get_template_directory() . '/cms/cms-cat-one-5.php';
+			// 单栏分类10篇
+			require get_template_directory() . '/cms/cms-cat-one-10.php';
+			// 图片日志
+			get_template_part( '/cms/cms-picture' );
+			// 两栏小工具
+			get_template_part( '/cms/cms-widget-two' );
+			// 主体两栏分类
+			require get_template_directory() . '/cms/cms-cat-small.php';
+			// 视频日志
+			get_template_part( '/cms/cms-video' );
+			// TAB切换
+			get_template_part( '/cms/cms-tab' );
+		?>
+	</main>
+</div>
+<!-- 上部结束 -->
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
-			<!-- 幻灯 -->
-			<?php if (zm_get_option('slider')) { ?>
-				<?php require get_template_directory() . '/template/slider.php'; ?>
-			<?php } ?>
-			<!-- 置顶 -->
-			<?php if (zm_get_option('cms_top')) { ?><?php get_template_part( 'template/cms-top' ); ?><?php } ?>
-			<!-- 最新文章 -->
-			<?php if (zm_get_option('news')) { ?>
-				<?php 
-				if (!zm_get_option('news_model') || (zm_get_option("news_model") == 'news_normal')) {
-					// 标准模式
-					require get_template_directory() . '/cms/cms-news.php';
-				}
-				if (zm_get_option('news_model') == 'news_grid') {
-					// 图文模式
-					require get_template_directory() . '/cms/cms-news-grid.php';
-				}
-				if (zm_get_option('news_model') == 'news_list') {
-					// 标题列表模式
-					require get_template_directory() . '/cms/cms-news-list.php';
-				}
-				?>
-			<?php } ?>
-			<!-- 单栏小工具  -->
-				<?php get_template_part( '/cms/cms-widget-one' ); ?>
-			<!-- 单栏分类5篇 -->
-			<?php if (zm_get_option('cat_one_5')) { ?>
-				<div class="line-one">
-					<?php require get_template_directory() . '/cms/cms-cat-one-5.php'; ?>
-				</div>
-			<?php } ?>
-			<!-- 单栏分类10篇 -->
-			<?php if (zm_get_option('cat_one_10')) { ?>
-				<div class="line-one">
-					<?php require get_template_directory() . '/cms/cms-cat-one-10.php'; ?>
-				</div>
-			<?php } ?>
-			<!-- 图片日志 -->
-			<?php if (zm_get_option('picture')) { ?>
-				<div class="line-four">
-					<?php get_template_part( '/cms/cms-picture' ); ?>
-				</div>
-			<?php } ?>
-			<!-- 两栏小工具 -->
-				<?php get_template_part( '/cms/cms-widget-two' ); ?>
-			<!-- 视频日志 -->
-			<?php if (zm_get_option('video')) { ?>
-				<div class="line-four">
-					<?php get_template_part( '/cms/cms-video' ); ?>
-				</div>
-			<?php } ?>
-			<!-- 主体两栏分类 -->
-			<?php if (zm_get_option('cat_small')) { ?>
-				<div class="line-small">
-					<?php require get_template_directory() . '/cms/cms-cat-small.php'; ?>
-				</div>
-			<?php } ?>
-			<!-- TAB切换 -->
-			<?php if (zm_get_option('tab_h')) { ?>
-				<?php get_template_part( '/cms/cms-tab' ); ?>
-			<?php } ?>
-
-		</main><!-- .site-main -->
-	</div><!-- .content-area -->
 <!-- 侧边小工具 -->
 <?php get_sidebar('cms'); ?>
-<!-- 横向图片滚动 -->
-<?php if (zm_get_option('flexisel')) { ?>
-<div class="wow fadeInUp" data-wow-delay="0.3s">
-	<?php get_template_part( '/cms/cms-scrolling' ); ?>
+
+<!-- 下部 -->
+<div id="below-main">
+<?php 
+	// 产品日志
+	get_template_part( '/cms/cms-show' );
+	// 分类方形
+	require get_template_directory() . '/cms/cms-cat-square.php';
+	// 分类网格
+	require get_template_directory() . '/cms/cms-cat-grid.php';
+	// 横向图片滚动
+	get_template_part( '/cms/cms-scrolling' );
+	// 底部分类
+	require get_template_directory() . '/cms/cms-cat-big.php';
+	// 淘客
+	get_template_part( '/cms/cms-tao' );
+	// 下载
+	get_template_part( '/cms/cms-dow-tab' );
+	// 产品
+	get_template_part( '/cms/cms-product' );
+	// 无缩略图分类
+	require get_template_directory() . '/cms/cms-cat-big-n.php'; 
+	?>
 </div>
-<?php } ?>
-<!-- 底部分类 -->
-<?php if (zm_get_option('cat_big')) { ?>
-	<div class="line-big">
-		<?php require get_template_directory() . '/cms/cms-cat-big.php'; ?>
-	</div>
-<?php } ?>
-<!-- 淘客 -->
-<?php if (zm_get_option('tao_h')) { ?>
-	<div class="line-tao">
-		<?php get_template_part( '/cms/cms-tao' ); ?>
-	</div>
-<?php } ?>
-<!-- 下载 -->
-<?php if (zm_get_option('cms_edd')) { ?>
-	<div class="line-tab">
-		<?php get_template_part( '/cms/cms-dow-tab' ); ?>
-	</div>
-<?php } ?>
-<!-- 产品 -->
-<?php if (zm_get_option('product_h')) { ?>
-	<div class="line-tao">
-		<?php get_template_part( '/cms/cms-product' ); ?>
-	</div>
-<?php } ?>
-<!-- 无缩略图分类 -->
-<?php if (zm_get_option('cat_big_not')) { ?>
-	<div class="line-big">
-		<?php require get_template_directory() . '/cms/cms-cat-big-n.php'; ?>
-	</div>
-<?php } ?>
 <!-- 页脚 -->
 <?php get_footer(); ?>

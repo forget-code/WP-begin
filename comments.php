@@ -19,16 +19,16 @@ if ( post_password_required() ) {
 	<?php if ( comments_open() ) : ?>
 
 		<div id="respond" class="comment-respond wow fadeInUp" data-wow-delay="0.3s">
-			<h3 id="reply-title" class="comment-reply-title"><?php _e( '发表评论', 'begin' ); ?><small><?php cancel_comment_reply_link( '' . sprintf(__( '取消回复', 'begin' )) . '' ); ?></small></h3>
+			<h3 id="reply-title" class="comment-reply-title"><span><?php _e( '发表评论', 'begin' ); ?></span><small><?php cancel_comment_reply_link( '' . sprintf(__( '取消回复', 'begin' )) . '' ); ?></small></h3>
 
 			<?php if ( get_option('comment_registration') && !$user_ID ) : ?>
-				<p class="comment-nologin"><?php print '<i class="fa fa-exclamation-circle"></i> ' . sprintf(__( '您必须', 'begin' )) . ''; ?><a href="<?php echo get_option('siteurl'); ?>/wp-login.php?redirect_to=<?php echo urlencode(get_permalink()); ?>"><?php _e( '登录', 'begin' ); ?></a><?php _e( '才能发表评论！', 'begin' ); ?></p>
+				<p class="comment-nologin"><?php print '' . sprintf(__( '您必须', 'begin' )) . ''; ?><a href="<?php echo get_option('siteurl'); ?>/wp-login.php?redirect_to=<?php echo urlencode(get_permalink()); ?>"><?php _e( '登录', 'begin' ); ?></a><?php _e( '才能发表评论！', 'begin' ); ?></p>
 			<?php else : ?>
 
 				<form action="<?php echo get_option('siteurl'); ?>/wp-comments-post.php" method="post" id="commentform">
 					<?php if ( $user_ID ) : ?>
 					<div class="user_avatar">
-						<?php global $current_user;	get_currentuserinfo();
+						<?php global $current_user;wp_get_current_user();
 							echo get_avatar( $current_user->user_email, 64);
 						?>
 						<?php _e( '登录者：', 'begin' ); ?><a href="<?php echo get_option('siteurl'); ?>/wp-admin/profile.php"><?php echo $user_identity; ?></a><br />
@@ -65,9 +65,9 @@ if ( post_password_required() ) {
 
 					<p class="comment-tool">
 					<?php if (zm_get_option('embed_img')) { ?>
-						<a class="tool-img" href='javascript:embedImage();' title="<?php _e( '插入图片', 'begin' ); ?>"><i class="icon-img"></i><i class="fa fa-picture-o"></i></a>
+						<a class="tool-img" href='javascript:embedImage();' title="<?php _e( '插入图片', 'begin' ); ?>"><i class="icon-img"></i><i class="be be-picture"></i></a>
 					<?php } ?>
-						<a class="emoji" href="" title="<?php _e( '插入表情', 'begin' ); ?>"><i class="fa fa-meh-o"></i></a>
+						<a class="emoji" href="" title="<?php _e( '插入表情', 'begin' ); ?>"><i class="be be-insertemoticon"></i></a>
 					</p>
 
 					<?php if ( ! $user_ID ): ?>
@@ -156,7 +156,16 @@ if ( post_password_required() ) {
 		<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : ?>
 			<?php if (zm_get_option('comment_scroll')) { ?><div class="scroll-links"><?php the_comments_navigation(); ?></div><?php } ?>
 			<nav class="comment-navigation">
-				<div class="pagination"><?php paginate_comments_links('prev_text=<i class="fa fa-angle-left"></i>&next_text=<i class="fa fa-angle-right"></i>'); ?></div>
+				<div class="pagination">
+					<?php 
+						the_comments_pagination( array(
+							'prev_text' => '<i class="be be-arrowleft"></i>',
+							'next_text' => '<i class="be be-arrowright"></i>',
+							'before_page_number' => '<span class="screen-reader-text">'.sprintf(__( '第', 'begin' )).' </span>',
+							'after_page_number'  => '<span class="screen-reader-text"> '.sprintf(__( '页', 'begin' )).'</span>',
+						) ); 
+					?>
+				</div>
 			</nav>
 			<div class="clear"></div>
 		<?php endif; // Check for comment navigation. ?>

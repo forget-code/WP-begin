@@ -10,20 +10,19 @@ function custom_color(){
 	}
 	if ($color) {
 		$styles .= "
-a:hover,.top-menu a:hover,.show-more span,.cat-box .icon-cat,.single-content a,.single-content a:visited,#site-nav .down-menu > .current-menu-item > a,.entry-meta a,.entry-meta-no a,#site-nav .down-menu > .current-menu-item > a:hover,#site-nav .down-menu > li > a:hover,#site-nav .down-menu > li.sfHover > a, .cat-title .fa-bars,.widget-title .fa-bars,.at, .at a,#user-profile a:hover,#comments .fa-exclamation-circle, #comments .fa-check-square, #comments .fa-spinner, #comments .fa-pencil-square-o, .zm-tabs-nav .current .fa, .tab-recent .fa {color: #" . $color . ";}
+a:hover,.top-menu a:hover,.show-more span,.cat-box .icon-cat,.entry-meta a,.entry-meta-no a,.at, .at a,#user-profile a:hover, .nav-search:hover, .off-side:hover:after, .nav-search:hover:after, .top-icon .be {color: #" . $color . ";}
 .sf-arrows > li > .sf-with-ul:focus:after,.sf-arrows > li:hover > .sf-with-ul:after,.sf-arrows > .sfHover > .sf-with-ul:after{border-top-color: #" . $color . ";}
-.thumbnail .cat,.format-img-cat {background: #" . $color . ";opacity: 0.8;}
-#login h1 a,.format-aside .post-format a,#searchform button,.li-icon-1,.li-icon-2,.li-icon-3,.new-icon, .title-l,.buttons a, .li-number, .post-format, .searchbar button {background: #" . $color . ";}
-.entry-more a, .qqonline a, #login input[type='submit'], .log-zd {background: #" . $color . ";}
-.entry-more a {	right: -1px;}
+.thumbnail .cat,.format-img-cat, .des-t, .des-p  {background: #" . $color . ";}
+#login h1 a,.format-aside .post-format a,#searchform button,.li-icon-1,.li-icon-2,.li-icon-3, .title-l,.buttons a, .li-number, .searchbar button, 
+.entry-more a, .qqonline a, #login input[type='submit'], .log-zd, .group-phone a, .deanm-main .de-button a, #site-nav .down-menu > li > a:hover,#site-nav .down-menu > li.sfHover > a {background: #" . $color . ";}
+.entry-more a {right: -1px;}
 .entry-more a:hover {color: #fff;background: #595959;}
 .entry-direct a:hover, #respond input[type='text']:focus, #respond textarea:focus {border: 1px solid #" . $color . ";}
 #down a,.page-links span,.reply a:hover,.widget_categories a:hover,.widget_links a:hover,#respond #submit:hover,.callbacks_tabs .callbacks_here a,#gallery .callbacks_here a,#fontsize:hover,.single-meta li a:hover,.meta-nav:hover,.nav-single i:hover, .widget_categories a:hover, .widget_links a:hover, .tagcloud a:hover, #sidebar .widget_nav_menu a:hover, .gr-cat-title a, .group-tab-hd .group-current, .img-tab-hd .img-current {background: #" . $color . ";border: 1px solid #" . $color . ";}
 .comment-tool a, .link-all a:hover, .link-f a:hover, .ias-trigger-next a:hover, .type-cat a:hover, .type-cat a:hover, .child-cat a:hover {background: #" . $color . ";border: 1px solid #" . $color . ";}
-#site-nav .down-menu > .current-menu-item > a, #site-nav .down-menu > .current-menu-item > a:hover,.deanm .deanm-main a {background: #" . $color . ";}
 .entry-header h1 {border-left: 5px solid #" . $color . ";border-right: 5px solid #" . $color . ";}
-.slider-caption, .grid,icon-zan, .grid-cat, .entry-title-img, .header-sub h1 {background: #" . $color . ";opacity: 0.9;}
-@media screen and (min-width: 900px) {#scroll li a:hover, .nav-search {background: #" . $color . ";border: 1px solid #" . $color . ";}.custom-more a, .cat-more a,.author-m a {background: #" . $color . ";}}
+.slider-caption, .grid,icon-zan, .grid-cat, .header-sub h1, .cms-news-grid .marked-ico {background: #" . $color . ";}
+@media screen and (min-width: 900px) {#scroll li a:hover {background: #" . $color . ";border: 1px solid #" . $color . ";}.custom-more a, .cat-more a,.author-m a {background: #" . $color . ";}}
 @media screen and (max-width: 900px) {#navigation-toggle:hover,.nav-search:hover,.mobile-login a:hover,.nav-mobile:hover, {color: #" . $color . ";}}
 @media screen and (min-width: 550px) {.pagination span.current, .pagination a:hover {background: #" . $color . ";border: 1px solid #" . $color . ";}}
 @media screen and (max-width: 550px) {.pagination .prev,.pagination .next {background: #" . $color . ";}}
@@ -31,6 +30,8 @@ a:hover,.top-menu a:hover,.show-more span,.cat-box .icon-cat,.single-content a,.
 .resp-vtabs li.resp-tab-active {border-left: 2px solid #" . $color . "  !important;}
 .page-links  a:hover span {background: #a3a3a3;border: 1px solid #a3a3a3;}
 .single-content a:hover {color: #555;}
+.ball-pulse > div{border: 1px solid #" . $color . ";}
+#site-nav .down-menu > .current-menu-item > a{border-bottom: 2px solid #" . $color . ";}
 .format-aside .post-format a:hover,.cat-more a:hover,.custom-more a:hover {color: #fff;}";
 	}
 	if ($styles) {
@@ -56,7 +57,7 @@ function begin_width(){
 function custom_width(){
 	if (zm_get_option("custom_width")) {
 		$width = substr(zm_get_option("custom_width"), 0);
-		echo "<style>#content, .header-sub, .top-nav, #top-menu, #mobile-nav, #main-search, #search-main, .breadcrumb, .footer-widget, .links-box {width: " . $width . "px;}@media screen and (max-width: " . $width . "px) {#content, .breadcrumb, .footer-widget, .links-box {width: 98%;}#top-menu{width: 98%;}.top-nav {width: 98%;}#main-search, #search-main, #mobile-nav, .header-sub {width: 98%;}.breadcrumb {width: 98%;}}</style>";
+		echo "<style>#content, .header-sub, .top-nav, #top-menu, #mobile-nav, #main-search, #search-main, .breadcrumb, .footer-widget, .links-box, .g-col {width: " . $width . "px;}@media screen and (max-width: " . $width . "px) {#content, .breadcrumb, .footer-widget, .links-box, #top-menu, .top-nav, #main-search, #search-main, #mobile-nav, .header-sub, .breadcrumb, .g-col {width: 98%;}}</style>";
 	}
 }
 
@@ -104,9 +105,9 @@ function ssid_return_value($value, $column_name, $id) {
 function ssid_css() {
 ?>
 <style type="text/css">
-	#ssid { width: 50px; 
+	#ssid { width: 50px;} 
 </style>
-<?php	
+<?php 
 }
 
 function ssid_add() {

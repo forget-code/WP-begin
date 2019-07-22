@@ -91,7 +91,7 @@ Template Name: 网址收藏
 		<article class="sites sites-all wow fadeInUp" data-wow-delay="0.3s">
 			<div class="sites-cats">
 				<h3 class="sites-cat"><?php echo $cat->name; ?></h3>
-				<span class="sites-more"><a href="<?php echo get_term_link( $cat ); ?>" ><?php _e( '更多', 'begin' ); ?> <i class="fa fa-angle-right"></i><i class="fa fa-angle-right"></i></a></span>
+				<span class="sites-more"><a href="<?php echo get_term_link( $cat ); ?>" ><?php _e( '更多', 'begin' ); ?> <i class="be be-fastforward"></i></a></span>
 			</div>
 			<div class="clear"></div>
 			<div class="sites-link">
@@ -149,7 +149,7 @@ Template Name: 网址收藏
 	<div class="wow fadeInUp" data-wow-delay="0.5s">
 		<?php if ( ! dynamic_sidebar( 'favorites' ) ) : ?>
 			<aside id="add-widgets" class="widget widget_text">
-				<h3 class="widget-title"><i class="fa fa-exclamation-triangle"></i>添加小工具</h3>
+				<h3 class="widget-title"><i class="be be-warning"></i>添加小工具</h3>
 				<div class="textwidget">
 					<a href="<?php echo admin_url(); ?>widgets.php" target="_blank">为“网址侧边栏”添加小工具</a>
 				</div>

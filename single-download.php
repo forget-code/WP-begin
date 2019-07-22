@@ -32,9 +32,9 @@
 						<?php the_content(); ?>
 						<?php if ( get_post_meta($post->ID, 'no_sidebar', true) ) : ?><style>	#primary {width: 100%;}#sidebar,.r-hide {display: none;}</style><?php endif; ?>
 						<div class="clear"></div>
-						<?php wp_link_pages(array('before' => '<div class="page-links">', 'after' => '', 'next_or_number' => 'next', 'previouspagelink' => '<span><i class="fa fa-angle-left"></i></span>', 'nextpagelink' => "")); ?>
+						<?php wp_link_pages(array('before' => '<div class="page-links">', 'after' => '', 'next_or_number' => 'next', 'previouspagelink' => '<span><i class="be be-arrowleft"></i></span>', 'nextpagelink' => "")); ?>
 						<?php wp_link_pages(array('before' => '', 'after' => '', 'next_or_number' => 'number', 'link_before' =>'<span>', 'link_after'=>'</span>')); ?>
-						<?php wp_link_pages(array('before' => '', 'after' => '</div>', 'next_or_number' => 'next', 'previouspagelink' => '', 'nextpagelink' => '<span><i class="fa fa-angle-right"></i></span> ')); ?>
+						<?php wp_link_pages(array('before' => '', 'after' => '</div>', 'next_or_number' => 'next', 'previouspagelink' => '', 'nextpagelink' => '<span><i class="be be-arrowright"></i></span> ')); ?>
 					</div>
 
 						<?php if (zm_get_option('zm_like')) { ?>
@@ -46,7 +46,7 @@
 						<footer class="single-footer">
 							<ul class="single-meta">
 								<?php edit_post_link('编辑', '<li class="edit-link">', '</li>' ); ?>
-								<?php if( function_exists( 'the_views' ) ) { the_views(true, '<li class="views"><i class="fa fa-eye"></i> ','</li>');  } ?>
+								<?php if( function_exists( 'the_views' ) ) { the_views(true, '<li class="views"><i class="be be-eye"></i> ','</li>');  } ?>
 							</ul>
 							<ul id="fontsize">A+</ul>
 							<div class="single-cat-tag">
@@ -67,16 +67,16 @@
 
 				<nav class="nav-single wow fadeInUp" data-wow-delay="0.3s">
 					<?php
-						if (get_previous_post()) { previous_post_link( '%link','<span class="meta-nav"><span class="post-nav"><i class="fa fa-angle-left"></i> ' . sprintf(__( '上一篇', 'begin' )) . '</span><br/>%title</span>' ); } else { echo "<span class='meta-nav'><span class='post-nav'>" . sprintf(__( '没有了', 'begin' )) . "<br/></span>" . sprintf(__( '已是最后文章', 'begin' )) . "</span>"; }
-						if (get_next_post()) { next_post_link( '%link', '<span class="meta-nav"><span class="post-nav">' . sprintf(__( '下一篇', 'begin' )) . ' <i class="fa fa-angle-right"></i></span><br/>%title</span>' ); } else { echo "<span class='meta-nav'><span class='post-nav'>" . sprintf(__( '没有了', 'begin' )) . "<br/></span>" . sprintf(__( '已是最新文章', 'begin' )) . "</span>"; }
+						if (get_previous_post()) { previous_post_link( '%link','<span class="meta-nav"><span class="post-nav"><i class="be be-arrowleft"></i> ' . sprintf(__( '上一篇', 'begin' )) . '</span><br/>%title</span>' ); } else { echo "<span class='meta-nav'><span class='post-nav'>" . sprintf(__( '没有了', 'begin' )) . "<br/></span>" . sprintf(__( '已是最后文章', 'begin' )) . "</span>"; }
+						if (get_next_post()) { next_post_link( '%link', '<span class="meta-nav"><span class="post-nav">' . sprintf(__( '下一篇', 'begin' )) . ' <i class="be be-arrowright"></i></span><br/>%title</span>' ); } else { echo "<span class='meta-nav'><span class='post-nav'>" . sprintf(__( '没有了', 'begin' )) . "<br/></span>" . sprintf(__( '已是最新文章', 'begin' )) . "</span>"; }
 					?>
 					<div class="clear"></div>
 				</nav>
 
 				<?php
 					the_post_navigation( array(
-						'next_text' => '<span class="meta-nav-l" aria-hidden="true"><i class="fa fa-angle-right"></i></span>',
-						'prev_text' => '<span class="meta-nav-r" aria-hidden="true"><i class="fa fa-angle-left"></i></span>',
+						'next_text' => '<span class="meta-nav-l" aria-hidden="true"><i class="be be-arrowright"></i></span>',
+						'prev_text' => '<span class="meta-nav-r" aria-hidden="true"><i class="be be-arrowleft"></i></span>',
 					) );
 				?>
 
@@ -87,13 +87,13 @@
 
 <div id="sidebar" class="widget-area">
 	<aside id="widget_edd_cart" class="widget widget_edd_cart_widget wow" data-wow-delay="0.3s">
-		<h3 class="widget-title"><i class="fa fa-bars"></i>购物车</h3>
+		<h3 class="widget-title"><span class="title-i"><span class="title-i-t"></span><span class="title-i-b"></span><span class="title-i-b"></span><span class="title-i-t"></span></span>购物车</h3>
 		<ul><?php edd_shopping_cart( true ); ?></ul>
 		<div class="clear"></div>
 	</aside>
 
 	<aside id="widget_edd_cart" class="widget widget_edd_cart_widget wow" data-wow-delay="0.3s">
-		<h3 class="widget-title"><i class="fa fa-bars"></i>您可能还会喜欢</h3>
+		<h3 class="widget-title"><span class="title-i"><span class="title-i-t"></span><span class="title-i-b"></span><span class="title-i-b"></span><span class="title-i-t"></span></span>您可能还会喜欢</h3>
 		<ul>
 			<?php $loop = new WP_Query( array( 'post_type' => 'download', 'posts_per_page' => 10, 'orderby' => 'rand') ); while ( $loop->have_posts() ) : $loop->the_post(); ?>
 			<div class="img-box">

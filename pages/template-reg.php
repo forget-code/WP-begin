@@ -12,22 +12,22 @@ Template Name: 用户注册
 
   // 检查名称
 	if ( $sanitized_user_login == '' ) {
-		$error .= '<i class="fa fa-exclamation-circle"></i>' . (__( '请输入用户名！', 'begin' )) . '<br />';
+		$error .= '<i class="be be-info"></i>' . (__( '请输入用户名！', 'begin' )) . '<br />';
 	} elseif ( ! validate_username( $sanitized_user_login ) ) {
-		$error .= '<i class="fa fa-exclamation-circle"></i>' . (__( '此用户名包含无效字符，请输入有效的用户名！', 'begin' )) . '<br />';
+		$error .= '<i class="be be-info"></i>' . (__( '此用户名包含无效字符，请输入有效的用户名！', 'begin' )) . '<br />';
 		$sanitized_user_login = '';
 	} elseif ( username_exists( $sanitized_user_login ) ) {
-		$error .= '<i class="fa fa-exclamation-circle"></i>' . (__( '该用户名已被注册，请再选择一个！', 'begin' )) . '<br />';
+		$error .= '<i class="be be-info"></i>' . (__( '该用户名已被注册，请再选择一个！', 'begin' )) . '<br />';
 	}
 
   // 检查邮件
 	if ( $user_email == '' ) {
-		$error .= '<i class="fa fa-exclamation-circle"></i>' . (__( '请填写电子邮件地址！', 'begin' )) . '<br />';
+		$error .= '<i class="be be-info"></i>' . (__( '请填写电子邮件地址！', 'begin' )) . '<br />';
 	} elseif ( ! is_email( $user_email ) ) {
-		$error .= '<i class="fa fa-exclamation-circle"></i>' . (__( '电子邮件地址不正确！', 'begin' )) . '<br />';
+		$error .= '<i class="be be-info"></i>' . (__( '电子邮件地址不正确！', 'begin' )) . '<br />';
 		$user_email = '';
 	} elseif ( email_exists( $user_email ) ) {
-		$error .= '<i class="fa fa-exclamation-circle"></i>' . (__( '该电子邮件地址已经被注册，请换一个！', 'begin' )) . '<br />';
+		$error .= '<i class="be be-info"></i>' . (__( '该电子邮件地址已经被注册，请换一个！', 'begin' )) . '<br />';
 	}
 	if (zm_get_option('invitation_code')) {
 		//检测邀请码
@@ -35,18 +35,18 @@ Template Name: 用户注册
 		$invitation_code = isset( $_POST['invitation_code'] ) ? strtoupper( $_POST['invitation_code'] ) : '';
 		if( !array_key_exists( $invitation_code, $baweic_options['codes'] ) ) {
 			add_action( 'login_head', 'wp_shake_js', 12 );
-			$error .= '<i class="fa fa-exclamation-circle"></i>' . (__( '邀请码错误！', 'begin' )) . '<br />';
+			$error .= '<i class="be be-info"></i>' . (__( '邀请码错误！', 'begin' )) . '<br />';
 		}elseif( isset( $baweic_options['codes'][$invitation_code] ) && $baweic_options['codes'][$invitation_code]['leftcount']==0 ){
 			add_action( 'login_head', 'wp_shake_js', 12 );
-			$error .='<i class="fa fa-exclamation-circle"></i>' . (__( '此邀请码已被使用！', 'begin' )) . '<br />';
+			$error .='<i class="be be-info"></i>' . (__( '此邀请码已被使用！', 'begin' )) . '<br />';
 		}
 	}
 
 	// 检查密码
 	if(strlen($_POST['user_pass']) < 6)
-		$error .= '<i class="fa fa-exclamation-circle"></i>' . (__( '密码长度至少6位!', 'begin' )) . '<br />';
+		$error .= '<i class="be be-info"></i>' . (__( '密码长度至少6位!', 'begin' )) . '<br />';
 		elseif($_POST['user_pass'] != $_POST['user_pass2'])
-		$error .= '<i class="fa fa-exclamation-circle"></i>' . (__( '密码不一致!', 'begin' )) . '<br />';
+		$error .= '<i class="be be-info"></i>' . (__( '密码不一致!', 'begin' )) . '<br />';
 
 	if($error == '') {
 			$user_id = wp_create_user( $sanitized_user_login, $_POST['user_pass'], $user_email );
@@ -58,7 +58,7 @@ Template Name: 用户注册
 		update_option( 'baweic_options', $baweic_options );
 	}
 		if ( ! $user_id ) {
-			$error .= sprintf( '<i class="fa fa-exclamation-circle"></i>无法完成您的注册请求... 请联系<a href=\"mailto:%s\">管理员</a>！<br />', get_option( 'admin_email' ) );
+			$error .= sprintf( '<i class="be be-info"></i>无法完成您的注册请求... 请联系<a href=\"mailto:%s\">管理员</a>！<br />', get_option( 'admin_email' ) );
 		}
 		else if (!is_user_logged_in()) {
 			$user = get_userdatabylogin($sanitized_user_login);
@@ -122,7 +122,7 @@ p.user_error {
 	border-radius: 2px;
 	border: 1px solid #f3f3f3;
 }
-.user_error .fa-exclamation-circle {
+.user_error .be-info {
 	color: #ff0129;
 	margin: 0 5px 0 0;
 }
@@ -244,12 +244,12 @@ p.user_is {
 	<?php while ( have_posts() ) : the_post(); ?>
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 			<?php if ( !get_option('users_can_register') )  { ?>
-				<p class="reg-error"><i class="fa fa-exclamation-circle"></i> 提示：进入后台→设置→常规→常规选项页面，勾选“任何人都可以注册”！</p>
+				<p class="reg-error"><i class="be be-info"></i> 提示：进入后台→设置→常规→常规选项页面，勾选“任何人都可以注册”！</p>
 			<?php } else { ?>
 			<div class="reg-main">
 				<div class="reg-page">
 					<?php if(!empty($error)) {
-						echo '<p class="user_error">'.$error.'<span class="shut-error"><i class="fa fa-times"></i></span></p>';
+						echo '<p class="user_error">'.$error.'<span class="shut-error"><i class="be be-cross"></i></span></p>';
 						}
 					if (!is_user_logged_in()) { ?>
 						<form name="registerform" method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>" class="user_reg">

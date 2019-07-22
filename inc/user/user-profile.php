@@ -59,7 +59,7 @@
 		<?php if ( zm_get_option('reg_url') == '' ) { ?>
 			<div class="user-login"><?php echo stripslashes( zm_get_option('wel_come') ); ?></div>
 		<?php } else { ?>
-			<div class="user-login"><a href="<?php echo stripslashes( zm_get_option('reg_url') ); ?>" target="_blank"><i class="fa fa-user"></i><?php _e( '注册', 'begin' ); ?></a></div>
+			<div class="user-login"><a href="<?php echo stripslashes( zm_get_option('reg_url') ); ?>" target="_blank"><i class="be be-accountcircle"></i><?php _e( '注册', 'begin' ); ?></a></div>
 		<?php } ?>
 	<?php } ?>
 
@@ -69,7 +69,7 @@
 			 	<div class="nav-login">
 			 	<?php if ( is_user_logged_in()){ ?>
 				<?php } else { ?>
-				<a href="<?php echo wp_login_url(  home_url() ); ?>" title="Login"><i class="fa fa-sign-in"></i><?php _e( '登录', 'begin' ); ?></a>
+				<a href="<?php echo wp_login_url(  home_url() ); ?>" title="Login"><i class="be be-timerauto"></i><?php _e( '登录', 'begin' ); ?></a>
 				<?php } ?>
 				</div>
 			</div>
@@ -78,7 +78,7 @@
 			 	<div class="nav-login">
 			 	<?php if ( is_user_logged_in()){ ?>
 				<?php } else { ?>
-				<a href="#login" class="flatbtn" id="login-main" ><i class="fa fa-sign-in"></i><?php _e( '登录', 'begin' ); ?></a>
+				<a href="#login" class="flatbtn" id="login-main" ><i class="be be-timerauto"></i><?php _e( '登录', 'begin' ); ?></a>
 				<?php } ?>
 				</div>
 			</div>

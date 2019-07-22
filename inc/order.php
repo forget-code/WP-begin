@@ -23,30 +23,30 @@ function begin_order() {
 }
 
 function begin_orderby() {
-	echo '<div class="orderby"><ul><li class="order"><a href="javascript:void(0)" title="' . sprintf(__( '文章排序', 'begin' )) . '"><i class="fa fa-sort-amount-asc"></i></a></li></ul>';
+	echo '<div class="orderby"><ul><li class="order"><a href="javascript:void(0)" title="' . sprintf(__( '文章排序', 'begin' )) . '"><i class="be be-sort"></i></a></li></ul>';
 	echo '<ul class="order-box">';
 	echo '<li><a href="';
 	echo bloginfo('url');
-	echo '" rel="nofollow" title="' . sprintf(__( '按日期排序', 'begin' )) . '"><i class="fa fa-calendar-minus-o"></i></a></li>';
+	echo '" rel="nofollow" title="' . sprintf(__( '按日期排序', 'begin' )) . '"><i class="be be-calendar2"></i></a></li>';
 	echo '<li><a ';
 		if ( isset($_GET['order']) && ($_GET['order']=='rand') ) echo 'class="current"';
 	echo 'href="';
 		echo get_option('home');
-	echo '/?order=rand" rel="nofollow" title="' . sprintf(__( '随机排序', 'begin' )) . '"><i class="fa fa-random"></i></a></li>';
+	echo '/?order=rand" rel="nofollow" title="' . sprintf(__( '随机排序', 'begin' )) . '"><i class="be be-repeat"></i></a></li>';
 	echo '<li><a ';
 		if ( isset($_GET['order']) && ($_GET['order']=='commented') ) echo 'class="current"';
 	echo 'href="';
 		echo get_option('home');
-	echo '/?order=commented" rel="nofollow" title="' . sprintf(__( '按评论排序', 'begin' )) . '"><i class="fa fa-comment-o"></i></a></li>';
+	echo '/?order=commented" rel="nofollow" title="' . sprintf(__( '按评论排序', 'begin' )) . '"><i class="be be-speechbubble"></i></a></li>';
 	echo '<li><a ';
 		if ( isset($_GET['order']) && ($_GET['order']=='views') ) echo 'class="current"';
 	echo 'href="';
 		echo get_option('home');
-	echo '/?order=views" rel="nofollow" title="' . sprintf(__( '按浏览排序', 'begin' )) . '"><i class="fa fa-eye"></i></a></li>';
+	echo '/?order=views" rel="nofollow" title="' . sprintf(__( '按浏览排序', 'begin' )) . '"><i class="be be-eye"></i></a></li>';
 	echo '<li><a ';
 		if ( isset($_GET['order']) && ($_GET['order']=='views') ) echo 'class="current"';
 	echo 'href="';
 		echo get_option('home');
-	echo '/?order=zm_like" rel="nofollow" title="' . sprintf(__( '按点赞排序', 'begin' )) . '"><i class="fa fa-thumbs-up"></i></a></li>';
+	echo '/?order=zm_like" rel="nofollow" title="' . sprintf(__( '按点赞排序', 'begin' )) . '"><i class="be be-thumbs-up"></i></a></li>';
 	echo '</ul></div>';
 }

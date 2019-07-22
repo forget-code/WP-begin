@@ -24,7 +24,7 @@ $(document).ready(function(){
 	// Mobile Menu
 	$('#navigation-toggle').sidr({
 		name: 'sidr-main',
-		source: '#sidr-close, #site-nav',
+		source: '#sidr-menu, #sidr-close, #site-nav',
 		side: 'left',
 		displace: false
 	});

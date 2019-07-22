@@ -1,4 +1,5 @@
 <div class="cms-news-grid">
+	<div class="marked-ico wow fadeIn" data-wow-delay="0.9s"><?php _e( '最近更新', 'begin' ); ?></div>
 	<?php if (zm_get_option('cms_top')) { ?>
 		<?php $recent = new WP_Query( array( 'posts_per_page' => zm_get_option('news_n'), 'category__not_in' => explode(',', zm_get_option('not_news_n')), 'post__not_in' => $do_show, 'meta_query' => array( array( 'key' => 'cms_top', 'compare' => 'NOT EXISTS'))));?>
 	<?php } else { ?>

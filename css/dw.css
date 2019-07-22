@@ -19,6 +19,11 @@ Description: 问答插件DW Question Answer配套样式.
 	width: 16px;
 	height: 16px;
 }
+
+.dwqa-breadcrumbs {
+	display: none;
+}
+
 /** 回答 **/
 .single-dwqa-question #primary,
 .list-dwqa-question #primary,
@@ -168,6 +173,15 @@ Description: 问答插件DW Question Answer配套样式.
 	display: inline;
 }
 
+.dwqa-question-filter {
+	zoom: 1;
+	overflow: hidden;
+}
+
+.dwqa-question-filter span {
+	display: none;
+}
+
 .dwqa-question-filter a {
 	display: inline;
 	white-space:nowrap;
@@ -189,4 +203,27 @@ Description: 问答插件DW Question Answer配套样式.
 }
 #dwqa-search ul li{
 	list-style: none;
+}
+
+@media screen and (max-width: 480px) {
+	.dwqa-questions-footer .dwqa-pagination + .dwqa-ask-question {
+		float: inherit;
+		display: block;
+	}
+}
+
+@media screen and (max-width: 800px) {
+	.dwqa-question-filter a {
+		width: 49%;
+		float: left;
+		text-align: center;
+		margin: 0 2px 2px 0;
+		padding: 2px 5px;
+	}
+
+	#dwqa-sort-by {
+		margin: 2px 0 0 0;
+		padding: 3px;
+		text-align: center;
+	}
 }

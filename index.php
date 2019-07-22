@@ -5,6 +5,9 @@ if (!zm_get_option('layout') || (zm_get_option("layout") == 'blog')) {
 if (zm_get_option('layout') == 'img') {
 	get_template_part( 'template/grid');
 }
+if (zm_get_option('layout') == 'grid') {
+	get_template_part( 'template/grid-cat');
+}
 if (zm_get_option('layout') == 'cms') {
 	get_template_part( 'template/cms');
 }

@@ -1,3 +1,4 @@
+<?php if (zm_get_option('slider')) { ?>
 <div id="slideshow"  class="wow fadeInUp" data-wow-delay="0.3s">
 	<ul class="rslides" id="slider">
 		<?php if (zm_get_option('show_order')) { ?>
@@ -38,3 +39,4 @@
 		<?php wp_reset_query(); ?>
 	</ul>
 </div>
+<?php } ?>

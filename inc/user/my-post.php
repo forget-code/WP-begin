@@ -18,7 +18,7 @@
 			$args = array(
 				'post_type' => array('post','video','picture','bulletin','tao'),
 				'author' => $user_id,
-				'posts_per_page' =>'15',
+				'posts_per_page' =>'20',
 				'post_status' => array('publish', 'pending'),
 				'orderby' => 'date',
 				'paged' => $paged

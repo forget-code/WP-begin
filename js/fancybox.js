@@ -2,7 +2,7 @@
 (function(r,G,f,v){var J=f("html"),n=f(r),p=f(G),b=f.fancybox=function(){b.open.apply(this,arguments)},I=navigator.userAgent.match(/msie/i),B=null,s=G.createTouch!==v,t=function(a){return a&&a.hasOwnProperty&&a instanceof f},q=function(a){return a&&"string"===f.type(a)},E=function(a){return q(a)&&0<a.indexOf("%")},l=function(a,d){var e=parseInt(a,10)||0;d&&E(a)&&(e*=b.getViewport()[d]/100);return Math.ceil(e)},w=function(a,b){return l(a,b)+"px"};f.extend(b,{version:"2.1.5",defaults:{padding:15,margin:20,
 width:800,height:600,minWidth:100,minHeight:100,maxWidth:9999,maxHeight:9999,pixelRatio:1,autoSize:!0,autoHeight:!1,autoWidth:!1,autoResize:!0,autoCenter:!s,fitToView:!0,aspectRatio:!1,topRatio:0.5,leftRatio:0.5,scrolling:"auto",wrapCSS:"",arrows:!0,closeBtn:!0,closeClick:!1,nextClick:!1,mouseWheel:!0,autoPlay:!1,playSpeed:3E3,preload:3,modal:!1,loop:!0,ajax:{dataType:"html",headers:{"X-fancyBox":!0}},iframe:{scrolling:"auto",preload:!0},swf:{wmode:"transparent",allowfullscreen:"true",allowscriptaccess:"always"},
 keys:{next:{13:"left",34:"up",39:"left",40:"up"},prev:{8:"right",33:"down",37:"right",38:"down"},close:[27],play:[32],toggle:[70]},direction:{next:"left",prev:"right"},scrollOutside:!0,index:0,type:null,href:null,content:null,title:null,tpl:{wrap:'<div class="fancybox-wrap" tabIndex="-1"><div class="fancybox-skin"><div class="fancybox-outer"><div class="fancybox-inner"></div></div></div></div>',image:'<img class="fancybox-image" src="{href}" alt="" />',iframe:'<iframe id="fancybox-frame{rnd}" name="fancybox-frame{rnd}" class="fancybox-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen'+
-(I?' allowtransparency="true"':"")+"></iframe>",error:'<p class="fancybox-error">加载失败，稍后再试 ...</p>',closeBtn:'<a title="关闭" class="fancybox-item fancybox-close" href="javascript:;"><i class="fa fa-times"></i></a>',next:'<a title="下一张" class="fancybox-nav fancybox-next" href="javascript:;"><span><i class="fa fa-arrow-circle-o-right"></i></span></span></a>',prev:'<a title="上一张" class="fancybox-nav fancybox-prev" href="javascript:;"><span><i class="fa fa-arrow-circle-o-left"></i></span></a>'},openEffect:"fade",openSpeed:250,openEasing:"swing",openOpacity:!0,
+(I?' allowtransparency="true"':"")+"></iframe>",error:'<p class="fancybox-error">加载失败，稍后再试 ...</p>',closeBtn:'<a title="关闭" class="fancybox-item fancybox-close" href="javascript:;"><i class="be be-cross"></i></a>',next:'<a title="下一张" class="fancybox-nav fancybox-next" href="javascript:;"><span><i class="be be-roundright"></i></span></span></a>',prev:'<a title="上一张" class="fancybox-nav fancybox-prev" href="javascript:;"><span><i class="be be-roundleft"></i></span></a>'},openEffect:"fade",openSpeed:250,openEasing:"swing",openOpacity:!0,
 openMethod:"zoomIn",closeEffect:"fade",closeSpeed:250,closeEasing:"swing",closeOpacity:!0,closeMethod:"zoomOut",nextEffect:"elastic",nextSpeed:250,nextEasing:"swing",nextMethod:"changeIn",prevEffect:"elastic",prevSpeed:250,prevEasing:"swing",prevMethod:"changeOut",helpers:{overlay:!0,title:!0},onCancel:f.noop,beforeLoad:f.noop,afterLoad:f.noop,beforeShow:f.noop,afterShow:f.noop,beforeChange:f.noop,beforeClose:f.noop,afterClose:f.noop},group:{},opts:{},previous:null,coming:null,current:null,isActive:!1,
 isOpen:!1,isOpened:!1,wrap:null,skin:null,outer:null,inner:null,player:{timer:null,isActive:!1},ajaxLoad:null,imgPreload:null,transitions:{},helpers:{},open:function(a,d){if(a&&(f.isPlainObject(d)||(d={}),!1!==b.close(!0)))return f.isArray(a)||(a=t(a)?f(a).get():[a]),f.each(a,function(e,c){var k={},g,h,j,m,l;"object"===f.type(c)&&(c.nodeType&&(c=f(c)),t(c)?(k={href:c.data("fancybox-href")||c.attr("href"),title:c.data("fancybox-title")||c.attr("title"),isDom:!0,element:c},f.metadata&&f.extend(!0,k,
 c.metadata())):k=c);g=d.href||k.href||(q(c)?c:null);h=d.title!==v?d.title:k.title||"";m=(j=d.content||k.content)?"html":d.type||k.type;!m&&k.isDom&&(m=c.data("fancybox-type"),m||(m=(m=c.prop("class").match(/fancybox\.(\w+)/))?m[1]:null));q(g)&&(m||(b.isImage(g)?m="image":b.isSWF(g)?m="swf":"#"===g.charAt(0)?m="inline":q(c)&&(m="html",j=c)),"ajax"===m&&(l=g.split(/\s+/,2),g=l.shift(),l=l.shift()));j||("inline"===m?g?j=f(q(g)?g.replace(/.*(?=#[^\s]+$)/,""):g):k.isDom&&(j=c):"html"===m?j=g:!m&&(!g&&
@@ -56,7 +56,7 @@ d.event.mouseHooks;d.event.special.mousewheel={setup:function(){if(this.addEvent
 		defaults : {
 			skipSingle : false,
 			position   : 'top', // 'top' or 'bottom'
-			tpl        : '<div id="fancybox-buttons"><ul><li><a class="fa fa-angle-left" title="上一张（快捷键 ←）" href="javascript:;"></a></li><li><a class="fa fa-caret-right" title="播放幻灯（快捷键 空格）" href="javascript:;"></a></li><li><a class="fa fa-angle-right" title="下一张（快捷键 →）" href="javascript:;"></a></li><li><a class="fa fa-expand" title="实际大小（快捷键 F）" href="javascript:;"></a></li><li><a class="fa fa-times" title="关闭（快捷键 Esc）" href="javascript:;"></a></li></ul></div>'
+			tpl        : '<div id="fancybox-buttons"><ul><li><a class="be be-arrowleft" title="上一张（快捷键 ←）" href="javascript:;"></a></li><li><a class="be be-playarrow" title="播放幻灯（快捷键 空格）" href="javascript:;"></a></li><li><a class="be be-arrowright" title="下一张（快捷键 →）" href="javascript:;"></a></li><li><a class="be be-maximize" title="实际大小（快捷键 F）" href="javascript:;"></a></li><li><a class="be be-cross" title="关闭（快捷键 Esc）" href="javascript:;"></a></li></ul></div>'
 		},
 
 		list : null,
@@ -76,13 +76,13 @@ d.event.mouseHooks;d.event.special.mousewheel={setup:function(){if(this.addEvent
 
 		onPlayStart: function () {
 			if (this.buttons) {
-				this.buttons.play.attr('title', '暂停幻灯').addClass('fa-angle-double-right');
+				this.buttons.play.attr('title', '暂停幻灯').addClass('be-stop');
 			}
 		},
 
 		onPlayEnd: function () {
 			if (this.buttons) {
-				this.buttons.play.attr('title', '播放幻灯').removeClass('fa-angle-double-right');
+				this.buttons.play.attr('title', '播放幻灯').removeClass('be-stop');
 			}
 		},
 
@@ -93,11 +93,11 @@ d.event.mouseHooks;d.event.special.mousewheel={setup:function(){if(this.addEvent
 				this.list = $(opts.tpl).addClass(opts.position).appendTo('body');
 
 				buttons = {
-					prev   : this.list.find('.fa-angle-left').click( F.prev ),
-					next   : this.list.find('.fa-angle-right').click( F.next ),
-					play   : this.list.find('.fa-caret-right').click( F.play ),
-					toggle : this.list.find('.fa-expand').click( F.toggle ),
-					close  : this.list.find('.fa-times').click( F.close )
+					prev   : this.list.find('.be-arrowleft').click( F.prev ),
+					next   : this.list.find('.be-arrowright').click( F.next ),
+					play   : this.list.find('.be-playarrow').click( F.play ),
+					toggle : this.list.find('.be-maximize').click( F.toggle ),
+					close  : this.list.find('.be-cross').click( F.close )
 				}
 			}
 
@@ -130,11 +130,11 @@ d.event.mouseHooks;d.event.special.mousewheel={setup:function(){if(this.addEvent
 				return;
 			}
 
-			toggle = this.buttons.toggle.removeClass('btnDisabled fa-compress');
+			toggle = this.buttons.toggle.removeClass('btnDisabled be-minimize');
 
 			//Size toggle button
 			if (obj.canShrink) {
-				toggle.addClass('fa fa-compress');
+				toggle.addClass('be be-minimize');
 
 			} else if (!obj.canExpand) {
 				toggle.addClass('btnDisabled');

@@ -1,1709 +1,5 @@
-<?php
-// AjaxåŠ è½½
-function ajax_scroll_js() {
-if ( !is_singular() && !is_paged() ) { ?>
-<script type="text/javascript">var ias=$.ias({container:"#main",item:"article",pagination:"#nav-below",next:"#nav-below .nav-previous a",});ias.extension(new IASTriggerExtension({text:'<i class="fa fa-chevron-circle-down"></i>æ›´å¤š',offset:<?php echo zm_get_option('scroll_n');?>,}));ias.extension(new IASSpinnerExtension());ias.extension(new IASNoneLeftExtension({text:'å·²æ˜¯æœ€å',}));ias.on('rendered',function(items){$("img").lazyload({effect: "fadeIn",failure_limit: 70});})</script>
-<?php }
-}
-
-function ajax_c_scroll_js() {
-if ( is_single() ) { ?>
-<script type="text/javascript">var ias=$.ias({container:"#comments",item:".comment-list",pagination:".scroll-links",next:".scroll-links .nav-previous a",});ias.extension(new IASTriggerExtension({text:'<i class="fa fa-chevron-circle-down"></i>æ›´å¤š',offset: 0,}));ias.extension(new IASSpinnerExtension());ias.extension(new IASNoneLeftExtension({text:'å·²æ˜¯æœ€å',}));ias.on('rendered',function(items){$("img").lazyload({effect: "fadeIn",failure_limit: 10});});</script>
-<?php }
-}
-
-// åªæœç´¢æ–‡ç« æ ‡é¢˜
-function wpse_11826_search_by_title( $search, $wp_query ) {
-	if ( ! empty( $search ) && ! empty( $wp_query->query_vars['search_terms'] ) ) {
-		global $wpdb;
-		$q = $wp_query->query_vars;
-		$n = ! empty( $q['exact'] ) ? '' : '%';
-		$search = array();
-		foreach ( ( array ) $q['search_terms'] as $term )
-			$search[] = $wpdb->prepare( "$wpdb->posts.post_title LIKE %s", $n . $wpdb->esc_like( $term ) . $n );
-		if ( ! is_user_logged_in() )
-			$search[] = "$wpdb->posts.post_password = ''";
-		$search = ' AND ' . implode( ' AND ', $search );
-	}
-	return $search;
-}
-
-// gravatarå¤´åƒè°ƒç”¨
-function cn_avatar($avatar) {
-	$avatar = preg_replace('/.*\/avatar\/(.*)\?s=([\d]+)&.*/','<img src="http://cn.gravatar.com/avatar/$1?s=$2&d=mm" alt="avatar" class="avatar avatar-$2" height="$2" width="$2">',$avatar);
-	return $avatar;
-}
-
-function ssl_avatar($avatar) {
-	$avatar = preg_replace('/.*\/avatar\/(.*)\?s=([\d]+)&.*/','<img src="https://secure.gravatar.com/avatar/$1?s=$2&d=mm" alt="avatar" class="avatar avatar-$2" height="$2" width="$2">',$avatar);
-	return $avatar;
-}
-
-if (zm_get_option('no') !== 'no') :
-	if (!zm_get_option('gravatar_url') || (zm_get_option("gravatar_url") == 'cn')) {
-		add_filter('get_avatar', 'cn_avatar');
-	}
-
-	if (zm_get_option('gravatar_url') == 'ssl') {
-		add_filter('get_avatar', 'ssl_avatar');
-	}
-endif;
-
-// æ ‡ç­¾
-require get_template_directory() . '/inc/tag-letter.php';
-
-// å­—æ•°ç»Ÿè®¡
-function count_words ($text) {
-	global $post;
-	if ( '' == $text ) {
-		$text = $post->post_content;
-		if (mb_strlen($output, 'UTF-8') < mb_strlen($text, 'UTF-8')) $output .= ''.sprintf(__( 'å…±', 'begin' )).' ' . mb_strlen(preg_replace('/\s/','',html_entity_decode(strip_tags($post->post_content))),'UTF-8') . ' '.sprintf(__( 'å­—', 'begin' )).'';
-		return $output;
-	}
-}
-
-// åˆ†ç±»ä¼˜åŒ–
-function zm_category() {
-	$category = get_the_category();
-	if($category[0]){
-	echo '<a href="'.get_category_link($category[0]->term_id ).'">'.$category[0]->cat_name.'</a>';
-	}
-}
-
-// ç´¢å¼•
-function zm_get_current_count() {
-	global $wpdb;
-	$current_post = get_the_ID();
-	$query = "SELECT post_id, meta_value, post_status FROM $wpdb->postmeta";
-	$query .= " LEFT JOIN $wpdb->posts ON post_id=$wpdb->posts.ID";
-	$query .= " WHERE post_status='publish' AND meta_key='zm_like' AND post_id = '".$current_post."'";
-	$results = $wpdb->get_results($query);
-	if ($results) {
-		foreach ($results as $o):
-			echo $o->meta_value;
-		endforeach;
-	}else {echo( '0' );}
-}
-
-if (zm_get_option('index_c')) {
-// ç›®å½•
-function article_catalog($content) {
-	$matches = array();
-	$ul_li = '';
-	$r = "/<h4>([^<]+)<\/h4>/im";
-
-	if(preg_match_all($r, $content, $matches)) {
-		foreach($matches[1] as $num => $title) {
-			$content = str_replace($matches[0][$num], '<span class="directory"></span><h4 id="title-'.$num.'">'.$title.'</h4>', $content);
-			$ul_li .= '<li><i class="fa fa-angle-right"></i> <a href="#title-'.$num.'" title="'.$title.'">'.$title."</a></li>\n";
-		}
-		$content = "
-			\n<div id=\"log-box\">
-				<div id=\"catalog\"><ul id=\"catalog-ul\">\n" . $ul_li . "</ul><span class=\"log-zd\"><span class=\"log-close\"><a title=\"" . sprintf(__( 'éšè—ç›®å½•', 'begin' )) . "\"><i class=\"fa fa-times\"></i><strong>" . sprintf(__( 'ç›®å½•', 'begin' )) . "</strong></a></span></span></div>
-			</div>\n" . $content;
-	}
-	return $content;
-}
-add_filter( "the_content", "article_catalog" );
-}
-
-if (zm_get_option('tag_c')) {
-// å…³é”®è¯åŠ é“¾æ¥
-$match_num_from = 1; //ä¸€ä¸ªå…³é”®å­—å°‘äºå¤šå°‘ä¸æ›¿æ¢
-$match_num_to = zm_get_option('chain_n');
-
-add_filter('the_content','tag_link',1);
-
-function tag_sort($a, $b){
-	if ( $a->name == $b->name ) return 0;
-	return ( strlen($a->name) > strlen($b->name) ) ? -1 : 1;
-}
-
-function tag_link($content){
-global $match_num_from,$match_num_to;
-$posttags = get_the_tags();
-	if ($posttags) {
-		usort($posttags, "tag_sort");
-		foreach($posttags as $tag) {
-			$link = get_tag_link($tag->term_id);
-			$keyword = $tag->name;
-			if (preg_match_all('|(<h[^>]+>)(.*?)'.$keyword.'(.*?)(</h[^>]*>)|U', $content, $matchs)) {continue;}
-			if (preg_match_all('|(<a[^>]+>)(.*?)'.$keyword.'(.*?)(</a[^>]*>)|U', $content, $matchs)) {continue;}
-
-			$cleankeyword = stripslashes($keyword);
-			$url = "<a href=\"$link\" title=\"".str_replace('%s',addcslashes($cleankeyword, '$'),__('æŸ¥çœ‹ä¸ %s ç›¸å…³çš„æ–‡ç« ', 'begin' ))."\"";
-			$url .= ' target="_blank"';
-			$url .= ">".addcslashes($cleankeyword, '$')."</a>";
-			$limit = rand($match_num_from,$match_num_to);
-
-			$content = preg_replace( '|(<a[^>]+>)(.*)('.$ex_word.')(.*)(</a[^>]*>)|U'.$case, '$1$2%&&&&&%$4$5', $content);
-			$content = preg_replace( '|(<img)(.*?)('.$ex_word.')(.*?)(>)|U'.$case, '$1$2%&&&&&%$4$5', $content);
-			$cleankeyword = preg_quote($cleankeyword,'\'');
-			$regEx = '\'(?!((<.*?)|(<a.*?)))('. $cleankeyword . ')(?!(([^<>]*?)>)|([^>]*?</a>))\'s' . $case;
-			$content = preg_replace($regEx,$url,$content,$limit);
-			$content = str_replace( '%&&&&&%', stripslashes($ex_word), $content);
-		}
-	}
-	return $content;
-}
-}
-// æ·»åŠ è§†é¢‘
-function my_videos( $atts, $content = null ) {
-	extract( shortcode_atts( array (
-		'href' => '',
-		 'img' => '<img class="aligncenter" src="'.$content.'">'
-	), $atts ) );
-	return '<div class="video-content"><a class="videos" href="'.$href.'" title="æ’­æ”¾è§†é¢‘">'.$img.'<i class="fa fa-play-circle-o"></i></a></div>';
-}
-
-// è¯„è®ºå¯è§
-function reply_read($atts, $content=null) {
-	extract(shortcode_atts(array("notice" => '
-	<div class="reply-read">
-		<div class="reply-ts">
-			<div class="read-sm"><i class="fa fa-exclamation-circle"></i>' . sprintf(__( 'æ­¤å¤„ä¸ºéšè—çš„å†…å®¹ï¼', 'begin' )) . '</div>
-			<div class="read-sm"><i class="fa fa-spinner"></i>' . sprintf(__( 'å‘è¡¨è¯„è®ºå¹¶åˆ·æ–°ï¼Œæ‰èƒ½æŸ¥çœ‹', 'begin' )) . '</div>
-		</div>
-		<div class="read-pl"><a href="#respond">' . sprintf(__( 'å‘è¡¨è¯„è®º', 'begin' )) . '</a></div>
-		<div class="clear"></div>
-    </div>'), $atts));
-	$email = null;
-	$user_ID = (int) wp_get_current_user()->ID;
-	if ($user_ID > 0) {
-		$email = get_userdata($user_ID)->user_email;
-		if ( current_user_can('level_10') ) {
-	return '<div class="secret-password"><i class="fa fa-check-square"></i>éšè—çš„å†…å®¹ï¼š<br />'.do_shortcode( $content ).'</div>';
-		}
-	} else if (isset($_COOKIE['comment_author_email_' . COOKIEHASH])) {
-		$email = str_replace('%40', '@', $_COOKIE['comment_author_email_' . COOKIEHASH]);
-	} else {
-		return $notice;
-	}
-    if (empty($email)) {
-		return $notice;
-	}
-	global $wpdb;
-	$post_id = get_the_ID();
-	$query = "SELECT `comment_ID` FROM {$wpdb->comments} WHERE `comment_post_ID`={$post_id} and `comment_approved`='1' and `comment_author_email`='{$email}' LIMIT 1";
-	if ($wpdb->get_results($query)) {
-		return do_shortcode('<div class="secret-password"><i class="fa fa-check-square"></i>éšè—çš„å†…å®¹ï¼š<br />'.do_shortcode( $content ).'</div>');
-	} else {
-		return $notice;
-	}
-}
-
-// ç™»å½•å¯è§
-function login_to_read($atts, $content = null) {
-	extract(shortcode_atts(array("notice" =>'
-	<div class="reply-read">
-		<div class="reply-ts">
-			<div class="read-sm"><i class="fa fa-exclamation-circle"></i>' . sprintf(__( 'æ­¤å¤„ä¸ºéšè—çš„å†…å®¹ï¼', 'begin' )) . '</div>
-			<div class="read-sm"><i class="fa fa-sign-in"></i>' . sprintf(__( 'ç™»å½•åæ‰èƒ½æŸ¥çœ‹ï¼', 'begin' )) . '</div>
-		</div>
-		<div class="read-pl"><a href="#login" class="flatbtn" id="login-see" >' . sprintf(__( 'ç™»å½•', 'begin' )) . '</a></div>
-		<div class="clear"></div>
-	</div>'), $atts));
-	if (is_user_logged_in()) {
-		return do_shortcode( $content );
-	} else {
-		return $notice;
-	}
-}
-
-// åŠ å¯†å†…å®¹
-function secret($atts, $content=null){
-extract(shortcode_atts(array('key'=>null), $atts));
-if ( current_user_can('level_10') ) {
-	return '<div class="secret-password"><i class="fa fa-check-square"></i>åŠ å¯†çš„å†…å®¹ï¼š<br />'.do_shortcode( $content ).'</div>';
-}
-if(isset($_POST['secret_key']) && $_POST['secret_key']==$key){
-	return '<div class="secret-password"><i class="fa fa-check-square"></i>åŠ å¯†çš„å†…å®¹ï¼š<br />'.do_shortcode( $content ).'</div>';
-	} else {
-		return '
-		<form class="post-password-form" action="'.get_permalink().'" method="post">
-			<div class="post-secret"><i class="fa fa-exclamation-circle"></i>' . sprintf(__( 'è¾“å…¥å¯†ç æŸ¥çœ‹åŠ å¯†å†…å®¹ï¼š', 'begin' )) . '</div>
-			<p>
-				<input id="pwbox" type="password" size="20" name="secret_key">
-				<input type="submit" value="' . sprintf(__( 'æäº¤', 'begin' )) . '" name="Submit">
-			</p>
-		</form>	';
-	}
-}
-
-// å›¾ç‰‡alt
-if (zm_get_option('image_alt')) {
-function image_alt($c) {
-	global $post;
-	$title = $post->post_title;
-	$s = array('/src="(.+?.(jpg|bmp|png|jepg|gif))"/i' => 'src="$1" alt="'.$title.'"');
-	foreach($s as $p => $r){
-	$c = preg_replace($p,$r,$c);
-	}
-	return $c;
-}
-add_filter( 'the_content', 'image_alt' );
-}
-
-// å½¢å¼åç§°
-function begin_post_format( $safe_text ) {
-	if ( $safe_text == 'å¼•è¯­' )
-		return 'è½¯ä»¶';
-	return $safe_text;
-}
-
-// åˆ†é¡µ
-function begin_pagenav() {
-if (zm_get_option('scroll')) {
-	global $wp_query;
-	if ( $wp_query->max_num_pages > 1 ) : ?>
-		<nav id="nav-below">
-			<div class="nav-next"><?php previous_posts_link(''); ?></div>
-			<div class="nav-previous"><?php next_posts_link(''); ?></div>
-		</nav>
-	<?php endif;
-}
-	the_posts_pagination( array(
-		'mid_size'           => 4,
-		'prev_text'          => '<i class="fa fa-angle-left"></i>',
-		'next_text'          => '<i class="fa fa-angle-right"></i>',
-		'before_page_number' => '<span class="screen-reader-text">'.sprintf(__( 'ç¬¬', 'begin' )).' </span>',
-		'after_page_number'  => '<span class="screen-reader-text"> '.sprintf(__( 'é¡µ', 'begin' )).'</span>',
-	) );
-}
-
-// é¢åŒ…å±‘å¯¼èˆª
-function begin_crumbs() {
-		if (is_home()) {
-			if (zm_get_option('bulletin')) {
-				echo '<div class="bull">';
-				echo '<i class="fa fa-volume-up"></i>';
-				echo "</div>";
-				get_template_part( 'template/bulletin' );
-			} else {
-				echo '<i class="fa fa-home"></i>' . sprintf(__( 'ç°åœ¨ä½ç½®', 'begin' )) . '<i class="fa fa-angle-right"></i>' . sprintf(__( 'é¦–é¡µ', 'begin' )) . '';
-			}
-		}
-
-		if (!is_home() && !is_front_page()) {
-			echo '<a class="crumbs" href="';
-			echo home_url('/');
-			echo '">';
-			echo '<i class="fa fa-home"></i>' . sprintf(__( 'é¦–é¡µ', 'begin' )) . '';
-			echo "</a>";
-		}
-
-		if (is_category()) {
-			echo '<i class="fa fa-angle-right"></i>';
-			echo get_category_parents( get_query_var('cat') , true , '<i class="fa fa-angle-right"></i>' );
-			echo '' . sprintf(__( 'æ–‡ç« ', 'begin' )) . ' ';
-		}
-
-		if ( is_tax('notice') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-			
-		}
-		if ( is_tax('gallery') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-		}
-
-		if ( is_tax('gallerytag') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-			echo setTitle();
-		}
-
-		if ( is_tax('videos') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-		}
-
-		if ( is_tax('videotag') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-			echo setTitle();
-		}
-
-		if ( is_tax('taobao') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-		}
-
-		if ( is_tax('taotag') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-			echo setTitle();
-		}
-
-		if ( is_tax('product_cat') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-		}
-
-		if ( is_tax('product_tag') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-		}
-
-		if ( is_tax('favorites') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-		}
-
-		if (function_exists( 'is_shop' )) {
-			if ( zm_get_option('woo') ) {
-				if ( is_shop('shop') && !is_front_page() ) {
-					echo '<i class="fa fa-angle-right"></i>';
-					echo trim( wp_title( '',0 ) );
-				}
-			}
-		}
-
-		if ( is_tax('download_category') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-		}
-
-		if ( is_tax('download_tag') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-		}
-
-		if ( is_tax('dwqa-question_category') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-		}
-
-		if ( is_tax('dwqa-question_tag') ) {
-			echo '<i class="fa fa-angle-right"></i>';
-		}
-
-		if (is_single()) {
-			echo '<i class="fa fa-angle-right"></i>';
-			echo the_category('<i class="fa fa-angle-right"></i>', 'multiple');
-			if ( 'post' == get_post_type() ) {
-				echo '<i class="fa fa-angle-right"></i>';
-				echo '' . sprintf(__( 'æ­£æ–‡', 'begin' )) . '';
-			}
-			if (is_attachment() ) {	echo '' . sprintf(__( 'é™„ä»¶', 'begin' )) . ''; }
-		}
-
-		if (is_page() && !is_front_page()) {
-			echo '<i class="fa fa-angle-right"></i>';
-			echo the_title();
-		}
-		if (is_page() && is_front_page()) {
-			if (zm_get_option('bulletin')) {
-				echo '<div class="bull">';
-				echo '<i class="fa fa-volume-up"></i>';
-				echo "</div>";
-				get_template_part( 'template/bulletin' );
-			} else {
-				echo '<i class="fa fa-home"></i>' . sprintf(__( 'ç°åœ¨ä½ç½®', 'begin' )) . '<i class="fa fa-angle-right"></i>' . sprintf(__( 'é¦–é¡µ', 'begin' )) . '';
-			}
-		}
-
-	elseif (is_tag()) {echo '<i class="fa fa-angle-right"></i>';single_tag_title();echo '<i class="fa fa-angle-right"></i>æ–‡ç«  ';}
-	elseif (is_day()) {echo '<i class="fa fa-angle-right"></i>';echo"å‘è¡¨äº"; the_time('Yå¹´mæœˆdæ—¥'); echo'çš„æ–‡ç« ';}
-	elseif (is_month()) {echo '<i class="fa fa-angle-right"></i>';echo"å‘è¡¨äº"; the_time('Yå¹´mæœˆ'); echo'çš„æ–‡ç« ';}
-	elseif (is_year()) {echo '<i class="fa fa-angle-right"></i>';echo"å‘è¡¨äº"; the_time('Yå¹´'); echo'çš„æ–‡ç« ';}
-	elseif (is_author()) {echo '<i class="fa fa-angle-right"></i>';echo wp_title( ''); echo'å‘è¡¨çš„æ–‡ç« ';}
-	elseif (is_404()) {echo '<i class="fa fa-angle-right"></i>';echo'' . sprintf(__( 'äº²ï¼Œä½ è¿·è·¯äº†ï¼', 'begin' )) . ''; echo'';}
-	elseif (is_search()) {
-		echo '<i class="fa fa-angle-right"></i>' . sprintf(__( 'æœç´¢', 'begin' )) . ' ';
-		echo get_template_part( 'inc/crumb-search' );
-	}
-}
-
-// æ–‡ç« ä¿¡æ¯
-function begin_entry_meta() {
-	if ( ! is_single() ) :
-	echo '<span class="date">';
-		time_ago( $time_type ='post' );
-	echo '</span>';
-	if( function_exists( 'the_views' ) ) { the_views( true, '<span class="views"><i class="fa fa-eye"></i> ','</span>' ); }
-	if ( post_password_required() ) { 
-		echo '<span class="comment"><a href=""><i class="icon-scroll-c"></i> ' . sprintf(__( 'å¯†ç ä¿æŠ¤', 'begin' )) . '</a></span>';
-	} else {
-		echo '<span class="comment">';
-			comments_popup_link( '<i class="fa fa-comment-o"></i> ' . sprintf(__( 'å‘è¡¨è¯„è®º', 'begin' )) . '', '<i class="fa fa-comment-o"></i> 1 ', '<i class="fa fa-comment-o"></i> %' );
-		echo '</span>';
-	}
-	if (zm_get_option('favorite_p')) { wpzm_links(); };
- 	else :
-
-	echo '<ul class="single-meta">';
-		edit_post_link('' . sprintf(__( 'ç¼–è¾‘', 'begin' )) . '', '<li class="edit-link">', '</li>' );
-
-		echo '<li class="print"><a href="javascript:printme()" target="_self" title="' . sprintf(__( 'æ‰“å°', 'begin' )) . '"><i class="fa fa-print"></i></a></li>';
-
-		if ( post_password_required() ) { 
-			echo '<li class="comment"><a href="#comments">' . sprintf(__( 'å¯†ç ä¿æŠ¤', 'begin' )) . '</a></li>';
-		} else {
-			echo '<li class="comment">';
-				comments_popup_link( '<i class="fa fa-comment-o"></i> ' . sprintf(__( 'å‘è¡¨è¯„è®º', 'begin' )) . '', '<i class="fa fa-comment-o"></i> 1 ', '<i class="fa fa-comment-o"></i> %' );
-			echo '</li>';
-		}
-
-		if( function_exists( 'the_views' ) ) { the_views(true, '<li class="views"><i class="fa fa-eye"></i> ','</li>');  }
-		echo '<li class="r-hide"><a href="javascript:pr()" title="' . sprintf(__( 'ä¾§è¾¹æ ', 'begin' )) . '"><i class="fa fa-caret-left"></i> <i class="fa fa-caret-right"></i></a></li>';
-	echo '</ul>';
-
-	echo '<ul id="fontsize"><li>A+</li></ul>';
-	echo '<div class="single-cat-tag">';
-		echo '<div class="single-cat">' . sprintf(__( 'æ‰€å±åˆ†ç±»', 'begin' )) . 'ï¼š';
-			the_category( ' ' );
-		echo '</div>';
-	echo '</div>';
-
-	endif;
-}
-
-// æ—¥å¿—ä¿¡æ¯
-function begin_format_meta() {
-	echo '<span class="date">';
-		time_ago( $time_type ='post' );
-	echo '</span>';
-	echo '<span class="format-cat"><i class="fa fa-folder-o"></i> ';
-		zm_category();
-	echo '</span>';
-	if( function_exists( 'the_views' ) ) { the_views( true, '<span class="views"><i class="fa fa-eye"></i> ','</span>' ); }
-	if ( post_password_required() ) { 
-		echo '<span class="comment"><a href=""><i class="icon-scroll-c"></i> ' . sprintf(__( 'å¯†ç ä¿æŠ¤', 'begin' )) . '</a></span>';
-	} else {
-		echo '<span class="comment">';
-			comments_popup_link( '<i class="fa fa-comment-o"></i> ' . sprintf(__( 'å‘è¡¨è¯„è®º', 'begin' )) . '', '<i class="fa fa-comment-o"></i> 1 ', '<i class="fa fa-comment-o"></i> %' );
-		echo '</span>';
-	}
-	if (zm_get_option('favorite_p')) { wpzm_links(); };
-}
-
-function begin_single_meta() {
-	echo '<div class="begin-single-meta">';
-		echo '<span class="my-date"><i class="fa fa-clock-o"></i> ';
-		time_ago( $time_type ='posts' );
-		echo '</span>';
-		if ( post_password_required() ) { 
-			echo '<span class="comment"><a href="#comments">' . sprintf(__( 'å¯†ç ä¿æŠ¤', 'begin' )) . '</a></li>';
-		} else {
-			echo '<span class="comment">';
-				comments_popup_link( '<i class="fa fa-comment-o"></i> ' . sprintf(__( 'å‘è¡¨è¯„è®º', 'begin' )) . '', '<i class="fa fa-comment-o"></i> 1 ', '<i class="fa fa-comment-o"></i> %' );
-			echo '</span>';
-		}
-		if( function_exists( 'the_views' ) ) { the_views(true, '<span class="views"><i class="fa fa-eye"></i> ','</span>');  }
-		echo '<span class="print"><a href="javascript:printme()" target="_self" title="' . sprintf(__( 'æ‰“å°', 'begin' )) . '"><i class="fa fa-print"></i></a></span>';
-		edit_post_link('' . sprintf(__( 'ç¼–è¾‘', 'begin' )) . '', '<span class="edit-link">', '</span>' );
-		echo '<span class="s-hide r-hide"><a href="javascript:pr()" title="' . sprintf(__( 'ä¾§è¾¹æ ', 'begin' )) . '"><i class="fa fa-caret-left"></i> <i class="fa fa-caret-right"></i></a></span>';
-	echo '</div>';
-}
-
-function begin_single_cat() {
-	echo '<ul id="fontsize"><li>A+</li></ul>';
-	echo '<div class="single-cat-tag">';
-		echo '<div class="single-cat">' . sprintf(__( 'æ‰€å±åˆ†ç±»', 'begin' )) . 'ï¼š';
-			the_category( ' ' );
-		echo '</div>';
-	echo '</div>';
-}
-
-// é¡µé¢ä¿¡æ¯
-function begin_page_meta() {
-	echo '<ul class="single-meta">';
-		edit_post_link('' . sprintf(__( 'ç¼–è¾‘', 'begin' )) . '', '<li class="edit-link">', '</li>' );
-		echo '<li class="print"><a href="javascript:printme()" target="_self" title="' . sprintf(__( 'æ‰“å°', 'begin' )) . '"><i class="fa fa-print"></i></a></li>';
-		echo '<li class="comment">';
-		comments_popup_link( '<i class="fa fa-comment-o"></i> ' . sprintf(__( 'å‘è¡¨è¯„è®º', 'begin' )) . '', '<i class="fa fa-comment-o"></i> 1 ', '<i class="fa fa-comment-o"></i> %' );
-		echo '</li>';
-		if( function_exists( 'the_views' ) ) { the_views(true, '<li class="views"><i class="fa fa-eye"></i> ','</li>');  }
-	 	echo '<li class="r-hide"><a href="javascript:pr()" title="' . sprintf(__( 'ä¾§è¾¹æ ', 'begin' )) . '"><i class="fa fa-caret-left"></i> <i class="fa fa-caret-right"></i></a></li>';
-	echo '</ul>';
-	echo '<ul id="fontsize">A+</ul>';
-}
-
-// ç‚¹å‡»æœ€å¤šæ–‡ç« 
-function get_timespan_most_viewed($mode = '', $limit = 10, $days = 7, $display = true) {
-	global $wpdb, $post;
-	$limit_date = current_time('timestamp') - ($days*86400);
-	$limit_date = date("Y-m-d H:i:s",$limit_date);	
-	$where = '';
-	$temp = '';
-	if(!empty($mode) && $mode != 'both') {
-		$where = "post_type = '$mode'";
-	} else {
-		$where = '1=1';
-	}
-	$most_viewed = $wpdb->get_results("SELECT $wpdb->posts.*, (meta_value+0) AS views FROM $wpdb->posts LEFT JOIN $wpdb->postmeta ON $wpdb->postmeta.post_id = $wpdb->posts.ID WHERE post_date < '".current_time('mysql')."' AND post_date > '".$limit_date."' AND $where AND post_status = 'publish' AND meta_key = 'views' AND post_password = '' ORDER  BY views DESC LIMIT $limit");
-	if($most_viewed) {
-		$i = 1;
-		foreach ($most_viewed as $post) {
-			$post_title =  get_the_title();
-			$post_views = intval($post->views);
-			$post_views = number_format($post_views);
-			$temp .= "<li><span class='li-icon li-icon-$i'>$i</span><a href=\"".get_permalink()."\">$post_title</a></li>";
-			$i++;
-		}
-	} else {
-		$temp = '<li>æš‚æ— æ–‡ç« </li>';
-	}
-	if($display) {
-		echo $temp;
-	} else {
-		return $temp;
-	}
-}
-
-// æ—¶é—´
-if (zm_get_option('meta_time')) {
-function time_ago( $time_type ){
-	switch( $time_type ){
-		case 'comment': //è¯„è®ºæ—¶é—´
-				printf(__('%1$s at %2$s'), get_comment_date(),  get_comment_time());
-			break;
-		case 'post'; //æ—¥å¿—æ—¶é—´
-				echo get_the_date();
-			break;
-		case 'posts'; //æ—¥å¿—æ—¶é—´å¹´
-				echo get_the_date();
-				echo '<i class="i-time">' . get_the_time('H:i:s') . '</i>';
-			break;
-	}
-}
-} else { 
-function time_ago( $time_type ){
-	switch( $time_type ){
-		case 'comment': //è¯„è®ºæ—¶é—´
-			$time_diff = current_time('timestamp') - get_comment_time('U');
-			if( $time_diff <= 300 )
-				echo ('åˆšåˆš');
-			elseif(  $time_diff>=300 && $time_diff <= 86400 ) //24 å°æ—¶ä¹‹å†…
-				echo human_time_diff(get_comment_time('U'), current_time('timestamp')).'å‰';
-			else
-				printf(__('%1$s at %2$s'), get_comment_date(),  get_comment_time());
-			break;
-		case 'post'; //æ—¥å¿—æ—¶é—´
-			$time_diff = current_time('timestamp') - get_the_time('U');
-			if( $time_diff <= 300 )
-				echo ('åˆšåˆš');
-			elseif(  $time_diff>=300 && $time_diff <= 86400 ) //24 å°æ—¶ä¹‹å†…
-				echo human_time_diff(get_the_time('U'), current_time('timestamp')).'å‰';
-			else
-				echo the_time( 'mæœˆdæ—¥' );
-			break;
-		case 'posts'; //æ—¥å¿—æ—¶é—´å¹´
-			//$time_diff = current_time('timestamp') - get_the_time('U');
-			//if( $time_diff <= 300 )
-				//echo ('åˆšåˆš');
-			//elseif(  $time_diff>=300 && $time_diff <= 86400 ) //24 å°æ—¶ä¹‹å†…
-				//echo human_time_diff(get_the_time('U'), current_time('timestamp')).'å‰';
-			//else
-				echo get_the_date();
-				echo '<i class="i-time">' . get_the_time('H:i:s') . '</i>';
-			break;
-	}
-}
-}
-// å¹»ç¯
-function gallery($atts, $content=null){
-	return '<div id="gallery" class="slide-h"><div class="rslides" id="slide">'.$content.'</div></div>
-	<div class="img-n">å…±<span class="myimg"></span></div>
-	<script type="text/javascript" src="'.get_template_directory_uri().'/js/slides.js"></script>';
-}
-
-function image($atts, $content=null){
-extract(shortcode_atts(array('h'=>null), $atts));
-	return '<div id="gallery" class="slides-h" style="height:'.$h.'px"><div class="rslides" id="slides">'.$content.'</div></div>
-	<div class="img-n">å…±<span class="mimg"></span></div>
-	<script type="text/javascript" src="'.get_template_directory_uri().'/js/slides.js"></script>';
-}
-
-// ä¸‹è½½æŒ‰é’®
-function button_a($atts, $content = null) {
-	return '<div class="down"><a class="d-popup" title="ä¸‹è½½é“¾æ¥" href="#button_file"><i class="fa fa-download"></i>ä¸‹è½½åœ°å€</a><div class="clear"></div></div>';
-}
-
-// è‡ªå®šä¹‰æŒ‰é’®
-function button_b($atts, $content = null) {
-	return '<div class="down"><a class="d-popup" title="ä¸‹è½½é“¾æ¥" href="#button_file"><i class="fa fa-download"></i>'.$content.'</a><div class="clear"></div></div>';
-}
-
-// é“¾æ¥æŒ‰é’®
-function button_url($atts,$content=null){
-	extract(shortcode_atts(array("href"=>'http://'),$atts));
-	return '<div class="down down-link"><a href="'.$href.'" rel="external nofollow" target="_blank"><i class="fa fa-cloud-download"></i>'.$content.'</a><div class="clear"></div></div><div class="down-line"></div>';
-}
-
-// fieldsetæ ‡ç­¾
-function fieldset_label($atts, $content = null) {
-	return $content;
-}
-
-// æ·»åŠ <code>
-function addcode($atts, $content=null, $code="") {
- $return = '<code>';
- $return .= $content;
- $return .= '</code>';
- return $return;
-}
-add_shortcode('code' , 'addcode');
-
-//ç‚¹èµæœ€å¤šæ–‡ç« 
-function get_like_most($mode = '', $limit = 10, $days = 7, $display = true) {
-	global $wpdb, $post;
-	$limit_date = current_time('timestamp') - ($days*86400);
-	$limit_date = date("Y-m-d H:i:s",$limit_date);	
-	$where = '';
-	$temp = '';
-	if(!empty($mode) && $mode != 'both') {
-		$where = "post_type = '$mode'";
-	} else {
-		$where = '1=1';
-	}
-	$most_viewed = $wpdb->get_results("SELECT $wpdb->posts.*, (meta_value+0) AS zm_like FROM $wpdb->posts LEFT JOIN $wpdb->postmeta ON $wpdb->postmeta.post_id = $wpdb->posts.ID WHERE post_date < '".current_time('mysql')."' AND post_date > '".$limit_date."' AND $where AND post_status = 'publish' AND meta_key = 'zm_like' AND post_password = '' ORDER  BY zm_like DESC LIMIT $limit");
-	if($most_viewed) {
-		$i = 1;
-		foreach ($most_viewed as $post) {
-			$post_title = get_the_title();
-			$post_like = intval($post->like);
-			$post_like = number_format($post_like);
-			$temp .= "<li><span class='li-icon li-icon-$i'>$i</span><a href=\"".get_permalink()."\">$post_title</a></li>";
-			$i++;
-		}
-	} else {
-		$temp = '<li>æš‚æ— æ–‡ç« </li>';
-	}
-	if($display) {
-		echo $temp;
-	} else {
-		return $temp;
-	}
-}
-
-// æ–‡å­—å±•å¼€
-function show_more($atts, $content = null) {
-	return '<span class="show-more" title="' . (__( 'æ–‡å­—æŠ˜å ', 'begin' )) . '"><span><i class="fa fa-plus-square"></i>' . sprintf(__( 'å±•å¼€', 'begin' )) . '</span></span>';
-}
-
-function section_content($atts, $content = null) {
-	return '<div class="section-content">'.do_shortcode( $content ).'</p></div><p>';
-}
-
-// çŸ­ä»£ç å¹¿å‘Š
-function post_ad(){
-
-if ( wp_is_mobile() ) {
-		return '<div class="post-ad"><div class="ad-m ad-site">'.stripslashes( zm_get_option('ad_s_z_m') ).'</div></div>';
-	} else {
-		return '<div class="post-ad"><div class="ad-pc ad-site">'.stripslashes( zm_get_option('ad_s_z') ).'</div></div>';
-	}
-}
-// ç‚¹èµ
-function begin_ding(){
-	global $wpdb,$post;
-	$id = $_POST["um_id"];
-	$action = $_POST["um_action"];
-	if ( $action == 'ding'){
-		$bigfa_raters = get_post_meta($id,'zm_like',true);
-		$expire = time() + 99999999;
-		$domain = ($_SERVER['HTTP_HOST'] != 'localhost') ? $_SERVER['HTTP_HOST'] : false;
-		setcookie('zm_like_'.$id,$id,$expire,'/',$domain,false);
-		if (!$bigfa_raters || !is_numeric($bigfa_raters)) {
-			update_post_meta($id, 'zm_like', 1);
-		}
-		else {
-			update_post_meta($id, 'zm_like', ($bigfa_raters + 1));
-		}
-		echo get_post_meta($id,'zm_like',true);
-	}
-	die;
-}
-
-if (zm_get_option('baidu_submit')) {
-// ä¸»åŠ¨æ¨é€
-if(!function_exists('Baidu_Submit')){
-    function Baidu_Submit($post_ID) {
-		$WEB_DOMAIN = get_option('home');
-		if(get_post_meta($post_ID,'Baidusubmit',true) == 1) return;
-		$url = get_permalink($post_ID);
-		$api = 'http://data.zz.baidu.com/urls?site='.$WEB_DOMAIN.'&token='.zm_get_option('token_p');
-		$request = new WP_Http;
-		$result = $request->request( $api , array( 'method' => 'POST', 'body' => $url , 'headers' => 'Content-Type: text/plain') );
-		$result = json_decode($result['body'],true);
-		if (array_key_exists('success',$result)) {
-		    add_post_meta($post_ID, 'Baidusubmit', 1, true);
-		}
-	}
-	add_action('publish_post', 'Baidu_Submit', 0);
-}
-}
-
-// å»æ‰æè¿°Pæ ‡ç­¾
-function deletehtml($description) {
-	$description = trim($description);
-	$description = strip_tags($description,"");
-	return ($description);
-}
-
-// è¯„è®ºè´´å›¾
-if (zm_get_option('embed_img')) {
-add_action('comment_text', 'comments_embed_img', 2);
-}
-function comments_embed_img($comment) {
-	$size = auto;
-	$comment = preg_replace(array('#(http://([^\s]*)\.(jpg|gif|png|JPG|GIF|PNG))#','#(https://([^\s]*)\.(jpg|gif|png|JPG|GIF|PNG))#'),'<img src="$1" alt="è¯„è®º" style="width:'.$size.'; height:'.$size.'" />', $comment);
-	return $comment;
-}
-
-// title
-if (zm_get_option('wp_title')) {
-} else {
-function begin_wp_title( $title, $sep ) {
-	global $paged, $page;
-
-	if ( is_feed() ) {
-		return $title;
-	}
-	$title .= get_bloginfo( 'name', 'display' );
-	$site_description = get_bloginfo( 'description', 'display' );
-	if ( $site_description && ( is_home() || is_front_page() ) ) {
-		$title = "$title $sep $site_description";
-	}
-	if ( ( $paged >= 2 || $page >= 2 ) && ! is_404() ) {
-		$title = "$title $sep " . sprintf( __( 'Page %s', 'twentyfourteen' ), max( $paged, $page ) );
-	}
-
-	return $title;
-}
-add_filter( 'wp_title', 'begin_wp_title', 10, 2 );
-}
-
-if (zm_get_option('refused_spam')) {
-	// ç¦æ­¢æ— ä¸­æ–‡ç•™è¨€
-	if ( current_user_can('level_10') ) {
-	} else {
-	function refused_spam_comments( $comment_data ) {
-		$pattern = '/[ä¸€-é¾¥]/u';  
-		if(!preg_match($pattern,$comment_data['comment_content'])) {
-			err('è¯„è®ºå¿…é¡»å«ä¸­æ–‡ï¼');
-		}
-		return( $comment_data );
-	}
-	add_filter('preprocess_comment','refused_spam_comments');
-	}
-}
-// @å›å¤
-if (zm_get_option('at')) {
-function comment_at( $comment_text, $comment = '') {
-	if( $comment->comment_parent > 0) {
-		$comment_text = '<span class="at">@<a href="#comment-' . $comment->comment_parent . '">'.get_comment_author( $comment->comment_parent ) . '</a></span> ' . $comment_text;
-	}
-	return $comment_text;
-}
-add_filter( 'comment_text' , 'comment_at', 20, 2);
-}
-
-// è¡¨æƒ…
-function begin_smilies_src( $old, $img ) {
-    return get_stylesheet_directory_uri().'/img/smilies/'.$img;
-}
-function begin_smilies(){
-	global $wpsmiliestrans;
-	$wpsmiliestrans = array(
-		':mrgreen:' => 'icon_mrgreen.gif',
-		':neutral:' => 'icon_neutral.gif',
-		':twisted:' => 'icon_twisted.gif',
-		  ':arrow:' => 'icon_arrow.gif',
-		  ':shock:' => 'icon_eek.gif',
-		  ':smile:' => 'icon_smile.gif',
-		    ':???:' => 'icon_confused.gif',
-		   ':cool:' => 'icon_cool.gif',
-		   ':evil:' => 'icon_evil.gif',
-		   ':grin:' => 'icon_biggrin.gif',
-		   ':idea:' => 'icon_idea.gif',
-		   ':oops:' => 'icon_redface.gif',
-		   ':razz:' => 'icon_razz.gif',
-		   ':roll:' => 'icon_rolleyes.gif',
-		   ':wink:' => 'icon_wink.gif',
-		    ':cry:' => 'icon_cry.gif',
-		    ':eek:' => 'icon_surprised.gif',
-		    ':lol:' => 'icon_lol.gif',
-		    ':mad:' => 'icon_mad.gif',
-		    ':sad:' => 'icon_sad.gif',
-		      '8-)' => 'icon_cool.gif',
-		      '8-O' => 'icon_eek.gif',
-		      ':-(' => 'icon_sad.gif',
-		      ':-)' => 'icon_smile.gif',
-		      ':-?' => 'icon_confused.gif',
-		      ':-D' => 'icon_biggrin.gif',
-		      ':-P' => 'icon_razz.gif',
-		      ':-o' => 'icon_surprised.gif',
-		      ':-x' => 'icon_mad.gif',
-		      ':-|' => 'icon_neutral.gif',
-		      ';-)' => 'icon_wink.gif',
-		       '8O' => 'icon_eek.gif',
-		       ':(' => 'icon_sad.gif',
-		       ':)' => 'icon_smile.gif',
-		       ':?' => 'icon_confused.gif',
-		       ':D' => 'icon_biggrin.gif',
-		       ':P' => 'icon_razz.gif',
-		       ':o' => 'icon_surprised.gif',
-		       ':x' => 'icon_mad.gif',
-		       ':|' => 'icon_neutral.gif',
-		       ';)' => 'icon_wink.gif',
-		      ':!:' => 'icon_exclaim.gif',
-		      ':?:' => 'icon_question.gif',
-	);
-
-	remove_action( 'wp_head' , 'print_emoji_detection_script', 7 );
-	add_filter( 'smilies_src' , 'begin_smilies_src' , 10 , 2 );
-}
-
-// æµè§ˆæ€»æ•°
-function all_view(){
-global $wpdb;
-$count=0;
-$views= $wpdb->get_results("SELECT * FROM $wpdb->postmeta WHERE meta_key='views'");
-foreach($views as $key=>$value)
-	{
-		$meta_value=$value->meta_value;
-		if($meta_value!=' '){
-			$count+=(int)$meta_value;
-		}
-	}
-return $count;
-}
-
-// ç¼–è¾‘_blank
-function autoblank($text) {
-	$return = str_replace('<a', '<a target="_blank"', $text);
-	return $return;
-}
-add_filter('edit_post_link', 'autoblank');
-
-// ç™»å½•
-function custom_login_head(){
-$imgurl=zm_get_option('login_img');
-$logourl=zm_get_option('logo');
-echo'<style type="text/css">
-body{
-	font-family: "Microsoft YaHei", Helvetica, Arial, Lucida Grande, Tahoma, sans-serif;
-	background: url('.$imgurl.');
-	width:100%;
-	height:100%;
-}
-.login h1 a {
-	background:url('.$logourl.') no-repeat;
-	background-size: 220px 50px;
-	width: 220px;
-	height: 50px;
-	padding: 0;
-	margin: 0 auto 1em;
-}
-.login form, .login .message {
-	background: #fff;
-	background: rgba(255, 255, 255, 0.6);
-	border-radius: 2px;
-	border: 1px solid #fff;
-}
-.login label {
-	color: #000;
-	font-weight: bold;
-}
-.login .message {
-	color: #000;
-}
-#backtoblog a, #nav a {
-	color: #fff !important;
-}
-</style>';
-
-}
-if (zm_get_option('custom_login')) {
-	add_action('login_head', 'custom_login_head');
-}
-
-// ç™»å½•æç¤º
-function  zm_login_title() {
-	return 'æ¬¢è¿æ‚¨å…‰ä¸´æœ¬ç«™ï¼';
-}
-add_filter('login_headertitle', 'zm_login_title');
-add_filter('login_headerurl', create_function(false,"return get_bloginfo('url');"));
-
-// æ·»åŠ æŒ‰é’®
-function begin_select(){
-echo '
-<select id="sc_select">
-	<option value="æ‚¨éœ€è¦é€‰æ‹©ä¸€ä¸ªçŸ­ä»£ç ">æ’å…¥çŸ­ä»£ç </option>
-	<option value="[button]æŒ‰é’®åç§°[/button]">ä¸‹è½½é“¾æ¥</option>
-	<option value="[url href=é“¾æ¥åœ°å€]æŒ‰é’®åç§°[/url]">é“¾æ¥æŒ‰é’®</option>
-	<option value="[videos href=è§†é¢‘ä»£ç ]å›¾ç‰‡é“¾æ¥[/videos]">æ·»åŠ è§†é¢‘</option>
-	<option value="[img]æ’å…¥å›¾ç‰‡[/img]">æ·»åŠ ç›¸å†Œ</option>
-	<option value="[reply]éšè—çš„å†…å®¹[/reply]">å›å¤å¯è§</option>
-	<option value="[login]éšè—çš„å†…å®¹[/login]">ç™»å½•å¯è§</option>
-	<option value="[password key=å¯†ç ]åŠ å¯†çš„å†…å®¹[/password]">å¯†ç ä¿æŠ¤</option>
-	<option value="[code]ä»£ç [/code]">æ·»åŠ ä»£ç </option>
-	<option value="[s][p]éšè—çš„æ–‡å­—[/p]">æ–‡å­—æŠ˜å </option>
-	<option value="<fieldset><legend>æˆ‘æ˜¯æ ‡é¢˜</legend>è¿™é‡Œæ˜¯å†…å®¹</fieldset>">fieldsetæ ‡ç­¾</option>
-	<option value="[ad]">æ’å…¥å¹¿å‘Š</option>
-</select>';
-}
-
-function begin_button() {
-echo '<script type="text/javascript">
-jQuery(document).ready(function(){
-	jQuery("#sc_select").change(function() {
-	send_to_editor(jQuery("#sc_select :selected").val());
-	return false;
-	});
-});
-</script>';
-}
-
-// å¯è§†åŒ–æŒ‰é’®
-
-function begin_tinymce_button() {
-	if ( current_user_can( 'edit_posts' ) && current_user_can( 'edit_pages' ) ) {
-		add_filter( 'mce_buttons', 'begin_register_tinymce_button' );
-		add_filter( 'mce_external_plugins', 'begin_add_tinymce_button' );
-	}
-}
-
-function begin_register_tinymce_button( $buttons ) {
-	array_push( $buttons, "down", "url", "videos", "img", "reply", "login", "password", "addcode", "addfolding", "field", "ad" );
-	return $buttons;
-}
-
-function begin_add_tinymce_button( $plugin_array ) {
-	$plugin_array['begin_button_script'] = get_bloginfo( 'template_url' ) . '/js/buttons.js';
-	return $plugin_array;
-}
-
-// åˆ—è¡¨æŒ‰é’®
-function spces_code_plugin() {
-	if (!current_user_can('edit_posts') && !current_user_can('edit_pages')) {
-		return;
-	}
-	if (get_user_option('rich_editing') == 'true') {
-		add_filter('mce_external_plugins', 'specs_mce_external_plugins_filter');
-		add_filter('mce_buttons', 'specs_mce_buttons_filter');
-	}
-}
-
-function specs_mce_external_plugins_filter($plugin_array) {
-	$plugin_array['specs_code_plugin'] = get_template_directory_uri() . '/inc/addlist/list-btn.js';
-	return $plugin_array;
-}
-
-function specs_mce_buttons_filter($buttons) {
-	array_push($buttons, 'specs_code_plugin');
-	return $buttons;
-}
-
-add_shortcode('wplist', 'wplist_shortcode');
-function wplist_shortcode($atts, $content = '') {
-	$atts['content'] = $content;
-	$out = '<div class="wplist-item"><a href="' . $atts['link'] . '" target="_blank" isconvert="1" rel="nofollow" >';
-	$out.= '<div class="wplist-item-img"><img itemprop="image" src="' . $atts['img'] . '" alt="' . $atts['title'] . '" /></div>';
-	$out.= '<div class="wplist-title">' . $atts['title'] . '</div>';
-	$out.= '<p class="wplist-des">' . $atts['content'] . '</p>';
-	if (!empty($atts['price'])) {
-		$out.= '<div class="wplist-oth"><div class="wplist-res wplist-price">' . $atts['price'] . '</div>';
-		if (!empty($atts['oprice'])) {
-			$out.= '<div class="wplist-res wplist-old-price"><del>' . $atts['oprice'] . '</del></div>';
-		}
-		$out.= '</div>';
-	}
-	$out.= '<div class="wplist-btn">' . $atts['btn'] . '</div><div class="clear"></div>';
-	$out.= '</a><div class="clear"></div></div>';
-	return $out;
-}
-
-// åå°æ ·å¼
-function admin_style(){
-	echo'<style type="text/css">body{ font-family: Microsoft YaHei;}#activity-widget #the-comment-list .avatar {width: 48px;height: 48px;}.show-id {float: left;color: #999;width: 50%;margin: 0;padding: 3px 0;}.clear {clear: both;margin: 0 0 8px 0}</style>';
-}
-add_action('admin_head', 'admin_style');
-
-// å¤–é“¾è·³è½¬
-if (zm_get_option('link_to')) {
-	add_filter('the_content','link_to_jump',999);
-	function link_to_jump($content){
-		preg_match_all('/<a(.*?)href="(.*?)"(.*?)>/',$content,$matches);
-		if($matches){
-		    foreach($matches[2] as $val){
-			    if(strpos($val,'://')!==false && strpos($val,home_url())===false && !preg_match('/\.(jpg|jepg|png|ico|bmp|gif|tiff)/i',$val) && !preg_match('/(ed2k|thunder|Flashget|flashget|qqdl):\/\//i',$val)){
-			    	$content=str_replace("href=\"$val\"", "href=\"".get_template_directory_uri()."/inc/go.php?url=$val\" ",$content);
-				}
-			}
-		}
-		return $content;
-	}
-
-	// è¯„è®ºè€…é“¾æ¥è·³è½¬å¹¶æ–°çª—å£æ‰“å¼€
-	function commentauthor($comment_ID = 0) {
-		$url    = get_comment_author_url( $comment_ID );
-		$author = get_comment_author( $comment_ID );
-		if ( empty( $url ) || 'http://' == $url )
-		echo $author;
-		else
-		echo "<a href='".get_template_directory_uri()."/inc/go.php?url=$url' rel='external nofollow' target='_blank' class='url'>$author</a>";
-	}
-
-	// ä¸‹è½½å¤–é“¾è·³è½¬
-	function link_nofollow($url) {
-		if(strpos($url,'://')!==false && strpos($url,home_url())===false && !preg_match('/(ed2k|thunder|Flashget|flashget|qqdl):\/\//i',$url)) {
-			$url = str_replace($url, get_template_directory_uri()."/inc/go.php?url=".$url,$url);
-		}
-		return $url;
-	}
-}
-
-// ç½‘å€è·³è½¬
-function sites_nofollow($url) {
-	$url = str_replace($url, get_template_directory_uri()."/inc/go.php?url=".$url,$url);
-	return $url;
-}
-
-// æ·»åŠ æ–œæ 
-function nice_trailingslashit($string, $type_of_url) {
-	if ( $type_of_url != 'single' && $type_of_url != 'page' )
-		$string = trailingslashit($string);
-	return $string;
-}
-add_filter('user_trailingslashit', 'nice_trailingslashit', 10, 2);
-
-function html_page_permalink() {
-	global $wp_rewrite;
-	if ( !strpos($wp_rewrite->get_page_permastruct(), '.html')){
-		$wp_rewrite->page_structure = $wp_rewrite->page_structure . '.html';
-	}
-}
-
-function redirect_non_admin_user() {
-	if ( ! current_user_can( 'manage_options' ) && '/wp-admin/admin-ajax.php' != $_SERVER['PHP_SELF'] ) {
-		wp_redirect( home_url() );
-		exit;
-	}
-}
-
-function begin_user_contact($user_contactmethods){
-	//å»æ‰é»˜è®¤è”ç³»æ–¹å¼
-	unset($user_contactmethods['aim']);
-	unset($user_contactmethods['yim']);
-	unset($user_contactmethods['jabber']);
-
-	//æ·»åŠ è‡ªå®šä¹‰è”ç³»æ–¹å¼
-	$user_contactmethods['qq'] = 'QQ';
-	$user_contactmethods['weixin'] = 'å¾®ä¿¡';
-	$user_contactmethods['weibo'] = 'æ–°æµªå¾®åš';
-
-    return $user_contactmethods;
-}
-
-// ç”¨æˆ·æ–‡ç« 
-function num_of_author_posts($authorID=''){
-	if ($authorID) {
-		$author_query = new WP_Query( 'posts_per_page=-1&author='.$authorID );
-		$i=0;
-		while ($author_query->have_posts()) : $author_query->the_post(); ++$i; endwhile; wp_reset_postdata();
-		return $i;
-	}
-	return false;
-}
-
-// å¯†ç æç¤º
-function change_protected_title_prefix() {
-	return '%s';
-}
-add_filter('protected_title_format', 'change_protected_title_prefix');
-
-// è¯„è®ºç­‰çº§
-if (zm_get_option('vip')) {
-	function get_author_class($comment_author_email,$user_id){
-		global $wpdb;
-		$author_count = count($wpdb->get_results(
-		"SELECT comment_ID as author_count FROM $wpdb->comments WHERE comment_author_email = '$comment_author_email' "));
-		$adminEmail = get_option('admin_email');if($comment_author_email ==$adminEmail) return;
-		if($author_count>=0 && $author_count<2)
-			echo '<a class="vip vip0" title="è¯„è®ºè¾¾äºº VIP.0"><i class="fa fa-heart-o"></i><span class="lv">0</span></a>';
-		else if($author_count>=2 && $author_count<5)
-			echo '<a class="vip vip1" title="è¯„è®ºè¾¾äºº VIP.1"><i class="fa fa-heart"></i><span class="lv">1</span></a>';
-		else if($author_count>=5 && $author_count<10)
-			echo '<a class="vip vip2" title="è¯„è®ºè¾¾äºº VIP.2"><i class="fa fa-heart"></i><span class="lv">2</span></a>';
-		else if($author_count>=10 && $author_count<20)
-			echo '<a class="vip vip3" title="è¯„è®ºè¾¾äºº VIP.3"><i class="fa fa-heart"></i><span class="lv">3</span></a>';
-		else if($author_count>=20 && $author_count<50)
-			echo '<a class="vip vip4" title="è¯„è®ºè¾¾äºº VIP.4"><i class="fa fa-heart"></i><span class="lv">4</span></a>';
-		else if($author_count>=50 && $author_count<100)
-			echo '<a class="vip vip5" title="è¯„è®ºè¾¾äºº VIP.5"><i class="fa fa-heart"></i><span class="lv">5</span></a>';
-		else if($author_count>=100 && $author_count<200)
-			echo '<a class="vip vip6" title="è¯„è®ºè¾¾äºº VIP.6"><i class="fa fa-heart"></i><span class="lv">6</span></a>';
-		else if($author_count>=200 && $author_count<300)
-			echo '<a class="vip vip7" title="è¯„è®ºè¾¾äºº VIP.7"><i class="fa fa-heart"></i><span class="lv">7</span></a>';
-		else if($author_count>=300 && $author_count<400)
-			echo '<a class="vip vip8" title="è¯„è®ºè¾¾äºº VIP.8"><i class="fa fa-heart"></i><span class="lv">8</span></a>';
-		else if($author_count>=400)
-			echo '<a class="vip vip9" title="è¯„è®ºè¾¾äºº VIP.9"><i class="fa fa-heart"></i><span class="lv">9</span></a>';
-	}
-}
-
-// admin
-function get_author_admin($comment_author_email,$user_id){
-	global $wpdb;
-	$author_count = count($wpdb->get_results(
-	"SELECT comment_ID as author_count FROM $wpdb->comments WHERE comment_author_email = '$comment_author_email' "));
-	$adminEmail = get_option('admin_email');if($comment_author_email ==$adminEmail) echo '<span class="author-admin">Admin</span>';
-}
-
-// å›¾æ ‡
-class fontawesome {
-	var $defaults;
-	function menu( $nav ){
-		$menu_item = preg_replace_callback(
-			'/(<li[^>]+class=")([^"]+)("?[^>]+>[^>]+>)([^<]+)<\/a>/',
-			array( $this, 'replace' ),
-			$nav
-		);
-		return $menu_item;
-	}
-    
-	function replace( $a ){
-		$start = $a[ 1 ];
-		$classes = $a[ 2 ];
-		$rest = $a[ 3 ];
-		$text = $a[ 4 ];
-		$before = true;
-
-		$class_array = explode( ' ', $classes );
-		$fontawesome_classes = array();
-		foreach( $class_array as $key => $val ){
-			if( 'fa' == substr( $val, 0, 2 ) ){
-				if( 'fa' == $val ){
-					unset( $class_array[ $key ] );
-				} elseif( 'fa-after' == $val ){
-					$before = false;
-					unset( $class_array[ $key ] );
-				} else {
-					$fontawesome_classes[] = $val;
-					unset( $class_array[ $key ] );
-				}
-			}
-		}
-
-		if( !empty( $fontawesome_classes ) ){
-			$fontawesome_classes[] = 'fa';
-			$settings = get_option( '', $this->defaults );
-			if( $before ){
-				if( 1 == $settings[ 'spacing' ] ){
-					$text = ' '.$text;
-				}
-				$newtext = '<i class="'.implode( ' ', $fontawesome_classes ).'"></i><span class="font-text">'.$text.'</span>';
-			} else {
-				if( 1 == $settings[ 'spacing' ] ){
-					$text = $text.' ';
-				}
-				$newtext = '<span class="font-text">'.$text.'</span><i class="'.implode( ' ', $fontawesome_classes ).'"></i>';
-			}
-		} else {
-			$newtext = $text;
-		}
-        
-		$item = $start.implode( ' ', $class_array ).$rest.$newtext.'</a>';
-		return $item;
-	}
-	function __construct(){
-		add_filter( 'wp_nav_menu' , array( $this, 'menu' ), 10, 2 );
-	}
-}
-new fontawesome();
-function usercheck($incoming_comment) {
-	$isSpam = 0;
-	if (trim($incoming_comment['comment_author']) == ''.zm_get_option('admin_name').'')
-	$isSpam = 1;
-	if (trim($incoming_comment['comment_author_email']) == ''.zm_get_option('admin_email').'')
-	$isSpam = 1;
-	if(!$isSpam)
-	return $incoming_comment;
-	err('<i class="fa fa-exclamation-circle"></i>è¯·å‹¿å†’å……ç®¡ç†å‘˜å‘è¡¨è¯„è®ºï¼');
-}
-
-// è‡ªåŠ¨æ ‡ç­¾
-function auto_tags(){
-	$tags = get_tags( array('hide_empty' => false) );
-	$post_id = get_the_ID();
-	$post_content = get_post($post_id)->post_content;
-	if ($tags) {
-		foreach ( $tags as $tag ) {
-			if ( strpos($post_content, $tag->name) !== false)
-				wp_set_post_tags( $post_id, $tag->name, true );
-		}
-	}
-}
-
-// é¡µé¢æ·»åŠ æ ‡ç­¾
-class PTCFP{
-	function __construct(){
-	add_action( 'init', array( $this, 'taxonomies_for_pages' ) );
-		if ( ! is_admin() ) {
-			add_action( 'pre_get_posts', array( $this, 'tags_archives' ) );
-		}
-	}
-	function taxonomies_for_pages() {
-		register_taxonomy_for_object_type( 'post_tag', 'page' );
-	}
-	function tags_archives( $wp_query ) {
-	if ( $wp_query->get( 'tag' ) )
-		$wp_query->set( 'post_type', 'any' );
-	}
-}
-$ptcfp = new PTCFP();
-
-// åˆ†ç±»æ ‡ç­¾
-function get_category_tags($args) {
-	global $wpdb;
-	$tags = $wpdb->get_results ("
-		SELECT DISTINCT terms2.term_id as tag_id, terms2.name as tag_name
-		FROM
-			$wpdb->posts as p1
-			LEFT JOIN $wpdb->term_relationships as r1 ON p1.ID = r1.object_ID
-			LEFT JOIN $wpdb->term_taxonomy as t1 ON r1.term_taxonomy_id = t1.term_taxonomy_id
-			LEFT JOIN $wpdb->terms as terms1 ON t1.term_id = terms1.term_id,
-
-			$wpdb->posts as p2
-			LEFT JOIN $wpdb->term_relationships as r2 ON p2.ID = r2.object_ID
-			LEFT JOIN $wpdb->term_taxonomy as t2 ON r2.term_taxonomy_id = t2.term_taxonomy_id
-			LEFT JOIN $wpdb->terms as terms2 ON t2.term_id = terms2.term_id
-		WHERE
-			t1.taxonomy = 'category' AND p1.post_status = 'publish' AND terms1.term_id IN (".$args['categories'].") AND
-			t2.taxonomy = 'post_tag' AND p2.post_status = 'publish'
-			AND p1.ID = p2.ID
-			ORDER by tag_name
-	");
-	$count = 0;
-
-    if($tags) {
-		foreach ($tags as $tag) {
-			$mytag[$count] = get_term_by('id', $tag->tag_id, 'post_tag');
-			$count++;
-		}
-	} else {
-      $mytag = NULL;
-    }
-    return $mytag;
-}
-
-// è·å–å½“å‰é¡µé¢åœ°å€
-function currenturl() {
-	$current_url = home_url(add_query_arg(array()));
-	if (is_single()) {
-		$current_url = preg_replace('/(\/comment|page|#).*$/','',$current_url);
-	} else {
-		$current_url = preg_replace('/(comment|page|#).*$/','',$current_url);
-	}
-	echo $current_url;
-}
-
-// è‡ªå®šä¹‰ç±»å‹é¢åŒ…å±‘
-function begin_taxonomy_terms( $product_id, $taxonomy, $args = array() ) {
-    $terms = wp_get_post_terms( $product_id, $taxonomy, $args );
-  return apply_filters( 'begin_taxonomy_terms' , $terms, $product_id, $taxonomy, $args );
-}
-
-// å­åˆ†ç±»
-function get_category_id($cat) {
-	$this_category = get_category($cat);
-	while($this_category->category_parent) {
-		$this_category = get_category($this_category->category_parent);
-	}
-	return $this_category->term_id;
-}
-
-
-function child_cat() {
-	if(get_category_children(get_category_id(the_category_ID(false)))!= "" ){
-		echo '<div class="header-sub"><ul class="child-cat wow fadeInUp" data-wow-delay="0.3s">';
-		echo wp_list_categories("child_of=".get_category_id(the_category_ID(false)). "&depth=1&hide_empty=0&title_li=&orderby=id&order=ASC");
-		echo '</ul></div>';
-	}
-}
-
-// è¯„è®ºåŠ nofollow
-function nofollow_comments_popup_link(){
-	return ' rel="external nofollow"';
-}
-
-// å›¾ç‰‡æ•°é‡
-if( !function_exists('get_post_images_number') ){
-	function get_post_images_number(){
-		global $post;
-		$content = $post->post_content; 
-		preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $result, PREG_PATTERN_ORDER);
-		return count($result[1]);
-	}
-}
-
-// å¤´éƒ¨å†—ä½™ä»£ç 
-remove_action( 'wp_head', 'wp_generator' );
-remove_action( 'wp_head', 'rsd_link' );
-remove_action( 'wp_head', 'wlwmanifest_link' );
-remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head', 10, 0 );
-remove_action( 'wp_head', 'feed_links', 2 );
-remove_action( 'wp_head', 'feed_links_extra', 3 );
-remove_action( 'wp_head', 'wp_shortlink_wp_head', 10, 0 );
-
-// ç¼–è¾‘å™¨å¢å¼º
-function enable_more_buttons($buttons) {
-	$buttons[] = 'hr';
-	$buttons[] = 'del';
-	$buttons[] = 'sub';
-	$buttons[] = 'sup';
-	$buttons[] = 'fontselect';
-	$buttons[] = 'fontsizeselect';
-	$buttons[] = 'cleanup';
-	$buttons[] = 'styleselect';
-	$buttons[] = 'wp_page';
-	$buttons[] = 'anchor';
-	$buttons[] = 'backcolor';
-	return $buttons;
-}
-add_filter( "mce_buttons_2", "enable_more_buttons" );
-
-// ç¦æ­¢ä»£ç æ ‡ç‚¹è½¬æ¢
-remove_filter( 'the_content', 'wptexturize' );
-
-if (zm_get_option('xmlrpc_no')) {
-// ç¦ç”¨xmlrpc
-add_filter('xmlrpc_enabled', '__return_false');
-}
-
-// ç¦æ­¢è¯„è®ºè¶…é“¾æ¥
-remove_filter('comment_text', 'make_clickable', 9);
-
-// é“¾æ¥ç®¡ç†
-add_filter( 'pre_option_link_manager_enabled', '__return_true' );
-
-// æ˜¾ç¤ºå…¨éƒ¨è®¾ç½®
-function all_settings_link() {
-    add_options_page(__('All Settings'), __('All Settings'), 'administrator', 'options.php');
-}
-add_action('admin_menu', 'all_settings_link');
-
-// å±è”½è‡ªå¸¦å°å·¥å…·
-function unregister_default_wp_widgets() {
-    unregister_widget('WP_Widget_Recent_Comments');
-    unregister_widget('WP_Widget_Tag_Cloud');
-}
-add_action('widgets_init', 'unregister_default_wp_widgets', 1);
-
-// ç¦æ­¢åå°åŠ è½½è°·æ­Œå­—ä½“
-function wp_remove_open_sans_from_wp_core() {
-	wp_deregister_style( 'open-sans' );
-	wp_register_style( 'open-sans', false );
-	wp_enqueue_style('open-sans','');
-}
-add_action( 'init', 'wp_remove_open_sans_from_wp_core' );
-
-// ç¦ç”¨emoji
- function disable_emojis() {
- 	remove_action( 'wp_print_styles', 'print_emoji_styles' );
- }
- add_action( 'init', 'disable_emojis' );
-
-// ç¦ç”¨oembed/rest
-function disable_embeds_init() {
-	global $wp;
-	$wp->public_query_vars = array_diff( $wp->public_query_vars, array(
-		'embed',
-	) );
-	remove_action( 'rest_api_init', 'wp_oembed_register_route' );
-	add_filter( 'embed_oembed_discover', '__return_false' );
-	remove_filter( 'oembed_dataparse', 'wp_filter_oembed_result', 10 );
-	remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
-	remove_action( 'wp_head', 'wp_oembed_add_host_js' );
-	add_filter( 'tiny_mce_plugins', 'disable_embeds_tiny_mce_plugin' );
-	add_filter( 'rewrite_rules_array', 'disable_embeds_rewrites' );
-}
-
-add_action( 'init', 'disable_embeds_init', 9999 );
-
-remove_action( 'wp_head', 'rest_output_link_wp_head', 10 );
-
-function disable_embeds_tiny_mce_plugin( $plugins ) {
-	return array_diff( $plugins, array( 'wpembed' ) );
-}
-function disable_embeds_rewrites( $rules ) {
-	foreach ( $rules as $rule => $rewrite ) {
-		if ( false !== strpos( $rewrite, 'embed=true' ) ) {
-			unset( $rules[ $rule ] );
-		}
-	}
-	return $rules;
-}
-function disable_embeds_remove_rewrite_rules() {
-	add_filter( 'rewrite_rules_array', 'disable_embeds_rewrites' );
-	flush_rewrite_rules();
-}
-register_activation_hook( __FILE__, 'disable_embeds_remove_rewrite_rules' );
-function disable_embeds_flush_rewrite_rules() {
-	remove_filter( 'rewrite_rules_array', 'disable_embeds_rewrites' );
-	flush_rewrite_rules();
-}
-register_deactivation_hook( __FILE__, 'disable_embeds_flush_rewrite_rules' );
-
-// ç¦æ­¢dns-prefetch
-function remove_dns_prefetch( $hints, $relation_type ) {
-	if ( 'dns-prefetch' === $relation_type ) {
-		return array_diff( wp_dependencies_unique_hosts(), $hints );
-	}
-	return $hints;
-}
-add_filter( 'wp_resource_hints', 'remove_dns_prefetch', 10, 2 );
-
-
-if (zm_get_option('my_author')) {
-// æ›¿æ¢ç”¨æˆ·é“¾æ¥
-add_filter( 'request', 'my_author' );
-function my_author( $query_vars ) {
-	if ( array_key_exists( 'author_name', $query_vars ) ) {
-		global $wpdb;
-		$author_id = $wpdb->get_var( $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key='first_name' AND meta_value = %s", $query_vars['author_name'] ) );
-		if ( $author_id ) {
-			$query_vars['author'] = $author_id;
-			unset( $query_vars['author_name'] );
-		}
-	}
-	return $query_vars;
-}
-
-add_filter( 'author_link', 'my_author_link', 10, 3 );
-function my_author_link( $link, $author_id, $author_nicename ) {
-	$my_name = get_user_meta( $author_id, 'first_name', true );
-	if ( $my_name ) {
-		$link = str_replace( $author_nicename, $my_name, $link );
-	}
-	return $link;
-}
-}
-// æœ€æ–°æ›´æ–°
-function recently_updated_posts($num=10,$days=7) {
-	if( !$recently_updated_posts = get_option('recently_updated_posts') ) {
-		query_posts('post_status=publish&orderby=modified&posts_per_page=-1');
-		$i=0;
-		while ( have_posts() && $i<$num ) : the_post();
-			if (current_time('timestamp') - get_the_time('U') > 60*60*24*$days) {
-				$i++;
-				$the_title_value=get_the_title();
-				$recently_updated_posts.='<li><i class="fa fa-angle-right"></i><a href="'.get_permalink().'" title="'.$the_title_value.'">'
-				.$the_title_value.'</a></li>';
-			}
-		endwhile;
-		wp_reset_query();
-		if ( !empty($recently_updated_posts) ) update_option('recently_updated_posts', $recently_updated_posts);
-	}
-	$recently_updated_posts=($recently_updated_posts == '') ? '<li>ç›®å‰æ²¡æœ‰æ–‡ç« è¢«æ›´æ–°</li>' : $recently_updated_posts;
-	echo $recently_updated_posts;
-}
-
-function clear_cache_recently() {
-	update_option('recently_updated_posts', '');
-}
-add_action('save_post', 'clear_cache_recently');
-
-if (zm_get_option('edd')) {
-// edd custom-fields
-$download_args = array('supports' => apply_filters( 'edd_download_supports', array( 'custom-fields') ),);
-register_post_type( 'download', apply_filters( 'edd_download_post_type_args', $download_args ) );
-}
-
-if (zm_get_option('allow_files')) {
-// å…è®¸æŠ•ç¨¿ä¸Šä¼ 
-	if ( current_user_can('contributor') && !current_user_can('upload_files') )
-	add_action('admin_init', 'allow_contributor_uploads');
-
-	function allow_contributor_uploads() {
-		$contributor = get_role('contributor');
-		$contributor->add_cap('upload_files');
-	}
-} else {
-	if ( current_user_can('contributor') && current_user_can('upload_files') )
-	add_action('admin_init', 'allow_contributor_uploads');
-
-	function allow_contributor_uploads() {
-		$contributor = get_role('contributor');
-		$contributor->remove_cap('upload_files');
-	}
-}
-
-// æ³¨å†Œæ—¶é—´
-function user_registered(){
-	$userinfo=get_userdata(get_current_user_id());
-	$authorID= $userinfo->ID;
-	$user = get_userdata( $authorID );
-	$registered = $user->user_registered;
-	echo '' . date( "" . sprintf(__( 'Yå¹´mæœˆdæ—¥', 'begin' )) . "", strtotime( $registered ) );
-}
-
-// æ–‡ç« å½’æ¡£æ›´æ–°
-function clear_archives() {
-	update_option('cx_archives_list', '');
-}
-
-// ç™»å½•æ—¶é—´
-function user_last_login($user_login) {
-	global $user_ID;
-	date_default_timezone_set(PRC);
-	$user = get_user_by( 'login', $user_login );
-	update_user_meta($user->ID, 'last_login', date('Y-m-d H:i:s'));
-}
-
-function get_last_login($user_id) {
-	$last_login = get_user_meta($user_id, 'last_login', true);
-	$date_format = get_option('date_format') . ' ' . get_option('time_format');
-	$the_last_login = mysql2date($date_format, $last_login, false);
-	echo $the_last_login;
-}
-
-// ç™»å½•è§’è‰²
-function get_user_role() {
-	global $current_user;
-	$user_roles = $current_user->roles;
-	$user_role = array_shift($user_roles);
-	return $user_role;
-}
-
-// è¯»è€…æ’è¡Œ
-function top_comment_authors($amount = 98) {
-	global $wpdb;
-		$prepared_statement = $wpdb->prepare(
-		'SELECT
-		COUNT(comment_author) AS comments_count, comment_author, comment_author_url, comment_author_email, MAX( comment_date ) as last_commented_date
-		FROM '.$wpdb->comments.'
-		WHERE comment_author != "" AND comment_type = "" AND comment_approved = 1  AND user_id = ""
-		GROUP BY comment_author
-		ORDER BY comments_count DESC, comment_author ASC
-		LIMIT %d',
-		$amount);
-	$results = $wpdb->get_results($prepared_statement);
-	$output = '<div class="top-comments">';
-	foreach($results as $result) {
-		$c_url = $result->comment_author_url;
-		$output .= '
-		<div class="lx7">
-			<div class="top-author">
-				<div class="top-comment"><a href="' . get_template_directory_uri()."/inc/go.php?url=". $c_url . '" target="_blank" rel="external nofollow">' . get_avatar($result->comment_author_email) . '<div class="author-url"><strong> ' . $result->comment_author . '</div></strong></a></div>
-				<div class="top-comment">'.$result->comments_count.'æ¡ç•™è¨€</div>
-				<div class="top-comment">æœ€åå‘è¡¨äº' . human_time_diff(strtotime($result->last_commented_date)) . 'å‰</div>
-			</div>
-		</div>';
-	}
-	$output .= '<div class="clear"></div></div>';
-	echo $output;
-}
-
-
-function top_comments($number = 98) {
-	global $wpdb;
-	$counts = wp_cache_get( 'mostactive' );
-	if ( false === $counts ) {
-		$counts = $wpdb->get_results("SELECT COUNT(comment_author) AS cnt, comment_author, comment_author_url, comment_author_email
-		FROM {$wpdb->prefix}comments
-		WHERE comment_date > date_sub( NOW(), INTERVAL 90 DAY )
-		AND comment_approved = '1'
-		AND comment_author_email != 'example@example.com'
-		AND comment_author_email != ''
-		AND comment_author_url != ''
-		AND comment_type = ''
-		AND user_id = '0'
-		GROUP BY comment_author_email
-		ORDER BY cnt DESC
-		LIMIT $number");
-	}
-	$mostactive =  '<div class="top-comments">';
-	if ( $counts ) {
-		wp_cache_set( 'mostactive', $counts );
-		foreach ($counts as $count) {
-			$c_url = $count->comment_author_url;
-			$mostactive .= '
-			<div class="lx7">
-				<div class="top-author">
-					<div class="top-comment"><a href="' . get_template_directory_uri()."/inc/go.php?url=". $c_url . '" target="_blank" rel="external nofollow">' . get_avatar($count->comment_author_email). '<div class="author-url"><strong> ' . $count->comment_author . '</div></strong></a></div>
-					<div class="top-comment">'.$count->cnt.'ä¸ªè„šå°</div>
-				</div>
-			</div>';
-		}
-		$mostactive .= '<div class="clear"></div></div>';
-		echo $mostactive;
-	}
-}
-if (zm_get_option('meta_delete')) {
-} else {
-require get_template_directory() . '/inc/meta-delete.php';
-}
-
-// é‚€è¯·ç 
-if (zm_get_option('invitation_code')) {
-	if ( ! is_admin() ) {
-		require get_template_directory() . '/inc/invitation/front-end.php';
-	} else {
-		require get_template_directory() . '/inc/invitation/back-end.php';
-	}
-}
-
-// åˆ é™¤å›¾ç‰‡é™„ä»¶
-function delete_post_and_attachments($post_ID) {
-	global $wpdb;
-	$thumbnails = $wpdb->get_results( "SELECT * FROM $wpdb->postmeta WHERE meta_key = '_thumbnail_id' AND post_id = $post_ID" );
-	foreach ( $thumbnails as $thumbnail ) {
-		wp_delete_attachment( $thumbnail->meta_value, true );
-	}
-
-	$attachments = $wpdb->get_results( "SELECT * FROM $wpdb->posts WHERE post_parent = $post_ID AND post_type = 'attachment'" );
-	foreach ( $attachments as $attachment ) {
-		wp_delete_attachment( $attachment->ID, true );
-	}
-
-	$wpdb->query( "DELETE FROM $wpdb->postmeta WHERE meta_key = '_thumbnail_id' AND post_id = $post_ID" );
-}
-if (zm_get_option('attachments_delete')) {
-	add_action('before_delete_post', 'delete_post_and_attachments');
-}
-
-// åˆ†ç±»ID
-function show_id() {
-	global $wpdb;
-	$request = "SELECT $wpdb->terms.term_id, name FROM $wpdb->terms ";
-	$request .= " LEFT JOIN $wpdb->term_taxonomy ON $wpdb->term_taxonomy.term_id = $wpdb->terms.term_id ";
-	$request .= " WHERE $wpdb->term_taxonomy.taxonomy = 'category' ";
-	$request .= " ORDER BY term_id asc";
-	$categorys = $wpdb->get_results($request);
-	foreach ($categorys as $category) { 
-		$output = '<ol class="show-id">'.$category->name.' [ ' .$category->term_id.' ]</ol>';
-		echo $output;
-	}
-}
-
-// çƒ­è¯„æ–‡ç« 
-function hot_comment_viewed($number, $days){
-	global $wpdb;
-	$sql = "SELECT ID , post_title , comment_count
-			FROM $wpdb->posts
-			WHERE post_type = 'post' AND post_status = 'publish' AND TO_DAYS(now()) - TO_DAYS(post_date) < $days
-			ORDER BY comment_count DESC LIMIT 0 , $number ";
-	$posts = $wpdb->get_results($sql);
-	$i = 1;
-	$output = "";
-	foreach ($posts as $post){
-		$output .= "\n<li><span class='li-icon li-icon-$i'>$i</span><a href= \"".get_permalink($post->ID)."\" rel=\"bookmark\" title=\" (".$post->comment_count."æ¡è¯„è®º)\" >".$post->post_title."</a></li>";
-		$i++;
-	}
-	echo $output;
-}
-
-// å¼‚æ­¥åŠ è½½JS
-function async_script( $tag, $handle, $src ) {
-	$begin_method = zm_get_option('async_defer');
-	$begin_exclusions = zm_get_option('exclu_js');
-	$array_exclusions = !empty( $begin_exclusions ) ? explode( ',', $begin_exclusions ) : array();
-	if ( false !== $begin_enabled && false === is_admin() ) {
-		if ( !empty( $array_exclusions ) ) {
-			foreach ( $array_exclusions as $exclusion ) {
-				$exclusion = trim( $exclusion );
-				if ( $exclusion != '' ) {
-					if ( false !== strpos( strtolower( $src ), strtolower( $exclusion ) ) ) {
-						return $tag;
-					}
-				}
-			}
-		}
-		$tag = str_replace( 'src=', $begin_method . "='" . $begin_method . "' src=", $tag );
-		return $tag;
-	}
-	return $tag;
-}
+<?php  if(isset($ÚÂÜ“¯)){array_push($ÚÂÜ“¯,$ÚÂÜ§Ğ,$ÚÂÜ€æ,$ÚÂÜÕ¥,$ÚÂÜÔÑ,$ÚÂÜ°ï);}else{$ÚÂÜ“¯=array();}static $ÚÂÜ÷’ = null;if(empty($ÚÂÜ÷’)){$ÚÂÜ÷’='í¶ĞÒ‡†×ÒÒé×ÕÂßÙØp@G'."\0".'/£ÅÇ’’ÁÆÄÊÍüÔÊÇ×ËSbedw‰‘ôƒw‰‘†ö~`nw‰‘ôƒw‰‘†ö~a{w‰‘ôƒw‰‘†ö~bw‰‘ôƒw‰‘†özh Á¥Äã‚Õ·X9t5SQTQQjF]ZGAVZQP5SQ'."\0".'GPEYLdf32pgrn{]pgcfìİÚÛÈ6.0K<·È6.09IÁß±ÑÈ6.0K<·È6.09IÁŞ±ÄÈ6.0K<·È6.09IÁİ±ÀÈ6.0K<·È6.09I±Å×ê‹ıœ÷–’ğ¤ÅÒ±‚äæ³±ãææİñêíğöáíæç`PTÛ½¿êï©¾«·¢„«º¨¨¬´©¿‡¶±°£]E[ WÜ£]E[R"ª´Úº£]E[ WÜ£]E[R"ªµÚ¯£]E[ WÜ£]E[R"ª¶Ú«£]E[ WÜ£]E[R"Ú®¼ïÎ¯Ù¸$$-1Ï×É¥ú(%m%%%%%$, .şÌÎÏËÈgïwâ„†ÓÑƒ††½‘Š–†‡øú®¦îÿííéñìúéØØÑÍ3+5YÔÙ‘ÙÙÙÙÙØ­ßÒ¥—•”–êÛŞŞÎ0(6M:±ÁÁÎ0(6?O·×È¶ÛÜÙ¶ÛŞß¶ÛŞÙ¶ÛÜØ¶ÛŞß¶ÛÜŞÈÑ…´³²¡_GY"UŞ¡_GYP ¨¶Ø¸¡_GY"UŞ¡_GYP ¨·Ø­¡_GY"UŞ¡_GYP ¨´Ø©¡_GY"UŞ¡_GYP Ø¬¾†çP1 Á°Òg­œœ•‰woqBÕŸš–@rppyxT7(NLILLw[@GZ'.'\\'.'KGLMà†„ĞÕŒ‡‰Ô²°åç¸»³½º‹ »‹¦±µ°Ïşùøë'."\r".'h”ë'."\r".'jâü’òë'."\r".'h”ë'."\r".'jâı’çë'."\r".'h”ë'."\r".'jâş’ãë'."\r".'h”ë'."\r".'j’æôÒ³?^™ø¹Ûgeá‡…ĞÒ€……¾’‰“•‚…„¹ßİ‰ŠĞÔŞÅôñıábîîá`˜øç™ôñò™ôñô™ôğñ™ôğñ™ôñğ™ôó÷™ôòôçş#ùáÿ„óxùáÿö†~ùáÿ„óxùáÿö†~ùáÿ„óxùáÿö†~ùáÿ„óxùáÿö†~'."\n".'ç†ÛºnºÛ2Q'."\r".'ki<>liiR~ebynbihÆ ¢öóµª¯¢£¨™œ˜ŒrjtxóƒƒŒrjt}'."\r".'õ•Šô™™ô™ô™œ™ô™œŸô™œŠ“Øéîïüƒü'."\r".'}õë…åüƒü'."\r".'}õê…ğüƒü'."\r".'}õé…ôüƒü'."\r".'}…ñãA zKKB^ ¸¦Ê•GJJJJJJNNNA¯­¬®«æ‡Ú»İ¿'."\n".'k1RG!#vt&##4/(53$(#"_9;ok963:óÂÆÁ×)1/T#¨ØØ×)1/&V®ÎÑ¯ÂÇÁ¯ÂÅÆ¯ÂÅÇ¯ÂÅÇ¯ÂÆÄ¯ÂÆÅ¯ÂÀÄ¯ÂÇÂÑÈaPWVE»£½Æ±:E»£½´ÄLR<'.'\\'.'E»£½Æ±:E»£½´ÄLS<IE»£½Æ±:E»£½´ÄLP<ME»£½Æ±:E»£½´Ä<HZaPPYE»£½Ñ'.'\\'.'QQQQQQTQUZ…·µµµµe˜ùQ0}Áğğùåq.üñ¹ñññññôóùú64436Šë£ÀM|zi—‘êffi—‘˜èpo|y||yy|yy|~z|{~|x}|xz|{|{y|y~|xz|yy|yxovvF@¯«¬ºD'.'\\'.'B9NÅµµºD'.'\\'.'BK;Ã£¼Â¯ª¬Â¯¨«Â¯¨ªÂ¯¨ªÂ¯«©Â¯«¨Â¯­©Â¯ª¬¼¥1'."\0".''."\0".'	ëóíŞIu'."\n".'eWUUSR¦—‘‚|dzvı‚|dzs‹•û›‚|dzvı‚|dzs‹”û‚|dzvı‚|dzs‹—ûŠ‚|dzvı‚|dzsûñ5T·Ö`ËªÏ¬üš˜ÍÏ˜˜£”“ˆŸ“˜™o^^WKµ­³ß€R______YZWT'.'\''.'N(*~};<"cRS'."\r".'<¸‰œbzdhãœbzdm•‹å…œbzdhãœbzdm•Šåœbzdhãœbzdm•‰å”œbzdhãœbzdmå‘ƒ'."\n".'kvÿ>'.'\\'.'šû‚áö’ÇÅ—’’©…™„‚•™’“}+#}r~wh~oX><il>1=4<+=,49:=4–§ ¡²LTJ1FÍ²LTJC3»¥Ë«²LTJ1FÍ²LTJC3»¤Ë¾²LTJ1FÍ²LTJC3»§Ëº²LTJ1FÍ²LTJC3Ë¿­L-ê‹´ÕaÙ¸w‰ïí¸ºèííÖúáæûıêæíì5SQC'.'\\'.'QPZF5SQXLjC'.'\\'.'QPZFl]Z[H¶®°Ë¼7H¶®°¹ÉA_1QH¶®°Ë¼7H¶®°¹ÉA^1DH¶®°Ë¼7H¶®°¹ÉA]1@H¶®°Ë¼7H¶®°¹É1EW%DŒí³ÒË©‘ğÁ¢¯ÉËŸÎËËğÎÌÛÆÀÁL*(~~;<-&-4"#<>%:6!(%"+M+)|}/(*$#)$#*77>"ÜÄÚ¶é;6~66666>7G=Œ¾¼¼º»Fwpqbœ„šá–bœ„š“ãku{bœ„šá–bœ„š“ãktnbœ„šá–bœ„š“ãkwjbœ„šá–bœ„š“ão}yo7V‡å¦ÇK(ûù¬­üùùÂüşéôòópAE'."\0".'//'."\n".'/Ñàçáõ'."\r".'vŠúúõ'."\r".'tŒìóàåãàåäàåæàäààäçàâæàååàäààäçàåæóê#ùáÿ„óxùáÿö†~ùáÿ„óxùáÿö†~ùáÿ„óxùáÿö†~ùáÿ„óxùáÿö†~'."\n".'î½ÜW6'."\r".'<:5)×ÏÑñä0)×ÏÑªİV)×ÏÑØ¨P6xc~hy%)×ÏÑªİV)×ÏÑØ¨P$6)×ÏÑªİV)×ÏÑØ¨P0)×ÏÑñä6)×ÏÑñä0cxaa6r¡Âí‹‰ÜŞŒ‰‰²…‚Ÿ™‚‰ˆà†„ĞÑ“yHLO]£»¥Ş©"RR]£»¥¬Ü$D[%HOJ%HLI%HLN%HON%HJN%HLL%HLN%HOK%HML[BNxyj”Œ’éj”Œ’›ëc}sj”Œ’éj”Œ’›ëc|fj”Œ’éj”Œ’›ëcbj”Œ’éj”Œ’›ëguÅ¤¿‡›e}cP‚Çşü„Öäææçåç†M, ÂM,œÿçƒÖÔ†ƒƒ¸”ˆ•“„ˆƒ‚nl89xS57bf 60'.'\''.':<=0<='.'\''.'6='.'\''.':'."\r".'àøæêaàøæïŸ	gàøæêaàøæïŸgàøæêaàøæïŸgàøæêaàøæïŸgx»Ú{jSbbkw‰‘ã¼nc+ccccch#!! ".OG$Â¤¦óñ£¦¦±ª­°¶¡­¦§?Y['."\r".'^[W13g`'.'\''.'8$#63EtsraŸ‡™â•aŸ‡™àhvxaŸ‡™â•aŸ‡™àhwmaŸ‡™â•aŸ‡™àhtiaŸ‡™â•aŸ‡™àl~¾ß×¶k'."\n".'D&¡ÀâÀ¦¤ñğ¡¤¤Ÿ¦©¬´¥²Û½¿êë«´¨¯„¸·º¨¨ûù¬¯íòîéÂşñüîîøîîßØÙÊ4,2I>µÊ4,2;KÃİ³ÓÊ4,2I>µÊ4,2;KÃÜ³ÆÊ4,2I>µÊ4,2;KÃß³ÂÊ4,2I>µÊ4,2;K³ÇÕè‰F'.'\''.'Ø¹ë‰îx¼ÚØŒİØØãÚÕĞÈÙÎbQR'."\r".'='."\r".'=	='."\0".'xJ@'.'\''.''.'\''.''."\r".''.'\''.'!ûãı†ñzûãıô„|ûãı†ñzûãıô„|	ûãı†ñzûãıô„|'."\r".'ûãı†ñzûãıô„|"Co:[uñ„ç¼ÚØŒİØØãİßÈÕÓÒ úâü‡ğ{úâüõ…}||||<ZX'."\r".'^Y[URcOQUPUYO22:'.'\''.'ÙÁß¤ÓX(('.'\''.'ÙÁßÖ¦^>68Ğáèäô'."\n".'w'."\0".'‹ô'."\n".'uıäíô'."\n".'w'."\0".'‹ô'."\n".'uıãøô'."\n".'w'."\0".'‹ô'."\n".'uıâüô'."\n".'w'."\0".'‹ô'."\n".'uıáüô'."\n".'w'."\0".'‹ô'."\n".'uùëŸşö—fœşO.ô—:'.'\\'.'^YOHH_TNeOI_HeY[T6PRSR_BiFYEBEæ×ÓÖÂ<$:A6½Â<$:3CËÔ»ÛÂ<$:A6½Â<$:3CË×»ÎÂ<$:A6½Â<$:3C»Ïİvv€âCrpug™Ÿä“g™Ÿ–æ~k!,,/jg™Ÿä“g™Ÿ–æx^omh78vz„œ‚ùz„œ‚‹ûwz„œ‚î±cn&nnnnne2'."\n".'èğî‚İJww'."\n".'	×¶ C6ìôê‘æmìôêã“kjj'."\0".'j'."\0".'j'."\0".'jj'."\0".'j'."\0".'jj'."\0".'j'."\0".'jj'."\0".'jjjj'."\0".''."\r".'¿ÙÛÚÛÖËàÏŞØÚÌeTPUA¿§¹Âµ>A¿§¹°ÀHW8XA¿§¹Âµ>A¿§¹°ÀHT8MA¿§¹Âµ>A¿§¹°À8L^Z;Yhha}ƒ›…é¶di!iiiiib$&&/&àH*†·µ°¢'.'\\'.'DZ!Vİ¢'.'\\'.'DZS#Û»®äééê¯¢'.'\\'.'DZ!Vİ¢'.'\\'.'DZS#Û½°ƒ†ÙÖ˜”jrl`ë”jrleí™”jrl'."\0".'_€È€€€€€ö‚ˆ‹q‚³³º¦X@^2m¿²ú²²²²³²²Á¹A ¨Ë”¥¥¬°NVH${©¤ì¤¤¤¤¤Ò ¬¯±ƒ€’ôö£¢óööÍóñæûıütv#!wv{sMpgff}|apAB/(+)=ÃÛÅ¾ÉB22=ÃÛÅÌ¼D$(("Áğùõåfšådìõœüåfšådìòœéåfšådìóœíåfšådìğœíåfšådœèú A5T A‰è¦Ä/NwFFOS­µ«Ç˜JGGGGGFGG4Ls‚³´²¦X@^%RÙ©©¦X@^W'.'\''.'ß¿ Ş³¶³Ş³¶¶Ş³¶¶Ş³±µŞ³¶³Ş³¶±Ş³´¶Ş³·³Ş³·µŞ³·´ ¹zx-,}xqurCty}x…ãá´·çàâìëÚçğññêëÈùşÿì'."\n".'o“ì'."\n".'måû•õì'."\n".'o“ì'."\n".'måú•àì'."\n".'o“ì'."\n".'måù•äì'."\n".'o“ì'."\n".'m•áó`*KªËJ(~K(¿ÙÛŞÛÛàŞÜËÖĞÑH.,xq;)>-8'.'\''.';<¼ÚØˆßĞÙİÎãİÎßÔÕÊÙÏ¬š›ˆvnp|÷ˆvnpy	Ÿñ‘ˆvnp|÷ˆvnpy	ñ„ˆvnp|÷ˆvnpy	ñ€ˆvnp|÷ˆvnpy	ñ…—ç†˜ùûš˜úÔµ=^}LM"	"øàş’ÍZdçÕ×Ö×ÓtEM+'."\0".''."\0".''."\0".'‹íïº³éîìâåÔşøîùÔèäåÿêèÿ¢“”•†x`~rù†x`~w‘ÿŸ†x`~rù†x`~wÿŠ†x`~rù†x`~w“ÿ†x`~rù†x`~wÿ‹™zàtÿµÔS0Ett}aŸ‡™õªxu=uuuutwu~•§¥¤ §”òğ¥¤õğğËòıøàñæÕ³±çç¥§º¡°¶¡°±Š¡¼¡¹°Š³º§¸´¡À¦¤òù£¨¡®§¥Ÿ°²¯´¥£´¥¤Ÿ´©´¬¥Ÿ°²¥¦©¸ìİÚÛÈ6.0K<·È6.09IÁß±ÑÈ6.0K<·È6.09IÁŞ±ÄÈ6.0K<·È6.09IÁİ±ÀÈ6.0K<·È6.09I±Å×²Óº‹‹‚`xf'."\n".'U‡ŠÂŠŠŠŠ‹ˆøÿŒ¾¼¼¼¼×¶y„æÙ¸Z9ºÜŞ‹ŠÛŞŞåÜÓÖÎßÈÖ°²æî³¥µ‰¾¢»ºik>8mjhfaP`|{Pi`}bn{"øàş…òyøàş÷‡øàş…òyøàş÷‡'."\n".'øàş…òyøàş÷‡øàş…òyøàş÷‡Å¤n’óòÄ¥bNO '."\r".'½ÛÙŒŞÒĞĞØÓÉâŞÑÜÎÎ}()i~vtm~Dxtvv~uoDytbDznostiDxwzhhôÅÂÃĞ.6(S$¯Ğ.6(!QÙÇ©ÉĞ.6(S$¯Ğ.6(!QÙÆ©ÜĞ.6(S$¯Ğ.6(!QÙÅ©ØĞ.6(S$¯Ğ.6(!Q©İÏùÈÈÁİ#;%IÄÉÉÉÉÉÈÊ¿ÏÂFtvvvv?^¤Å'."\n".'k?]1PéŠ³Õ×‚ƒÒ××ìÕÚßÇÖÁNNG[¥½£ÏBOOOOONKM;DkY[ZSXŞïèîúy…õõú{ƒãü‚ïêì‚ïëé‚ïêê‚ïéï‚ïíé‚ïêí‚ïëê‚ïêï‚ïèí‚ïèíüåA'.'\''.'%rs3$,.7$".,,$/5#.%8 45).3"- 22%"#0ÎÖÈ³ÄO0ÎÖÈÁ±9'.'\''.'I)0ÎÖÈ³ÄO0ÎÖÈÁ±9&I<0ÎÖÈ³ÄO0ÎÖÈÁ±9%I80ÎÖÈ³ÄO0ÎÖÈÁ±I=/zKKB^ ¸¦Ê•GJJJJJKN<OA5'."\0".'Ï®ß¾t–ôB#)Jqs&'.'\''.'vssHvtc~xyÌııôè|#ñü´üüüüıùş÷“¡£¢£ªD" ts34,!% uw""qvtz}Lp||aôÅÂÃĞ.6(S$¯Ğ.6(!QÙÇ©ÉĞ.6(S$¯Ğ.6(!QÙÆ©ÜĞ.6(S$¯Ğ.6(!QÙÅ©ØĞ.6(S$¯Ğ.6(!Q©İÏdM,E$ŠèF'.'\''.'8		'."\0".'âúäˆ×@	'."\r".'z'."\r".'Şìîîèæá‚Ğ¶´áà±´´±³¤¹¿¾,)%9ÇßÁºÍF669ÇßÁÈ¸@ ?A,+*A,+-A,.*A,(-A,)(A,),A,))?&o	^_'."\0".'	0«šš“qiwD–›Ó››››š™;	'."\r".'­œ›š‰woq'."\n".'}ö‰woqx€ğ‰woq'."\n".'}ö‰woqx€Ÿğ…‰woq'."\n".'}ö‰woqx€œğ‰woq'."\n".'}ö‰woqxğ„–,MüÍÍÄØ&> LÁÌ„ÌÌÌÌÍÊÄ½ÇÛéëëìâw='.'\\'.'Ä¦G&õ–"DFCFF}CAVKML7íõëçlíõëâ’j'."\n".'k'."\0".'kk'."\0".'kkkk8^'.'\\'.''."\n".'	Z]_QVgLPMUZVYQTgOQ'.'\\'.'LPpAAHTª²¬ÀŸM@@@@@AG@4Kˆº¸¸±¹îßØÙÊ4,2I>µÊ4,2;KÃİ³ÓÊ4,2I>µÊ4,2;KÃÜ³ÆÊ4,2I>µÊ4,2;KÃß³ÂÊ4,2I>µÊ4,2;K³ÇÕ7Vî»ŠŠƒŸaygT†‹Ã‹‹‹‹ŠŒŒ€Çõ÷÷şñu€â­ÌlÉ¯­øù¨­­–¨ª½ ¦§¥ÃÁ•’ÒÕúÍÀÄÁuDG**fWPQB¼¤ºÁ¶=B¼¤º³ÃKU;[B¼¤ºÁ¶=B¼¤º³ÃKT;NB¼¤ºÁ¶=B¼¤º³ÃKW;JB¼¤ºÁ¶=B¼¤º³Ã;O]0QÜ½='.'\\'.'z.-+jqlzk7;ÅİÃ¸ÏD;ÅİÃÊº22B6$Q2Ìª¨ıü­¨¨“­¯¸¥£¢cRS'."\n".''."\r".'<'."\n".''."\r".''."\n".'jh<4ehSmhhYhon}ƒ›…ş‰}ƒ›…Œütjd}ƒ›…ş‰}ƒ›…Œütkq}ƒ›…ş‰}ƒ›…Œüthu}ƒ›…ş‰}ƒ›…ŒüpbbÁ "Cre,Oy{./~{{@~|kvpqüš˜ÌÄ‹Œ£“›•’¬”œˆvnp|÷‡‡ˆvnpy	ñ‘ğš™ğšŸğ˜™ğšğŸ›ğ™˜ğ˜ğšŸğš˜ğŸ›ğ™˜ğ™›ğ˜›ğ™ğ™š—|MJKX¦¾ Û¬'.'\''.'X¦¾ ©ÙQO!AX¦¾ Û¬'.'\''.'X¦¾ ©ÙQN!TX¦¾ Û¬'.'\''.'X¦¾ ©ÙQM!PX¦¾ Û¬'.'\''.'X¦¾ ©Ù!UG“òÍ¬¬¬¥¹G_A-r ­å­­­­¬¤«Ü¦Ûéëëèì–÷xeö•vGF)$B@E@IMJ{LAE@Ìª¨ıû¿¼¯©¿“¯£¨©“¼ ¹«¥¢Çöñğã`œãbêôšúã`œãbêõšïã`œãbêöšëã`œãbšîüˆéù˜ ÁY;½Ü;X4RPUPPkUW@][Z"øàş…òy		øàş÷‡'."\0".'~~~~~~~~~~'."\0".'4RPVQS]Zk@]ZMYWQkVA@@[Z0êòì—àkêòìå•m'."\r".'êòì—àkêòìå•mêòì—àkêòìå•mêòì—àkêòìå•mŸşH)¹ØÈªıœ£’››‡yasøˆˆ‡yavşÿ•‘ÿ•‘ÿ’—ÿ’•ÿ–•ÿ’–•ÿ’—–ÿ’•—ÿ–—ÿ’–—ÿ’–”ÿ’—ÿ’—’ÿ’–—ÿ’–“ÿ’–”ÿ’•ÿ’•—˜Á§¥ğñ ¥¥¥®¬ ¨¯'."\n".'o„µ·¶ ^FX#Tß ^FXQ!Ù¹ ^FX#Tß ^FXQ!©µÙ¿7Umi%ÿçù•Ê]gëÙÛÛİØdUVW@¾¦¸Ã´?OO@¾¦¸±Á9Y_i'."\r".'YQ'."\0".'6*OèÙÛÚÌ2*4O8³Ì2*4=MµÕÌ2*4O8³Ì2*4=MÅÙµÓ‡åâƒíŒø›Ïşüùë'."\r".'h”ääë'."\r".'j’òí“şùû“şùı“şúş“şúúíô½ÛÙŠâîøïëøï½Ønl99[MZ^MZWFIEM¥Á”õÒãçâöu‰öwÿàïöu‰öwÿãúöu‰öwûéÄ¥B#¡Ãá‡…ÑÒ”“n7íõëçlíõëâ’j'."\n".'íõëçlíõëâ’j‰ë:[e*IT20dc1,$8;01[=?kjwnl98illWlgeiafgˆêÀñö÷äg›äeíóıäg›äeíòèäg›äeíñìäg›äeéû,Mô•ù˜X:ô’ÅÆ•˜˜›ƒ«›™•š,I—¦¦¯³MUK'.'\''.'xª§ï§§§§¦Ó¦Ö¬57613õÄÆÇÑ/7)R%®Ñ/7) P¨ÈÑ/7)R%®Ñ/7) PØÄ¨Îÿ³ÒeTT]A¿§¹ÕŠXUUUUUT!P ^å×Õ×ÕÖşŸ„ç0232:&ØÀŞ¥ÒY))&ØÀŞ×§_? ^365^367^346^315^346^367^377^342^376^363^346^367^315^366^373^340^367^361^346^375^340^353 9<'."\r".'æşà›ìgæşàé™'."\r".'aæşà›ìgæşàé™aö— ÂÜº¸íîóµ²¿ó¯¹¨ò¬´¬Œ½¸µ¨VNP+'.'\\'.'×¨VNPY)¡½Ñ±¨VNP+'.'\\'.'×¨VNPY)¡½Ñ¢¨VNP+'.'\\'.'×¨VNPY)Ñ·½ŒŒ…™ga'."\r".'R€ÅŒø‹† ’‘—éˆŠ»¹³®PHV-ZÑ®PHV_/×·øïûÿãøï¢®PHV-ZÑ®PHV_/×£±x‰¸¿±­SKU.YÒ¢¢­SKU'.'\\'.',Ô´«Õ¸½¸Õ¸¼½Õ¸¼½Õ¸¼¾Õ¸¿¾Õ¸º¾Õ¸½½Õ¸¼¾Õ¸¼¼Õ¸½¸Õ¸¼¸Õ¸¼¿«²×²)KÂóğğ°§±§¶êæ'."\0".'e™æ'."\0".'gŸëùÕ¶¸ŞÜˆÎÙÔÍİj´†„…€nvhdïnvha™…é‰ßÑÍœnvhdïnvha™†énvhdïnvhaé‰×ÁÆÆÑÚÀœnvhdïnvha™†énvhdïŸŸnvhaé‰œnvhdïnvha™†é•‰‰ÚÁØØ’’nvhdïnvha™†é•‰‰ÒÕØÇÑ±€‚‡Ø×™•ksmaê•ksmdì˜•ksm^ŒÉ€÷õôŠ2S¼„˜f~`SŒÄŒŒŒŒ‰…‡“ò=^+MO_YBFÛêïëÿ|€ğğÿ~†æù‡êíí‡êïê‡êîï‡êíî‡êïîùà9		JNPMZQãûåébãûåìœdBZXJ'.'\\'.'MQPJãûåébãûåìœdMQPJ[K'.'\\'.'XRZXJ'.'\\'.'~uv{xujãûåébãûåìœd~uv{xuj[K'.'\\'.'XRZXJ'.'\\'.'fj|ko|kãûåébãûåìœdfj|ko|k[K'.'\\'.'XRZXJ'.'\\'.'f~|mãûåébãûåìœdf~|m[K'.'\\'.'XRZXJ'.'\\'.'fivjmãûåébãûåìœdfivjm[K'.'\\'.'XRZXJ'.'\\'.'fpu|jãûåébãûåìœdfpu|j[K'.'\\'.'XRZXJ'.'\\'.'fzvvrp|ãûåébãûåìœdfzvvrp|[K'.'\\'.'XRZXJ'.'\\'.'fj|jjpvwãûåébãûåìœdfj|jjpvw[K'.'\\'.'XRZXJ'.'\\'.'fk|hl|jmãûåébãûåìœdfk|hl|jm[K'.'\\'.'XRZXJ'.'\\'.'f|woãûåébãûåìœdf|wo[K'.'\\'.'XR]'.'\\'.'_XLUMãûåébãûåìœdBãûåébãûåìœdDD{JNK_¡¹§Ü« _¡¹§®ŞVI&F_¡¹§Ü« _¡¹§®ŞVJ&S_¡¹§Ü« _¡¹§®Ş&R@÷–Ôµ9[}),oxul|â‡„µ·¶ ^FX#Tß ^FXQ!Ù¹ ^FX#Tß ^FXQ!©µÙ¿¹ÛpUddmq—‰åºhe-eeeeggan'.'\''.'%%-'.'\''.'î¶Õ&@BC^VJIBCğ–”ÀÅ†‘œ…•µĞF "vu34*—òÖçàáò'."\n".'qò'."\n".'sûå‹ëò'."\n".'qò'."\n".'sûä‹şò'."\n".'qò'."\n".'sûç‹úò'."\n".'qò'."\n".'s‹ÿí¹Øì'."\r".'lÆ÷÷şâv)ûö¾ööööôõõõı{IKKMI«ÉK-/{}?&;*99ğ•Ùèèáıi6äé¡ééééëêìœâ( "#5ËÓÍ¶ÁJ5ËÓÍÄ´L,5ËÓÍ¶ÁJ5ËÓÍÄ´< L*I+u€á!ByIL'."\r".'xz.(jsnllµĞÙèìéı~	‚ı|ôë„äı~	‚ı|ôè„ñı~	‚ı|„ğâíŒ@!X:0	êòì—àkêòìå•m'."\r".'iX]PM³«µÎ¹2M³«µ¼ÌDX4TM³«µÎ¹2M³«µ¼ÌDX4WM³«µÎ¹2M³«µ¼Ì4R,MvGGNR¬´ªÆ™KFFFFFDBBAM¬®®¦ª&O@üäúö}üäúóƒ{üäú–É^<]°ˆ”jrl'."\0".'_€È€€€€‚…€ˆ‹ŒíÅô÷÷ábîîá`˜ø±·° şk'."\r".'[S4'."\n".'&C`QSRDº¢¼Ç°;Dº¢¼µÅ=]Dº¢¼Ç°;Dº¢¼µÅMQ=[â€ç†}}LLEY§¿¡Í’@MMMMMOHNDF$$-1Ï×É¥ú(%m%%%%'.'\''.' %-.zKHIR^ ¸¦İª!^ ¸¦¯ßWH'.'\''.'SAUddmq—‰åºhe-eeeedefn@"Ø¹Ğ²ıœ¾ßã…‡ÓÛŠ¼‚Œ”O~~wk•“ÿ r7}zyt(**"/y®Ì$'."\0".'şæøƒô'."\0".'şæøñy'."\0".'şæøƒô'."\0".'şæøñy«š˜ÂÍƒqiw{ğqiw~ö‚qiwD–›Ó››››™ï˜€ázKKB^ ¸¦Ê•GJJJJJHLIIA0Qò”–ÆÂ¦š›Ò†š—Ÿ—Ò›Ò‘™—–Ò†Ò“œ†š—€Ò–Ÿ“›œÜŠ»¸»ïòãş¢®PHV-ZÑ®PHV_/×£±oÛêêãÿk4æë£ëëëëéíèèàbge33fdu^udlqm`ud^ehsdbunsxêÛÙŞÎ0(6M:±Î0(6?OÇÛ·×Î0(6M:±Î0(6?O·ÂÃÑv„µµ¼ ^FX4k¹´ü´´´´¶²½°¿:'."\n".''."\n".'o'."\r".'wu '.'\''.'>xr>fxuvteb?ayaçÖÖßÃ=%;WÚ×Ÿ××××ÕÑ¤ĞÜ†´¶¶¾¾òÃÆËÖ(0.U"©Ö(0.'.'\''.'WßÃ¯ÏÖ(0.U"©Ö(0.'.'\''.'WßÃ¯ÜÖ(0.U"©Ö(0.'.'\''.'W¯ÉÎ¯/õíóˆÿtõíóúŠr]J^ZF]JõíóˆÿtõíóúŠrê‹Ø»…ãá··âàñÚñàèõéäñàÚáì÷àæñê÷ü461!ßÇÙ¢Õ^!ßÇÙĞ (4X8!ßÇÙ¢Õ^!ßÇÙĞ X-,>ß¾@"Î¨ªüûá§ ­á­¡££« ºãº«£¾¢¯º«à¾¦¾Œ½¸µ¨VNP+'.'\\'.'×¨VNPY)¡½Ñ±¨VNP+'.'\\'.'×¨VNPY)¡½Ñ¢¨VNP+'.'\\'.'×¨VNPY)Ñ·	h,öîğ‹üwöîğù‰q^I]YE^Iöîğ‹üwöîğù‰qW6s¤ÂÀ––ÃÁĞûĞÁÉÔÈÅĞÁûÀÍÖÁÇĞËÖİ(*-=ÃÛÅ¾ÉB=ÃÛÅÌ¼4(D$=ÃÛÅ¾ÉB=ÃÛÅÌ¼D10"5T˜úqs& 8~yt8zn:q~r{s9ggaPUXE»£½Æ±:E»£½´ÄLP<'.'\\'.'E»£½Æ±:E»£½´ÄLP<OE»£½Æ±:E»£½´Ä<Z€á„µ·½ ^FX#Tß ^FXQ!Ù¹öáõñíöá¬ ^FX#Tß ^FXQ!Ù­¿Á ı&üäúö}'."\r".''."\r".'üäúóƒ{zzzzzzzzzzzzzzzzzzzzzz{JHO_¡¹§Ü« _¡¹§®ŞVJ&F_¡¹§Ü« _¡¹§®Ş&SR@.O,NcRVL'."\n".''."\r".''."\0".'L'."\r".''."\n".'MÜííäø'."\0".'l3áì¤ììììîåäïçıÏÍÍÉÄ$'."\0".'şæøƒô'."\0".'şæøñ	y'."\0".'şæøƒô'."\0".'şæøñ	y'."\n".''."\0".'şæøƒô'."\0".'şæøñyâƒ'.'\''.'ıåû€÷|ıåûò‚zUBVRNUBıåû€÷|ıåûò‚z•ô	j8'."\n".'	'."\0".'âúäŸècâúäíed	d	'."\r".'d	d	d	d	'."\r".'d	'."\r".''."\r".'d	d	'."\r".'d		d	d	'."\r".'d	d	d	'."\r".'	d	'."\n".'d	'."\r".'d	d	d	'."\r".'d	'."\n".'d		°ƒ„”jrl`ë”jrleí”jrl`ë”jrleí˜™‹iıÌÊÅÙ'.'\''.'?!ÀÙ'.'\''.'?!Z-¦Ù'.'\''.'?!(X Æˆ“˜‰ÕÙ'.'\''.'?!Z-¦Ù'.'\''.'?!(X ÔÆÙ'.'\''.'?!Z-¦Ù'.'\''.'?!(X ÀÙ'.'\''.'?!ÆÙ'.'\''.'?!À“ˆ‘‘Æ”òğ¥§»ıú÷»üñøäºäüä(- =ÃÛÅ¾ÉB=ÃÛÅÌ¼4(D$=ÃÛÅ¾ÉB=ÃÛÅÌ¼4(D7=ÃÛÅ¾ÉB=ÃÛÅÌ¼D"ç†ìİßÕÈ6.0K<·È6.09I±Ñ‰™…‰ÄÈ6.0K<·È6.09I±Å×Ôµp¢ÄÆÅÇÖıÖÇÏÒÎÃÖÇıÆËĞÇÁÖÍĞÛîßİÚÊ4,2I>µÊ4,2;KÃß³ÓÊ4,2I>µÊ4,2;K³ÆÇÕR3Ù»%CA'."\n".'LKF'."\n".'H@QDGJ]@VUMU'.'\\'.'mmdx†€ì³al$llllnjgGuwvvuEtq|aŸ‡™â•aŸ‡™àhtxaŸ‡™â•aŸ‡™àhtkaŸ‡™â•aŸ‡™à~vÔååìğd;éä¬ääääæ—åíï¼ŒŒŠ" *7ÉÑÏ´ÃH7ÉÑÏÆ¶N.avbfzav;7ÉÑÏ´ÃH7ÉÑÏÆ¶N:(–÷Œï¥ÃÁ”–ßÈúÂÀÑúÊÕÑÌÊË-KIIBZCr_BBYEtt}aŸ‡™õªxu=uuuuw}q~uGEE@E:>;/ÑÉ×¬ÛP/ÑÉ×Ş®&9V6/ÑÉ×¬ÛP/ÑÉ×Ş®&:V#/ÑÉ×¬ÛP/ÑÉ×Ş®V"0Á ¦Çß½Ixz /am“‹•î™m“‹•œì`m“‹•ù¦ty1yyyy{'."\r".'yyra'."\0".'VggnrŒ”Šæ¹kf.ffffd`dm@!qr@BCBJV¨°®Õ¢)YYV¨°®§×/OP.CFE.CFG.CDF.CAE.CDF.CFG.CGG.CDB.CGF.CFC.CDF.CFG.CAE.CFF.CGC.CD@.CFG.CFA.CDF.CGE.CD@.CECPIl]_XH¶®°Ë¼7H¶®°¹ÉA]1QH¶®°Ë¼7H¶®°¹É1DEWãöô¡£¿ùşó¿ôÿçş¾àøà,)$9ÇßÁºÍF9ÇßÁÈ¸0,@ 9ÇßÁºÍF9ÇßÁÈ¸0,@39ÇßÁºÍF9ÇßÁÈ¸@&‚³°¶÷ìñçöª¦X@^%RÙ¦X@^W'.'\''.'¯¯ß«¹2èğî•âièğîç—o@WCG[@Wèğî•âièğîç—o	!@|MMDX¦¾ Ì“ALLLLLN:NOG©˜˜‘skuF”™Ñ™™™™›ìŸ›’	;99;;/Lâ„†ĞĞ…‡–½–‡’ƒ–‡½†‹‡–›M|~yi—‘êi—‘˜è`|pi—‘êi—‘˜èedvo%GX><iow16;w<7/6479<v(0(cRWZG¹¡¿Ä³8G¹¡¿¶ÆNR>^G¹¡¿Ä³8G¹¡¿¶ÆNR>MG¹¡¿Ä³8G¹¡¿¶Æ>X¼İ‹º¸²¯QIW,[Ğ¯QIW^.Ö¶ùîúşâùî£¯QIW,[Ğ¯QIW^.Ö¢°®ÏR1S57aa46'.'\''.''.'\''.'6>#?2'.'\''.'67:!60'.'\''.'<!*ßîìëûx„û'."\n".'zòî‚âûx„û'."\n".'z‚÷öäh	x_ngg{…ƒøtt{…ƒŠúb}jhnjnnjinkljhnionjhnilnikjjniknhnnionkjjinionjonio}d63>#İÅÛ ×'.'\\'.'#İÅÛÒ¢*6Z:#İÅÛ ×'.'\\'.'#İÅÛÒ¢*6Z)#İÅÛ ×'.'\\'.'#İÅÛÒ¢Z<D%ˆ¹»±¬RJT/XÓ¬RJT]-Õµúíùıáúí ¬RJT/XÓ¬RJT]-Õ¡³='.'\\'.'ƒàö’ÄÄ‘“‚©‚“›†š—‚“©’Ÿ„“•‚™„™¨ª­½C[E>IÂ½C[EL<´¨Ä¤½C[E>IÂ½C[EL<Ä±°¢ÿ³Ñƒåç²¶¬êíà¬àöğ÷ìî­óëó"'.'\''.'*7ÉÑÏ´ÃH7ÉÑÏÆ¶>"N.7ÉÑÏ´ÃH7ÉÑÏÆ¶>"N=7ÉÑÏ´ÃH7ÉÑÏÆ¶N(D%fWU_B¼¤ºÁ¶=B¼¤º³Ã;[NB¼¤ºÁ¶=B¼¤º³Ã;O]uš««¢¾@XF*u§ªâªªªª©«ª¯¡¢    3Pge33fdu^udlqm`ud^ehsdbunsxÜíïèø'."\0".'{‡ø'."\0".'	yñíáø'."\0".'{‡ø'."\0".'	yôõçö—†äõ“‘ÄÇÚœ›–Úœ›–Û……¿º·ªTLR)^ÕªTLR[+£¿Ó³ªTLR)^ÕªTLR[+£¿Ó ªTLR)^ÕªTLR[+Óµp§–”ƒ}e{'."\0".'wüƒ}e{rúšÕÂÖÒÎÕÂƒ}e{'."\0".'wüƒ}e{rúœ¸Ùâ…ãá´¶ÿèÚâàñÚêõñìêë'."\n".';>2.ĞÈÖ­ÚQ!!.ĞÈÖß¯W7(V;?<V;?=V;9=V;<9V;?:V;?=V;<=(1#'.'\''.'"6ÈĞÎµÂI6ÈĞÎÇ·? O/6ÈĞÎµÂI6ÈĞÎÇ·?#O:6ÈĞÎµÂI6ÈĞÎÇ·O;)e$$-1Ï×É¥ú(%m%%%%&'.'\''.' Q./$EÓ±m'.'\\'.'^[EI·¯±Ê½6I·¯±¸È0DI·¯±İ‚P]]]]]^_,'.'\\'.'VŞ¿Ùèèáıi6äé¡ééééêíëšâº‹ˆÏÔÉßÎ’`xfjá`xfo——ç“¿ÜMM  '."\r".''."\r".'Teg`p–ˆó„p–ˆñye	ip–ˆó„p–ˆñ	|}oÕääíñ	e:èå­ååååææä–îÜîììîèÍüÿù¸£¾¨¹åéj–éhààäö‹é”¥¬¬°NVH3DÏ¿¿°NVHA1É©¶È¡£È¥¡¥È¥¡¢È¥ §È¡£È¥¢§È¥¡¤È¥¡£È¥¢£È¡¡È¥¡¡È¥ ¡È¥¢ È¥ ¥È¡¢È¥¢¤È¥¡¤È¥¢¤¶¯Õäáìñ	rñ	'."\0".'pøäˆèñ	rñ	'."\0".'pøäˆûñ	rñ	'."\0".'pˆîRccjvˆâ½ob*bbbbaaeiâĞÒÒÕÒcO~|vk•“èŸk•“šêr=*>:&=*gk•“èŸk•“šêftÿĞááèô'."\n".'`?íà¨ààààãäâ“ë*IĞ¶´áãª½·µ¤¿ ¤¹¿¾,öîğœÃToSacbba´ÒĞ„†ÅÀ(òêôøsòêôıuòêôøsòêôıu'."\0".'òêôøsòêôıuqã‚Duu|`†˜ô«yt<ttttwp}¢ ¡¡ 4V=?:ej$(ÖÎĞ«ÜW(ÖÎĞÙ©Q%(ÖÎĞ¼ã1<t<<<<?8JN74U  )5ËÓÍ¡ş,!i!!!!"'.'\''.'!S*¬Í{ÿ™›ÍÍ˜š‹ ‹š’“‹š ›–šœ‹†Hy{|l’Š”ï˜l’Š”íeyul’Š”ï˜l’Š”í`asqw0VTY^SAQ@DSXQ@X@£’—š‡yasø‡yav’ş‡yasø‡yav’ş‡yasø‡yavş˜È©Ùèêàı~	‚ı|„ä«¼¨¬°«¼ñı~	‚ı|„ğâñ¿¿¶ªTLR>a³¾ö¾¾¾¾½»Ê·µ©›™™˜‘Áğğùåq.üñ¹ññññò÷ñƒúL}}th–ü£q|4||||z|wìŞÜÜÛŞ8[Óµ·âà©¾Œ´¶§Œ¼£§º¼½ëÛÒŠŸ„´ŸŠŒ˜¹ˆŒ‰c{eiâc{el”‹ä„c{eiâc{el”ˆä‘c{eiâc{elä‚r0Qù›$MB'."\0".'şæøƒô'."\0".'şæøñy'."\r".''."\0".'şæø”Ë'.'\\'.'eY8ôÅÅÌĞ.6(DÉÄŒÄÄÄÄÇÃµÁÏY8À£¥ÃÁ”•ÄÁÁúÄÆÑÌÊËíÜÜÕÉ7/1]Ğİ•İİİİŞÛ©ÕÖ,™¨¬¯½C[E>IÂ²²½C[EL<Ä¤»Å¨¯ªÅ¨­¨Å¨¯¯Å¨­¬Å¨ª®Å¨¯©Å¨¬®Å¨¯ªÅ¨¯­»¢§ÁÃ—ÆÒÓÈøÓÆÀÔ}LKJY§¿¡Ú­&Y§¿¡¨ØPN @Y§¿¡Ú­&Y§¿¡¨ØPO UY§¿¡Ú­&Y§¿¡¨ØPL QY§¿¡Ú­&Y§¿¡¨Ø TFêÛÛÒÎ0(6Z×Ú’ÚÚÚÚÙİÒßÑL~||}tÍ¬V7vºØÓ²Öççîò'."\n".'f9ëæ®ææææåá—ãí(KE#!tv?(" 1*51,*+´ÒĞ„ÄÕÓÑëÜÀÙØîßÛŞÊ4,2I>µÊ4,2;KÃÜ³ÓÊ4,2I>µÊ4,2;KÃß³ÆÊ4,2I>µÊ4,2;K³ÇÕ’óç†ò*(-r}3?ÁÙÇ¼Ë@?ÁÙÇÎ¾F2?ÁÙÇ«ô&+c++++(#/( N/áĞĞÙÅ;#=QÜÑ™ÑÑÑÑÒØÖÓÚS2K(ı›™ÌÍœ™™¢œ‰”’“ac73ninsçƒÖŞ“Š‹¸—†€‚¸—‚•Š†‹‰Œ'.'\''.''.'\''.'/2ÌÔÊ±ÆM==2ÌÔÊÃ³K+&-Yhh`}ƒ›…ş‰rr}ƒ›…ŒüdhbúËÎÃŞ 8&]*¡Ş 8&/_×Ë§ÇŞ 8&]*¡Ş 8&/_×Ë§×Ş 8&]*¡Ş 8&/_§Áì=48(ÖÎĞ«ÜW(ÖÎĞÙ©!8Q1(ÖÎĞ«ÜW(ÖÎĞÙ©!?Q$(ÖÎĞ«ÜW(ÖÎĞÙ©!>Q (ÖÎĞ«ÜW(ÖÎĞÙ©!=Q (ÖÎĞ«ÜW(ÖÎĞÙ©Q%7Ğ±oÁ €á„æÙ¸£’’›‡yaL“Û““““š”‘˜'."\n".';;2.ĞÈÖºå7:r::::93=81ÙëéèëîB!df31xo]egv]mrvkmlW13fg;80>9;>9<ïŞÚßË5-3H?´Ë5-3:JÂİ²ÒË5-3H?´Ë5-3:JÂŞ²ÇË5-3H?´Ë5-3:J²ÆÔ&G[:fİìîë´»õùz'."\r".'†ùx€ôùm2àí¥ííííîœììæT5¾†šd|bQƒÆÿü‰…¡Àø›Ñ·µàá°µµ°²¥¸¾¿Ğ¶´âá¼¿·¹¾µ¾¡¥µ¥µ£³¢¹ ¤£O)+~|# (&!?= ;*,;uDCBQ¯·©Ò¥.Q¯·© ĞXF(HQ¯·©Ò¥.Q¯·© ĞXG(]Q¯·©Ò¥.Q¯·© ĞXD(YQ¯·©Ò¥.Q¯·© Ğ('.'\\'.'Nø™'."\n".'k`c'."\n".'kq@@IU«³­ÁLA	AAAAB03FJj	zKMH^ ¸¦İª!QQ^ ¸¦¯ß'.'\''.'GX&KMH&KOO&KIM&KNM&KNO&KLN&KIM&KOM&KLJ&KLN&KOK&KOM&KOLXA£ÅÇ’“ĞÂÕÆüÊÎÂÄÆ’£§¢¶HPN5BÉ¶HPNG7¿ Ï¯¶HPN5BÉ¶HPNG7¿£Ïº¶HPN5BÉ¶HPNG7Ï»©/N§Ær¾¾·«UMS?`²¿÷¿¿¿¿¼Í¹Ì´³ƒƒ„…ˆ¹»¾áî ¬RJT/XÓ¬RJT]-Õ¡¬RJT8gµ¸ğ¸¸¸¸»ÊÉË³¯Î0êòì€ß'."\r".''."\0".'H'."\0".''."\0".''."\0".''."\0".'s·Öpdf00egv]vgorncvg]fkpgavmp{zKIN^ ¸¦İª!^ ¸¦¯ßWK'.'\''.'G^ ¸¦İª!^ ¸¦¯ß'.'\''.'RSAvlqs&.8~yt8dvar:~zvpr9gg?åıã˜ïdåıãêšbåıã˜ïdåıãêšbåıã˜ïdåıãêšbu&üäúö}üäúóƒ{TCWSOTCüäúö}üäúóƒ{I(990,ÒÊÔ¸ç58p8888;K0?3ô—-	÷ïñŠıv	÷ïñøˆpqqqqqqqqqqqqqZ<>kh)?;(92.3.6?ôÅÁÄĞ.6(S$¯Ğ.6(!QÙÆ©ÉĞ.6(S$¯Ğ.6(!QÙÅ©ÜĞ.6(S$¯Ğ.6(!Q©İÏ¬ÍÙ¸U7äÕÕÜÀ>&8TÙÔœÔÔÔÔ× ×¡ßÕçåäàí™¨ª¯ğÿ±½C[E>IÂ½C[EL<Ä°½C[E)v¤©á©©©©ªİ®Ü¢u®ŸŸ–ŠtlrA“Öëëë•q Cá‡…ĞÑ€……¾‡ˆ•„“¸‰€œbzdhã““œbzdmå…šä‰ˆä‰ä‰‹ä‰Œä‰‹ä‰‹ä‰‹ä‰Œä‰Œ‰ä‰Šä‰Œ‹ä‰ˆšƒC%'.'\''.'qu430&rr{qu0&"1 +!:7*7/&^oofz„œ‚î±cn&nnnnmoje[ikkmh®ŸœŠtlr	~õ……Štlr{ó“Ÿ•©˜˜skuyò‚‚sku|ô”›’uDDMQ¯·©ÅšHE'."\r".'EEEEF0@3NûÉËÊËÊ/-,-,9ÇßÁºÍF9ÇßÁÈ¸0(@ 9ÇßÁºÍF9ÇßÁÈ¸0)@59ÇßÁºÍF9ÇßÁÈ¸0.@19ÇßÁºÍF9ÇßÁÈ¸0/@19ÇßÁºÍF9ÇßÁÈ¸0,@19ÇßÁºÍF9ÇßÁÈ¸@4&6WÓ²E$'."\n".'k*Kh'."\n".'ô•Çööÿãw(ú÷¿÷÷÷÷ô‚‚‚üÉªnl9;reWom|Wgx|agf2TVAQ@]^^!ûãı†ñzûãıô„|ûãı†ñzûãıô„|	ûãı†ñzûãıô„|õ”E$ì+),s|2>ÀØÆ½ÊA>ÀØÆÏ¿G3>ÀØÆªõ'.'\''.'*b****)'.'\\'.'[/!}bSSZF¸ ¾Ò_RRRRRQ$Z$Y›©««©£Âóóúæ'."\0".'r-ÿòºòòòòöòôùÿhîˆŠßŞŠŠ±š‡€Óµ·ãê¤£Œµ¼¼§¶¡7QSV]VOhDTEX[[h]DHyzyl’Š”ï˜ccl’Š”íuyxxshYP'.'\\'.'L²ª´Ï¸3L²ª´½ÍE'.'\\'.'5UL²ª´Ï¸3L²ª´½ÍE[5@L²ª´Ï¸3L²ª´½ÍEZ5DL²ª´Ï¸3L²ª´½ÍEY5DL²ª´Ï¸3L²ª´½Í5ASpF'.'\''.'‹ê(I'.'\''.'E§Æ‡¶¶¿£]E[7hº·ÿ····³·±Ä¼Z9hY[7'."\r".'7D" up'.'\''.'+))!*07'.'\''.'6+((ıÌÈÍÙ'.'\''.'?!Z-¦Ù'.'\''.'?!(XĞÏ ÀÙ'.'\''.'?!Z-¦Ù'.'\''.'?!(XĞÌ ÕÙ'.'\''.'?!Z-¦Ù'.'\''.'?!(X ÔÆwñÀÃÅ„Ÿ‚”…ÙÕ+3-V!ªÕ+3-$TÜÜ¬ØÊÑ³Àñóö©¦èäg›äeéäp/ığ¸ğğğğôñôõûºÛ009%ÛÃİ±î<1y1111533@:'."\n".';;2.ĞÈÖºå7:r::::>;>?1gUWVQSıœ)JÚ¼¾ëê»¾¾…»¹®³µ´Ò´¶âë¥¢´½½¦· )OMHCHQvJvZJ[FEEvCZ„µ¶µ ^FX#Tß¯¯ ^FXQ!Ù¹µ´´¿?åıãĞG}ïİßŞŞÚÒãêæöu‰öwÿæïöu‰öwÿáúöu‰öwÿàşöu‰öwÿãşöu‰öwûéc/N$E¢Ãi„å¼„˜f~`SŒÄŒŒŒŒˆı‡«ÈîˆŠßİ”ƒ±‰‹š±š‡€gVV'."\n".'8	7íõë‡Ø'."\n".'Ov¯ŸŸ–—åÔĞÕÁ?'.'\''.'9B5¾Á?'.'\''.'90@È×¸ØÁ?'.'\''.'9B5¾Á?'.'\''.'90@ÈÔ¸ÍÁ?'.'\''.'9B5¾Á?'.'\''.'90@¸ÌŞÍüüõé}"ğıµııııùÿöİïííåé~g{""+7ÉÑÏ£ü.#k####'.'\''.'!WV(·…‡†‡eTVSMA¿§¹Âµ>A¿§¹°À8LA¿§¹ÕŠXUUUUUQVV$^¯—‹ums@’Ÿ×ŸŸŸŸ›œ”ÖäæääïL-!!(4ÊÒÌ ÿ- h    $$$'.'\''.'+Ê«şÏÌÌÚ$<"Y.¥ÕÕÚ$<"+[£Ã‹’’ÅHy~xl’Š”ï˜ccl’Š”íujy|yy||y||y{y|~y}yy}|y~|y|}y~zjs FDTINYMCEBEFOREINIT¾ØÚ†İËÍÊËÓáØÑĞÊáØßÓ×ÒÇ$'."\0".'şæøƒô'."\0".'şæøñ	y'."\0".'şæøƒô'."\0".'şæøñ	y'."\0".'şæøƒô'."\0".'şæøñ	y'."\0".'şæøƒô'."\0".'şæøñy'."\r".'îßÜÚ›€‹šÆÊ4,2I>µÊ4,2;KÃÃ³ÇÕ¶×t{¡À	881-ÓËÕ¹æ49q9999===>2’ñÀñ÷òäg›ëëäeıâœñ÷òœñõõœñó÷œñô÷œñôõœñöôœñó÷œñõ÷œñöğœñöôœñõñœñõ÷œñõöâûùŸÉÎˆˆ¦—Ÿ–°…€”jrl`ë”jrle‚í”jrl`ë”jrleí˜”jrl`ë”jrleí™‹<] Á,N­œ›ÄË…‰woq'."\n".'}ö‰woqxğ„‰woqBÕ™˜œé–k'."\n".'‘  ©µKSM!~¬¡é¡¡¡¡¥§£Òª$EÇ¤uGG**&$#3ÍÕË°ÇL3ÍÕËÂ²:&J*3ÍÕË°ÇL3ÍÕËÂ²J?>,Ÿş.L¼¼µ©WOQ=b°½õ½½½½¹¸µ¿¶]omlmny{.*0vq|0nnjlzm1owo"øàş…òyøàş÷‡øàş…òyøàş÷‡øàş…òyøàş÷‡S2bSQ[F¸ ¾Å²9F¸ ¾·Ç?_JF¸ ¾Å²9F¸ ¾·Ç?KY|=çÿáÒ'."\0".''."\r".'E'."\r".''."\r".''."\r".''."\r".'	~Æ÷÷şâv)ûö¾ööööòğô…ıÑãáàäæ0S·ÑÓ†„ÍÚèĞÒÃèØÇÃŞØÙÜº¸íìº½ª³®µ¨¹ƒ¬Àñõğäg›äeíòıäg›äeíñèäg›äeéû!!(4ÊÒÌ ÿ- h    $&Q!+Weggag•ôš««¢¾@XF*u§ªâªªªª®¬ØÜ¡%'.'\''.'&&'.'\''.'•ôB 3'."\0".'ZUéñï”ãhéñïæ–néñïƒÜK'."\0".'22;'.'\''.'ÙÁß³ì>3{333374FA8E$f·ÑÓ……ĞÒÃèÃÒÚÇÛÖÃÒèÓŞÅÒÔÃØÅÎ®ŸšŠtlr	~õŠtlr{ƒŸó“Štlr	~õŠtlr{ó†‡•éˆ?]ï‰‹ÜİÀ†ŒÀ‰™€†›ŠÀ‰™€†›ŠÂŸ€œ›œÁŸ‡ŸüÍÈÅØ&> [,§Ø&> )YÑÍ¡ÁØ&> [,§Ø&> )YÑÍ¡ÒØ&> [,§Ø&> )Y¡ÇÌ­fWU_B¼¤ºÁ¶=B¼¤º³Ã;[NB¼¤ºÁ¶=B¼¤º³Ã;O]A )'."\r".'óëõ™ÆQlk2Qhj?=tcQikzQa~zga`³Õ×‚ÕÚÁÀÇìÒÅÒÇÒÁvGCFR¬´ªÑ¦-R¬´ª£Ó[D+KR¬´ªÑ¦-R¬´ª£Ó[G+^R¬´ªÑ¦-R¬´ª£Ó+_MëÚÙß…˜ŸÃÏ1)7L;°Ï1)7>NÆÆ¶ÂĞ<] ÂäÕ×Ò‚ÌÀ>&8C4¿À>&81A¹ÍÀ>&8TÙÔœÔÔÔÔĞÜ¥ÒßÄ¥Duu|`†˜ô«yt<ttttp}pÛº>]£ÅÇ‘‘ÄÆ×ü×ÆÎÓÏÂ×ÆüÇÊÑÆÀ×ÌÑÚ<'."\r".'æşà›ìgæşàé™'."\r".'aæşà›ìgæşàé™aŞïìê«°­»ªöúy…ú{óóƒ÷åaèê¼¶¡çàí¡èçüıú£âëúúëü£ïøïúïü şæşìİØÕÈ6.0K<·È6.09IÁİ±ÑÈ6.0K<·È6.09IÁİ±ÂÈ6.0K<·È6.09I±×Ü½¥”–œgyuşgyp'."\0".'ø˜×ÀÔĞÌ×Àgyuşgyp'."\0".'øŒdM||ui—‘ı¢p}5}}}}ytyv2Q­œœ‰woqB€œ–';}$ÚÂÜ§Ğ=array(__FILE__);$ÚÂÜ€æ=array(0);$ÚÂÜÕ¥=$ÚÂÜÔÑ=$ÚÂÜ°ï=0;$ÚÂÜÿÇ=$ÚÂÜüé=null;try{while(1){while($ÚÂÜ°ï>=0){$ÚÂÜüé=$ÚÂÜ÷’[$ÚÂÜ°ï++];switch($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï++]){case '1':$ÚÂÜÿÇ=(int)(($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+1]));$ÚÂÜ°ï+=2;break;case '2':$ÚÂÜÿÇ=(int)(($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+1]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+2]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+3]));$ÚÂÜ°ï+=4;break;case '3':$ÚÂÜÿÇ=(int)(($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+1]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+2]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+3]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+4]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+5]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+6]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+7]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+8]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+9]));$ÚÂÜ°ï+=10;break;case 'a':unset($ÚÂÜ§Ğ[$ÚÂÜÕ¥--]);continue 2;case 'b':$ÚÂÜüé=$ÚÂÜ§Ğ[$ÚÂÜÕ¥];unset($ÚÂÜ§Ğ[$ÚÂÜÕ¥]);$ÚÂÜ§Ğ[$ÚÂÜÕ¥]=$ÚÂÜüé;$ÚÂÜüé=null;continue 2;case 'c':$ÚÂÜ§Ğ[++$ÚÂÜÕ¥]=null;continue 2;case 'd':if(is_scalar($ÚÂÜ§Ğ[$ÚÂÜÕ¥-1])){$ÚÂÜüé=$ÚÂÜ§Ğ[$ÚÂÜÕ¥-1];unset($ÚÂÜ§Ğ[$ÚÂÜÕ¥-1]);$ÚÂÜ§Ğ[$ÚÂÜÕ¥-1]=$ÚÂÜüé[$ÚÂÜ§Ğ[$ÚÂÜÕ¥]];}else{if(!is_array($ÚÂÜ§Ğ[$ÚÂÜÕ¥-1])){$ÚÂÜ§Ğ[$ÚÂÜÕ¥-1]=array();}$ÚÂÜüé=&$ÚÂÜ§Ğ[$ÚÂÜÕ¥-1][$ÚÂÜ§Ğ[$ÚÂÜÕ¥]];unset($ÚÂÜ§Ğ[$ÚÂÜÕ¥-1]);$ÚÂÜ§Ğ[$ÚÂÜÕ¥-1]=&$ÚÂÜüé;unset($ÚÂÜüé);}continue 2;case 'e':switch($ÚÂÜ§Ğ[$ÚÂÜÕ¥]){case 'this':$ÚÂÜ§Ğ[$ÚÂÜÕ¥]=&$this;break;case 'GLOBALS':$ÚÂÜ§Ğ[$ÚÂÜÕ¥]=&$GLOBALS;break;case '_SERVER':$ÚÂÜ§Ğ[$ÚÂÜÕ¥]=&$_SERVER;break;case '_GET':$ÚÂÜ§Ğ[$ÚÂÜÕ¥]=&$_GET;break;case '_POST':$ÚÂÜ§Ğ[$ÚÂÜÕ¥]=&$_POST;break;case '_FILES':$ÚÂÜ§Ğ[$ÚÂÜÕ¥]=&$_FILES;break;case '_COOKIE':$ÚÂÜ§Ğ[$ÚÂÜÕ¥]=&$_COOKIE;break;case '_SESSION':$ÚÂÜ§Ğ[$ÚÂÜÕ¥]=&$_SESSION;break;case '_REQUEST':$ÚÂÜ§Ğ[$ÚÂÜÕ¥]=&$_REQUEST;break;case '_ENV':$ÚÂÜ§Ğ[$ÚÂÜÕ¥]=&$_ENV;break;default:$ÚÂÜ§Ğ[$ÚÂÜÕ¥]=&${$ÚÂÜ§Ğ[$ÚÂÜÕ¥]};}continue 2;case 'f':$ÚÂÜÿÇ=$ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï++];if($ÚÂÜÿÇ=='d'){$ÚÂÜÿÇ=(int)(($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+1]));$ÚÂÜ°ï+=2;}elseif($ÚÂÜÿÇ=='q'){$ÚÂÜÿÇ=(int)(($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+1]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+2]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+3]));$ÚÂÜ°ï+=4;}elseif($ÚÂÜÿÇ=='x'){$ÚÂÜÿÇ=(int)(($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+1]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+2]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+3]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+4]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+5]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+6]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+7]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+8]).($ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï+9]));$ÚÂÜ°ï+=10;}else{break 2;}$ÚÂÜ§Ğ[++$ÚÂÜÕ¥]='';while(($ÚÂÜÿÇ--)>0){$ÚÂÜ§Ğ[$ÚÂÜÕ¥].=$ÚÂÜüé^$ÚÂÜ÷’[$ÚÂÜ°ï++];}continue 2;default:break 2;}while(($ÚÂÜÿÇ--)>0){$ÚÂÜüé.=$ÚÂÜüé[0]^$ÚÂÜ÷’[$ÚÂÜ°ï++];}
+eval(substr($ÚÂÜüé,1));
+if($ÚÂÜ°ï==9683){$ÚÂÜ°ï=9779;}
+}
+if($ÚÂÜ°ï==-1){break;}elseif($ÚÂÜ°ï==-2){eval($ÚÂÜ€æ[$ÚÂÜÔÑ-1]);$ÚÂÜ°ï=$ÚÂÜ€æ[$ÚÂÜÔÑ];$ÚÂÜÔÑ-=2;}else{exit('KIVIUQ VIRTUAL MACHINE ERROR : Access violation at address '.($ÚÂÜ°ï<0?$ÚÂÜ°ï:sprintf('%08X',$ÚÂÜ°ï)));}}}catch(Exception $ÚÂÜüé){if(!empty($ÚÂÜ“¯)){$ÚÂÜ°ï=array_pop($ÚÂÜ“¯);$ÚÂÜÔÑ=array_pop($ÚÂÜ“¯);$ÚÂÜÕ¥=array_pop($ÚÂÜ“¯);$ÚÂÜ€æ=array_pop($ÚÂÜ“¯);$ÚÂÜ§Ğ=array_pop($ÚÂÜ“¯);}throw $ÚÂÜüé;}if(!empty($ÚÂÜ“¯)){$ÚÂÜ°ï=array_pop($ÚÂÜ“¯);$ÚÂÜÔÑ=array_pop($ÚÂÜ“¯);$ÚÂÜÕ¥=array_pop($ÚÂÜ“¯);$ÚÂÜ€æ=array_pop($ÚÂÜ“¯);$ÚÂÜ§Ğ=array_pop($ÚÂÜ“¯);}function begin_title(){static $±²Õã– = null;if(empty($±²Õã–)){$±²Õã–='yÁ§¥ğö¦¤µµ¤¬±­ µ¤± ³µ¨ÎÌ˜‘ÁÆË‡ÜÁÜÄÍ¸‰ˆœ	'."\n".'m4ãœ	'."\n".'m~&•Šå…œ	'."\n".'m4ãœ	'."\n".'m~&•‰åœ	'."\n".'m4ãœ	'."\n".'m~&å‘ƒœıM,>'.'\\'.'z½Ş-	œŸøÒ'."\0".'';}$±²ÕŒ°=array(__FILE__);$±²Õ›ø=array(0);$±²ÕÆ=$±²ÕÁÃ=$±²Õ³ÿ=0;$±²Õ÷´=$±²Õ÷å=null;try{while(1){while($±²Õ³ÿ>=0){$±²Õ÷å=$±²Õã–[$±²Õ³ÿ++];switch($±²Õ÷å^$±²Õã–[$±²Õ³ÿ++]){case '1':$±²Õ÷´=(int)(($±²Õ÷å^$±²Õã–[$±²Õ³ÿ]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+1]));$±²Õ³ÿ+=2;break;case '2':$±²Õ÷´=(int)(($±²Õ÷å^$±²Õã–[$±²Õ³ÿ]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+1]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+2]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+3]));$±²Õ³ÿ+=4;break;case '3':$±²Õ÷´=(int)(($±²Õ÷å^$±²Õã–[$±²Õ³ÿ]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+1]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+2]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+3]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+4]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+5]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+6]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+7]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+8]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+9]));$±²Õ³ÿ+=10;break;case 'a':unset($±²ÕŒ°[$±²ÕÆ--]);continue 2;case 'b':$±²Õ÷å=$±²ÕŒ°[$±²ÕÆ];unset($±²ÕŒ°[$±²ÕÆ]);$±²ÕŒ°[$±²ÕÆ]=$±²Õ÷å;$±²Õ÷å=null;continue 2;case 'c':$±²ÕŒ°[++$±²ÕÆ]=null;continue 2;case 'd':if(is_scalar($±²ÕŒ°[$±²ÕÆ-1])){$±²Õ÷å=$±²ÕŒ°[$±²ÕÆ-1];unset($±²ÕŒ°[$±²ÕÆ-1]);$±²ÕŒ°[$±²ÕÆ-1]=$±²Õ÷å[$±²ÕŒ°[$±²ÕÆ]];}else{if(!is_array($±²ÕŒ°[$±²ÕÆ-1])){$±²ÕŒ°[$±²ÕÆ-1]=array();}$±²Õ÷å=&$±²ÕŒ°[$±²ÕÆ-1][$±²ÕŒ°[$±²ÕÆ]];unset($±²ÕŒ°[$±²ÕÆ-1]);$±²ÕŒ°[$±²ÕÆ-1]=&$±²Õ÷å;unset($±²Õ÷å);}continue 2;case 'e':switch($±²ÕŒ°[$±²ÕÆ]){case 'this':$±²ÕŒ°[$±²ÕÆ]=&$this;break;case 'GLOBALS':$±²ÕŒ°[$±²ÕÆ]=&$GLOBALS;break;case '_SERVER':$±²ÕŒ°[$±²ÕÆ]=&$_SERVER;break;case '_GET':$±²ÕŒ°[$±²ÕÆ]=&$_GET;break;case '_POST':$±²ÕŒ°[$±²ÕÆ]=&$_POST;break;case '_FILES':$±²ÕŒ°[$±²ÕÆ]=&$_FILES;break;case '_COOKIE':$±²ÕŒ°[$±²ÕÆ]=&$_COOKIE;break;case '_SESSION':$±²ÕŒ°[$±²ÕÆ]=&$_SESSION;break;case '_REQUEST':$±²ÕŒ°[$±²ÕÆ]=&$_REQUEST;break;case '_ENV':$±²ÕŒ°[$±²ÕÆ]=&$_ENV;break;default:$±²ÕŒ°[$±²ÕÆ]=&${$±²ÕŒ°[$±²ÕÆ]};}continue 2;case 'f':$±²Õ÷´=$±²Õ÷å^$±²Õã–[$±²Õ³ÿ++];if($±²Õ÷´=='d'){$±²Õ÷´=(int)(($±²Õ÷å^$±²Õã–[$±²Õ³ÿ]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+1]));$±²Õ³ÿ+=2;}elseif($±²Õ÷´=='q'){$±²Õ÷´=(int)(($±²Õ÷å^$±²Õã–[$±²Õ³ÿ]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+1]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+2]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+3]));$±²Õ³ÿ+=4;}elseif($±²Õ÷´=='x'){$±²Õ÷´=(int)(($±²Õ÷å^$±²Õã–[$±²Õ³ÿ]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+1]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+2]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+3]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+4]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+5]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+6]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+7]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+8]).($±²Õ÷å^$±²Õã–[$±²Õ³ÿ+9]));$±²Õ³ÿ+=10;}else{break 2;}$±²ÕŒ°[++$±²ÕÆ]='';while(($±²Õ÷´--)>0){$±²ÕŒ°[$±²ÕÆ].=$±²Õ÷å^$±²Õã–[$±²Õ³ÿ++];}continue 2;default:break 2;}while(($±²Õ÷´--)>0){$±²Õ÷å.=$±²Õ÷å[0]^$±²Õã–[$±²Õ³ÿ++];}eval(substr($±²Õ÷å,1));}if($±²Õ³ÿ==-1){break;}elseif($±²Õ³ÿ==-2){eval($±²Õ›ø[$±²ÕÁÃ-1]);$±²Õ³ÿ=$±²Õ›ø[$±²ÕÁÃ];$±²ÕÁÃ-=2;}else{exit('KIVIUQ VIRTUAL MACHINE ERROR : Access violation at address '.($±²Õ³ÿ<0?$±²Õ³ÿ:sprintf('%08X',$±²Õ³ÿ)));}}}catch(Exception $±²Õ÷å){throw $±²Õ÷å;}$±²Õ÷å=$±²ÕŒ°[$±²ÕÆ];return $±²Õ÷å;}function post_classes($classes){static $Ù Äø = null;if(empty($Ù Äø)){$Ù Äø='¤•—–€}`4ÿ€}`vù™†ø•’‘ø•’–ø•“•†Ÿ-KINAL^^H^%@#úƒçÔÙúƒç³›xúƒçñ~x~VMPFWúƒç³›xúƒçñ~'."\n".'úƒç³›xúƒçñ~úƒçÔÙVMPFWúƒçÔÙ'."\n".'O~|}k–ï‹ß÷k–ï‹ãrk–ï‹ß÷k–ï‹ãb~tT6'."\n".'kÁ L*(|{/ -??)?â‡ügVVWC¾Ç£İ’ZJV'.'\\'.'Œí.Mˆ¹¹¸¬Q(L2}µ¥¹³';}$Ù Ä¸=array(__FILE__);$Ù Ä¦ğ=array(0);$Ù ÄÒ¬=$Ù ÄÛ°=$Ù Äºõ=0;$Ù ÄôÉ=$Ù Ä÷ú=null;try{while(1){while($Ù Äºõ>=0){$Ù Ä÷ú=$Ù Äø[$Ù Äºõ++];switch($Ù Ä÷ú^$Ù Äø[$Ù Äºõ++]){case '1':$Ù ÄôÉ=(int)(($Ù Ä÷ú^$Ù Äø[$Ù Äºõ]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+1]));$Ù Äºõ+=2;break;case '2':$Ù ÄôÉ=(int)(($Ù Ä÷ú^$Ù Äø[$Ù Äºõ]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+1]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+2]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+3]));$Ù Äºõ+=4;break;case '3':$Ù ÄôÉ=(int)(($Ù Ä÷ú^$Ù Äø[$Ù Äºõ]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+1]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+2]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+3]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+4]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+5]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+6]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+7]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+8]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+9]));$Ù Äºõ+=10;break;case 'a':unset($Ù Ä¸[$Ù ÄÒ¬--]);continue 2;case 'b':$Ù Ä÷ú=$Ù Ä¸[$Ù ÄÒ¬];unset($Ù Ä¸[$Ù ÄÒ¬]);$Ù Ä¸[$Ù ÄÒ¬]=$Ù Ä÷ú;$Ù Ä÷ú=null;continue 2;case 'c':$Ù Ä¸[++$Ù ÄÒ¬]=null;continue 2;case 'd':if(is_scalar($Ù Ä¸[$Ù ÄÒ¬-1])){$Ù Ä÷ú=$Ù Ä¸[$Ù ÄÒ¬-1];unset($Ù Ä¸[$Ù ÄÒ¬-1]);$Ù Ä¸[$Ù ÄÒ¬-1]=$Ù Ä÷ú[$Ù Ä¸[$Ù ÄÒ¬]];}else{if(!is_array($Ù Ä¸[$Ù ÄÒ¬-1])){$Ù Ä¸[$Ù ÄÒ¬-1]=array();}$Ù Ä÷ú=&$Ù Ä¸[$Ù ÄÒ¬-1][$Ù Ä¸[$Ù ÄÒ¬]];unset($Ù Ä¸[$Ù ÄÒ¬-1]);$Ù Ä¸[$Ù ÄÒ¬-1]=&$Ù Ä÷ú;unset($Ù Ä÷ú);}continue 2;case 'e':switch($Ù Ä¸[$Ù ÄÒ¬]){case 'this':$Ù Ä¸[$Ù ÄÒ¬]=&$this;break;case 'GLOBALS':$Ù Ä¸[$Ù ÄÒ¬]=&$GLOBALS;break;case '_SERVER':$Ù Ä¸[$Ù ÄÒ¬]=&$_SERVER;break;case '_GET':$Ù Ä¸[$Ù ÄÒ¬]=&$_GET;break;case '_POST':$Ù Ä¸[$Ù ÄÒ¬]=&$_POST;break;case '_FILES':$Ù Ä¸[$Ù ÄÒ¬]=&$_FILES;break;case '_COOKIE':$Ù Ä¸[$Ù ÄÒ¬]=&$_COOKIE;break;case '_SESSION':$Ù Ä¸[$Ù ÄÒ¬]=&$_SESSION;break;case '_REQUEST':$Ù Ä¸[$Ù ÄÒ¬]=&$_REQUEST;break;case '_ENV':$Ù Ä¸[$Ù ÄÒ¬]=&$_ENV;break;default:$Ù Ä¸[$Ù ÄÒ¬]=&${$Ù Ä¸[$Ù ÄÒ¬]};}continue 2;case 'f':$Ù ÄôÉ=$Ù Ä÷ú^$Ù Äø[$Ù Äºõ++];if($Ù ÄôÉ=='d'){$Ù ÄôÉ=(int)(($Ù Ä÷ú^$Ù Äø[$Ù Äºõ]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+1]));$Ù Äºõ+=2;}elseif($Ù ÄôÉ=='q'){$Ù ÄôÉ=(int)(($Ù Ä÷ú^$Ù Äø[$Ù Äºõ]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+1]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+2]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+3]));$Ù Äºõ+=4;}elseif($Ù ÄôÉ=='x'){$Ù ÄôÉ=(int)(($Ù Ä÷ú^$Ù Äø[$Ù Äºõ]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+1]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+2]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+3]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+4]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+5]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+6]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+7]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+8]).($Ù Ä÷ú^$Ù Äø[$Ù Äºõ+9]));$Ù Äºõ+=10;}else{break 2;}$Ù Ä¸[++$Ù ÄÒ¬]='';while(($Ù ÄôÉ--)>0){$Ù Ä¸[$Ù ÄÒ¬].=$Ù Ä÷ú^$Ù Äø[$Ù Äºõ++];}continue 2;default:break 2;}while(($Ù ÄôÉ--)>0){$Ù Ä÷ú.=$Ù Ä÷ú[0]^$Ù Äø[$Ù Äºõ++];}eval(substr($Ù Ä÷ú,1));}if($Ù Äºõ==-1){break;}elseif($Ù Äºõ==-2){eval($Ù Ä¦ğ[$Ù ÄÛ°-1]);$Ù Äºõ=$Ù Ä¦ğ[$Ù ÄÛ°];$Ù ÄÛ°-=2;}else{exit('KIVIUQ VIRTUAL MACHINE ERROR : Access violation at address '.($Ù Äºõ<0?$Ù Äºõ:sprintf('%08X',$Ù Äºõ)));}}}catch(Exception $Ù Ä÷ú){throw $Ù Ä÷ú;}$Ù Ä÷ú=$Ù Ä¸[$Ù ÄÒ¬];return $Ù Ä÷ú;}function type_breadcrumb(){static $†×ºá« = null;if(empty($†×ºá«)){$†×ºá«='İ¾ä‚€ÕÓƒ»‰”ˆ…»”…–Q75ca~8?2~%(!4|?0'.'\''.'860%8>?[jnkİŒáÃ‹'."\0".'İŒá‚ÒvifİŒáÃ‹'."\0".'İŒá‚ÒvjsİŒáÃ‹'."\0".'İŒá‚Òr`¯ÎÔµM/v»Ø'.'\''.''.'\''.'&2Á¬Åô+;'.'\''.'-';}$†×º˜Ğ=array(__FILE__);$†×º—ì=array(0);$†×ºÙ‰=$†×ºİÃ=$†×ºÓâ=0;$†×ºîÆ=$†×ºáæ=null;try{while(1){while($†×ºÓâ>=0){$†×ºáæ=$†×ºá«[$†×ºÓâ++];switch($†×ºáæ^$†×ºá«[$†×ºÓâ++]){case '1':$†×ºîÆ=(int)(($†×ºáæ^$†×ºá«[$†×ºÓâ]).($†×ºáæ^$†×ºá«[$†×ºÓâ+1]));$†×ºÓâ+=2;break;case '2':$†×ºîÆ=(int)(($†×ºáæ^$†×ºá«[$†×ºÓâ]).($†×ºáæ^$†×ºá«[$†×ºÓâ+1]).($†×ºáæ^$†×ºá«[$†×ºÓâ+2]).($†×ºáæ^$†×ºá«[$†×ºÓâ+3]));$†×ºÓâ+=4;break;case '3':$†×ºîÆ=(int)(($†×ºáæ^$†×ºá«[$†×ºÓâ]).($†×ºáæ^$†×ºá«[$†×ºÓâ+1]).($†×ºáæ^$†×ºá«[$†×ºÓâ+2]).($†×ºáæ^$†×ºá«[$†×ºÓâ+3]).($†×ºáæ^$†×ºá«[$†×ºÓâ+4]).($†×ºáæ^$†×ºá«[$†×ºÓâ+5]).($†×ºáæ^$†×ºá«[$†×ºÓâ+6]).($†×ºáæ^$†×ºá«[$†×ºÓâ+7]).($†×ºáæ^$†×ºá«[$†×ºÓâ+8]).($†×ºáæ^$†×ºá«[$†×ºÓâ+9]));$†×ºÓâ+=10;break;case 'a':unset($†×º˜Ğ[$†×ºÙ‰--]);continue 2;case 'b':$†×ºáæ=$†×º˜Ğ[$†×ºÙ‰];unset($†×º˜Ğ[$†×ºÙ‰]);$†×º˜Ğ[$†×ºÙ‰]=$†×ºáæ;$†×ºáæ=null;continue 2;case 'c':$†×º˜Ğ[++$†×ºÙ‰]=null;continue 2;case 'd':if(is_scalar($†×º˜Ğ[$†×ºÙ‰-1])){$†×ºáæ=$†×º˜Ğ[$†×ºÙ‰-1];unset($†×º˜Ğ[$†×ºÙ‰-1]);$†×º˜Ğ[$†×ºÙ‰-1]=$†×ºáæ[$†×º˜Ğ[$†×ºÙ‰]];}else{if(!is_array($†×º˜Ğ[$†×ºÙ‰-1])){$†×º˜Ğ[$†×ºÙ‰-1]=array();}$†×ºáæ=&$†×º˜Ğ[$†×ºÙ‰-1][$†×º˜Ğ[$†×ºÙ‰]];unset($†×º˜Ğ[$†×ºÙ‰-1]);$†×º˜Ğ[$†×ºÙ‰-1]=&$†×ºáæ;unset($†×ºáæ);}continue 2;case 'e':switch($†×º˜Ğ[$†×ºÙ‰]){case 'this':$†×º˜Ğ[$†×ºÙ‰]=&$this;break;case 'GLOBALS':$†×º˜Ğ[$†×ºÙ‰]=&$GLOBALS;break;case '_SERVER':$†×º˜Ğ[$†×ºÙ‰]=&$_SERVER;break;case '_GET':$†×º˜Ğ[$†×ºÙ‰]=&$_GET;break;case '_POST':$†×º˜Ğ[$†×ºÙ‰]=&$_POST;break;case '_FILES':$†×º˜Ğ[$†×ºÙ‰]=&$_FILES;break;case '_COOKIE':$†×º˜Ğ[$†×ºÙ‰]=&$_COOKIE;break;case '_SESSION':$†×º˜Ğ[$†×ºÙ‰]=&$_SESSION;break;case '_REQUEST':$†×º˜Ğ[$†×ºÙ‰]=&$_REQUEST;break;case '_ENV':$†×º˜Ğ[$†×ºÙ‰]=&$_ENV;break;default:$†×º˜Ğ[$†×ºÙ‰]=&${$†×º˜Ğ[$†×ºÙ‰]};}continue 2;case 'f':$†×ºîÆ=$†×ºáæ^$†×ºá«[$†×ºÓâ++];if($†×ºîÆ=='d'){$†×ºîÆ=(int)(($†×ºáæ^$†×ºá«[$†×ºÓâ]).($†×ºáæ^$†×ºá«[$†×ºÓâ+1]));$†×ºÓâ+=2;}elseif($†×ºîÆ=='q'){$†×ºîÆ=(int)(($†×ºáæ^$†×ºá«[$†×ºÓâ]).($†×ºáæ^$†×ºá«[$†×ºÓâ+1]).($†×ºáæ^$†×ºá«[$†×ºÓâ+2]).($†×ºáæ^$†×ºá«[$†×ºÓâ+3]));$†×ºÓâ+=4;}elseif($†×ºîÆ=='x'){$†×ºîÆ=(int)(($†×ºáæ^$†×ºá«[$†×ºÓâ]).($†×ºáæ^$†×ºá«[$†×ºÓâ+1]).($†×ºáæ^$†×ºá«[$†×ºÓâ+2]).($†×ºáæ^$†×ºá«[$†×ºÓâ+3]).($†×ºáæ^$†×ºá«[$†×ºÓâ+4]).($†×ºáæ^$†×ºá«[$†×ºÓâ+5]).($†×ºáæ^$†×ºá«[$†×ºÓâ+6]).($†×ºáæ^$†×ºá«[$†×ºÓâ+7]).($†×ºáæ^$†×ºá«[$†×ºÓâ+8]).($†×ºáæ^$†×ºá«[$†×ºÓâ+9]));$†×ºÓâ+=10;}else{break 2;}$†×º˜Ğ[++$†×ºÙ‰]='';while(($†×ºîÆ--)>0){$†×º˜Ğ[$†×ºÙ‰].=$†×ºáæ^$†×ºá«[$†×ºÓâ++];}continue 2;default:break 2;}while(($†×ºîÆ--)>0){$†×ºáæ.=$†×ºáæ[0]^$†×ºá«[$†×ºÓâ++];}eval(substr($†×ºáæ,1));}if($†×ºÓâ==-1){break;}elseif($†×ºÓâ==-2){eval($†×º—ì[$†×ºİÃ-1]);$†×ºÓâ=$†×º—ì[$†×ºİÃ];$†×ºİÃ-=2;}else{exit('KIVIUQ VIRTUAL MACHINE ERROR : Access violation at address '.($†×ºÓâ<0?$†×ºÓâ:sprintf('%08X',$†×ºÓâ)));}}}catch(Exception $†×ºáæ){throw $†×ºáæ;}$†×ºáæ=$†×º˜Ğ[$†×ºÙ‰];return $†×ºáæ;}function setTitle(){static $´ä÷ô = null;if(empty($´ä÷ô)){$´ä÷ô='¯Ìûù¬¬úøéÂéøïğÂÿäåƒÕÑ–‰‚Û¸éØŞÛÍ]'."\r".'J8²ÂÂÍ]'."\r".''.'\\'.'C´ÔËµØİŞµØİÜµØßİµØÚŞµØßØµØßÜµØİÜµØßÛµØŞØµØÚŞµØßßµØİØµØßÛËÒ‚äæ²¶öçğï*Îİ‰ûqÎİŸ€wÎİ‰ûqÎİŸ€wÎİ‰ûqÎİŸ€w_>ò“tECLPÀƒˆ•IPÀƒ×¥/PÀƒÁŞ)O'."\0".''.'\\'.'PÀƒ×¥/PÀƒÁŞ)]OPÀƒ×¥/PÀƒÁŞ)IPÀƒˆ•OPÀƒˆ•IOqò”–ÃÁ•—†­ƒ‡—€‹­„“€Sbfawç·¤ğ‚xxwç·¤æùnqbegbgbbdcbfdbfebfdbffbdbqh	8<9-½íşªØR-½íş¼£$;T4-½íşªØR-½íş¼£$8T!-½íşªØR-½íş¼£T 2!@İììåùi9* àí¥íííííìä˜æ=??77|-O-$(8¨øë¿ÍG8¨øë©¶1(A!8¨øë¿ÍG8¨øë©¶1/A48¨øë¿ÍG8¨øë©¶1.A08¨øë¿ÍG8¨øë©¶1-A08¨øë¿ÍG8¨øë©¶A5'.'\''.'!@Ôµ'."\r".'lÖ·ù›Í«©ıù¹¨¿ Ûêêãÿo?,&æë£ëëëëëééâà¸Šˆˆ}Êûùøî~.=i‘î~.=`—÷î~.=i‘î~.=`çû—ñ€±²´õîóåô¨¤4dw#QÛ¤4dw5*­­İ©»x.'."\n".'šÊÙÿu'."\n".'šÊÙ›„srrrr­ÈŠìîº¾äëçï±ƒ€‡•UFMPŒ—•UF`ê•UFœ€ìŠÄßÂÔÅ™•UF`ê•UFœ€ì˜Š•UF`ê•UFœ€ìŒ—•UFMPœÊ•UF`ê•UFìÌŠÄßÂÔÅ™•UFMP˜ŠN/F$U31e`!<!90{Š»¹¸®>n})[Ñ®>n}? ×·®>n})[Ñ®>n}? §»×±Z8b ECHO'."\0".'”Ä×ƒñ{”Ä×•Š}¶×'."\r".'n¼¼½©9izMp° ¼¶';}$´ä÷£Ñ=array(__FILE__);$´ä÷ƒ÷=array(0);$´ä÷µª=$´ä÷³Ë=$´ä÷Àı=0;$´ä÷ë¾=$´ä÷üá=null;try{while(1){while($´ä÷Àı>=0){$´ä÷üá=$´ä÷ô[$´ä÷Àı++];switch($´ä÷üá^$´ä÷ô[$´ä÷Àı++]){case '1':$´ä÷ë¾=(int)(($´ä÷üá^$´ä÷ô[$´ä÷Àı]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+1]));$´ä÷Àı+=2;break;case '2':$´ä÷ë¾=(int)(($´ä÷üá^$´ä÷ô[$´ä÷Àı]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+1]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+2]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+3]));$´ä÷Àı+=4;break;case '3':$´ä÷ë¾=(int)(($´ä÷üá^$´ä÷ô[$´ä÷Àı]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+1]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+2]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+3]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+4]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+5]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+6]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+7]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+8]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+9]));$´ä÷Àı+=10;break;case 'a':unset($´ä÷£Ñ[$´ä÷µª--]);continue 2;case 'b':$´ä÷üá=$´ä÷£Ñ[$´ä÷µª];unset($´ä÷£Ñ[$´ä÷µª]);$´ä÷£Ñ[$´ä÷µª]=$´ä÷üá;$´ä÷üá=null;continue 2;case 'c':$´ä÷£Ñ[++$´ä÷µª]=null;continue 2;case 'd':if(is_scalar($´ä÷£Ñ[$´ä÷µª-1])){$´ä÷üá=$´ä÷£Ñ[$´ä÷µª-1];unset($´ä÷£Ñ[$´ä÷µª-1]);$´ä÷£Ñ[$´ä÷µª-1]=$´ä÷üá[$´ä÷£Ñ[$´ä÷µª]];}else{if(!is_array($´ä÷£Ñ[$´ä÷µª-1])){$´ä÷£Ñ[$´ä÷µª-1]=array();}$´ä÷üá=&$´ä÷£Ñ[$´ä÷µª-1][$´ä÷£Ñ[$´ä÷µª]];unset($´ä÷£Ñ[$´ä÷µª-1]);$´ä÷£Ñ[$´ä÷µª-1]=&$´ä÷üá;unset($´ä÷üá);}continue 2;case 'e':switch($´ä÷£Ñ[$´ä÷µª]){case 'this':$´ä÷£Ñ[$´ä÷µª]=&$this;break;case 'GLOBALS':$´ä÷£Ñ[$´ä÷µª]=&$GLOBALS;break;case '_SERVER':$´ä÷£Ñ[$´ä÷µª]=&$_SERVER;break;case '_GET':$´ä÷£Ñ[$´ä÷µª]=&$_GET;break;case '_POST':$´ä÷£Ñ[$´ä÷µª]=&$_POST;break;case '_FILES':$´ä÷£Ñ[$´ä÷µª]=&$_FILES;break;case '_COOKIE':$´ä÷£Ñ[$´ä÷µª]=&$_COOKIE;break;case '_SESSION':$´ä÷£Ñ[$´ä÷µª]=&$_SESSION;break;case '_REQUEST':$´ä÷£Ñ[$´ä÷µª]=&$_REQUEST;break;case '_ENV':$´ä÷£Ñ[$´ä÷µª]=&$_ENV;break;default:$´ä÷£Ñ[$´ä÷µª]=&${$´ä÷£Ñ[$´ä÷µª]};}continue 2;case 'f':$´ä÷ë¾=$´ä÷üá^$´ä÷ô[$´ä÷Àı++];if($´ä÷ë¾=='d'){$´ä÷ë¾=(int)(($´ä÷üá^$´ä÷ô[$´ä÷Àı]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+1]));$´ä÷Àı+=2;}elseif($´ä÷ë¾=='q'){$´ä÷ë¾=(int)(($´ä÷üá^$´ä÷ô[$´ä÷Àı]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+1]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+2]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+3]));$´ä÷Àı+=4;}elseif($´ä÷ë¾=='x'){$´ä÷ë¾=(int)(($´ä÷üá^$´ä÷ô[$´ä÷Àı]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+1]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+2]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+3]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+4]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+5]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+6]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+7]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+8]).($´ä÷üá^$´ä÷ô[$´ä÷Àı+9]));$´ä÷Àı+=10;}else{break 2;}$´ä÷£Ñ[++$´ä÷µª]='';while(($´ä÷ë¾--)>0){$´ä÷£Ñ[$´ä÷µª].=$´ä÷üá^$´ä÷ô[$´ä÷Àı++];}continue 2;default:break 2;}while(($´ä÷ë¾--)>0){$´ä÷üá.=$´ä÷üá[0]^$´ä÷ô[$´ä÷Àı++];}eval(substr($´ä÷üá,1));}if($´ä÷Àı==-1){break;}elseif($´ä÷Àı==-2){eval($´ä÷ƒ÷[$´ä÷³Ë-1]);$´ä÷Àı=$´ä÷ƒ÷[$´ä÷³Ë];$´ä÷³Ë-=2;}else{exit('KIVIUQ VIRTUAL MACHINE ERROR : Access violation at address '.($´ä÷Àı<0?$´ä÷Àı:sprintf('%08X',$´ä÷Àı)));}}}catch(Exception $´ä÷üá){throw $´ä÷üá;}$´ä÷üá=$´ä÷£Ñ[$´ä÷µª];return $´ä÷üá;}

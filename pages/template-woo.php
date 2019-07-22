@@ -24,7 +24,7 @@ Template Name: Woo商城
 	color: #fff;
 }
 
-.tao-cat .fa-bookmark-o {
+.tao-cat .be-basket {
 	font-size: 18px;
 	font-size: 1.8rem;
 	margin: 0 5px 0 0;
@@ -112,7 +112,7 @@ Template Name: Woo商城
 		$query = new WP_Query($args);
 		if( $query->have_posts() ) { ?>
 		<div class="clear"></div>
-		<h3 class="tao-cat"><a href="<?php echo get_term_link( $cat ); ?>" ><i class="fa fa-bookmark-o"></i><?php echo $cat->name; ?></a></h3>
+		<h3 class="tao-cat"><a href="<?php echo get_term_link( $cat ); ?>" ><i class="be be-basket"></i><?php echo $cat->name; ?></a></h3>
 		<div class="clear"></div>
 		<?php while ($query->have_posts()) : $query->the_post();?>
 			<article id="post-<?php the_ID(); ?>" class="w4">

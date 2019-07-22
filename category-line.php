@@ -323,7 +323,6 @@ a.read-more:hover {
 
 			<div class="timeline-img time-picture">
 				<?php the_time( 'd' ) ?>
-				<!-- <i class="fa fa-file-text-o"></i> -->
 				<!-- <?php echo get_avatar( get_the_author_meta('email'), '64' ); ?> -->
 			</div>
 

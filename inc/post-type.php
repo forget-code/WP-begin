@@ -448,3 +448,75 @@ function create_sites_taxonomies() {
 
 	register_taxonomy( 'favorites', array( 'sites' ), $args );
 }
+
+if (zm_get_option('no_show')) {
+// 产品
+add_action( 'init', 'post_type_show' );
+function post_type_show() {
+	$type_url = zm_get_option('show_url');
+	$labels = array(
+		'name'               => '产品', 'post type general name', 'your-plugin-textdomain',
+		'singular_name'      => '产品', 'post type singular name', 'your-plugin-textdomain',
+		'menu_name'          => '产品', 'admin menu', 'your-plugin-textdomain',
+		'name_admin_bar'     => '产品', 'add new on admin bar', 'your-plugin-textdomain',
+		'add_new'            => '发布产品', 'picture', 'your-plugin-textdomain',
+		'add_new_item'       => '发布新产品', 'your-plugin-textdomain',
+		'new_item'           => '新产品', 'your-plugin-textdomain',
+		'edit_item'          => '编辑产品', 'your-plugin-textdomain',
+		'view_item'          => '查看产品', 'your-plugin-textdomain',
+		'all_items'          => '所有产品', 'your-plugin-textdomain',
+		'search_items'       => '搜索产品', 'your-plugin-textdomain',
+		'parent_item_colon'  => 'Parent 产品:', 'your-plugin-textdomain',
+		'not_found'          => '你还没有发布产品。', 'your-plugin-textdomain',
+		'not_found_in_trash' => '回收站中没有产品。', 'your-plugin-textdomain'
+	);
+
+	$args = array(
+		'labels'             => $labels,
+		'public'             => true,
+		'publicly_queryable' => true,
+		'show_ui'            => true,
+		'show_in_menu'       => true,
+		'query_var'          => true,
+		'rewrite'            => array( 'slug' => $type_url ),
+		'capability_type'    => 'post',
+		'menu_icon'          => 'dashicons-album',
+		'has_archive'        => false,
+		'hierarchical'       => false,
+		'menu_position'      => 10,
+		'supports'           => array( 'title', 'editor', 'author', 'excerpt', 'comments', 'thumbnail', 'revisions', 'custom-fields' )
+	);
+
+	register_post_type( 'show', $args );
+}
+}
+
+// 产品分类
+add_action( 'init', 'create_show_taxonomies', 0 );
+function create_show_taxonomies() {
+	$type_url = zm_get_option('show_cat_url');
+	$labels = array(
+		'name'              => '产品分类目录', 'taxonomy general name',
+		'singular_name'     => '产品分类', 'taxonomy singular name',
+		'search_items'      => '搜索产品目录',
+		'all_items'         => '所有产品目录',
+		'parent_item'       => '父级分类目录',
+		'parent_item_colon' => 'Parent Genre:',
+		'edit_item'         => '编辑产品目录',
+		'update_item'       => '更新产品目录',
+		'add_new_item'      => '添加新产品目录',
+		'new_item_name'     => 'New Genre Name',
+		'menu_name'         => '产品分类',
+	);
+
+	$args = array(
+		'hierarchical'      => true,
+		'labels'            => $labels,
+		'show_ui'           => true,
+		'show_admin_column' => true,
+		'query_var'         => true,
+		'rewrite'           => array( 'slug' => $type_url ),
+	);
+
+	register_taxonomy( 'products', array( 'show' ), $args );
+}

@@ -6,15 +6,22 @@
 	<?php if ( ! is_single() ) : ?>
 
 		<?php if (zm_get_option('no_rand_img')) { ?>
-			<?php 
-				$content = $post->post_content;
-				preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
-				$n = count($strResult[1]);
-				if($n > 0) { ?>
+			<?php if ( get_post_meta($post->ID, 'thumbnail', true) ) { ?>
 				<figure class="thumbnail">
 					<?php if (zm_get_option('lazy_s')) { zm_thumbnail_h(); } else { zm_thumbnail(); } ?>
 					<span class="cat"><?php zm_category(); ?></span>
 				</figure>
+			<?php } else { ?>
+				<?php 
+					$content = $post->post_content;
+					preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
+					$n = count($strResult[1]);
+					if($n > 0) { ?>
+					<figure class="thumbnail">
+						<?php if (zm_get_option('lazy_s')) { zm_thumbnail_h(); } else { zm_thumbnail(); } ?>
+						<span class="cat"><?php zm_category(); ?></span>
+					</figure>
+				<?php } ?>
 			<?php } ?>
 		<?php } else { ?>
 			<figure class="thumbnail">
@@ -50,7 +57,7 @@
 			</div>
 			<span class="title-l"></span>
 			<?php if ( is_sticky() ) { ?>
-				<span class="new-icon"><i class="fa fa-bookmark-o"></i></span>
+				<span class="top-icon"><i class="be be-top"></i></span>
 			<?php } else { ?>
 				<?php get_template_part( 'inc/new' ); ?>
 			<?php } ?>
@@ -92,11 +99,11 @@
 			</div>
 
 			<?php get_template_part( 'inc/file' ); ?>
-			<?php if ( get_post_meta($post->ID, 'no_sidebar', true) ) : ?><style>	#primary {width: 100%;}#sidebar,.r-hide {display: none;}</style><?php endif; ?>
+			<?php if ( get_post_meta($post->ID, 'no_sidebar', true) ) : ?><style>#primary {width: 100%;}#sidebar, .r-hide, .s-hide {display: none;}</style><?php endif; ?>
 
-			<?php wp_link_pages(array('before' => '<div class="page-links">', 'after' => '', 'next_or_number' => 'next', 'previouspagelink' => '<span><i class="fa fa-angle-left"></i></span>', 'nextpagelink' => "")); ?>
+			<?php wp_link_pages(array('before' => '<div class="page-links">', 'after' => '', 'next_or_number' => 'next', 'previouspagelink' => '<span><i class="be be-arrowleft"></i></span>', 'nextpagelink' => "")); ?>
 			<?php wp_link_pages(array('before' => '', 'after' => '', 'next_or_number' => 'number', 'link_before' =>'<span>', 'link_after'=>'</span>')); ?>
-			<?php wp_link_pages(array('before' => '', 'after' => '</div>', 'next_or_number' => 'next', 'previouspagelink' => '', 'nextpagelink' => '<span><i class="fa fa-angle-right"></i></span> ')); ?>
+			<?php wp_link_pages(array('before' => '', 'after' => '</div>', 'next_or_number' => 'next', 'previouspagelink' => '', 'nextpagelink' => '<span><i class="be be-arrowright"></i></span> ')); ?>
 
 			<?php if ( get_post_meta($post->ID, 'direct', true) ) { ?>
 			<?php $direct = get_post_meta($post->ID, 'direct', true); ?>

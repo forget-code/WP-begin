@@ -26,8 +26,6 @@
 										echo "<div class='taourl'><a href='".get_template_directory_uri()."/inc/go.php?url=$url' rel='external nofollow' target='_blank' class='url'>购买</a></div>";
 									 ?>
 									<!-- <a target="_blank" rel="external nofollow" href="<?php $url = get_post_meta($post->ID, 'taourl', true);{ echo $url; }?>" >购买</a> -->
-								<?php } else { ?>
-									<a href="<?php the_permalink(); ?>" >购买</a>
 								<?php } ?>
 							</div>
 							<div class="detail"><a href="<?php the_permalink(); ?>" rel="bookmark">详情</a></div>

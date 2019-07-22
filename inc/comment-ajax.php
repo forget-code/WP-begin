@@ -69,20 +69,20 @@ if ( $user->ID ) {
 	}
 } else {
 	if ( get_option('comment_registration') || 'private' == $status )
-		err('<i class="fa fa-exclamation-circle"></i>对不起，您必须登录后才能发表评论。'); // 将 wp_die 改为错误提示
+		err('<i class="be be-info"></i>对不起，您必须登录后才能发表评论。'); // 将 wp_die 改为错误提示
 }
 
 $comment_type = '';
 
 if ( get_option('require_name_email') && !$user->ID ) {
 	if ( 6 > strlen($comment_author_email) || '' == $comment_author )
-		err('<i class="fa fa-exclamation-circle"></i>' . sprintf(__( '提示：必须填写昵称及邮件。', 'begin' )) . ''); // 将 wp_die 改为错误提示
+		err('<i class="be be-info"></i>' . sprintf(__( '提示：必须填写昵称及邮件。', 'begin' )) . ''); // 将 wp_die 改为错误提示
 	elseif ( !is_email($comment_author_email))
-		err('<i class="fa fa-exclamation-circle"></i>' . sprintf(__( '提示：请输入一个有效的电子邮件地址。', 'begin' )) . '');// 将 wp_die 改为错误提示
+		err('<i class="be be-info"></i>' . sprintf(__( '提示：请输入一个有效的电子邮件地址。', 'begin' )) . '');// 将 wp_die 改为错误提示
 }
 
 if ( '' == $comment_content )
-	err('<i class="fa fa-exclamation-circle"></i>' . sprintf(__( '提示：请输入评论内容。', 'begin' )) . ''); // 将 wp_die 改为错误提示
+	err('<i class="be be-info"></i>' . sprintf(__( '提示：请输入评论内容。', 'begin' )) . ''); // 将 wp_die 改为错误提示
 
 // 增加: 错误提示功能
 function err($ErrMsg) {
@@ -96,7 +96,7 @@ $dupe = "SELECT comment_ID FROM $wpdb->comments WHERE comment_post_ID = '$commen
 if ( $comment_author_email ) $dupe .= "OR comment_author_email = '$comment_author_email' ";
 $dupe .= ") AND comment_content = '$comment_content' LIMIT 1";
 if ( $wpdb->get_var($dupe) ) {
-    err('<i class="fa fa-exclamation-circle"></i>' . sprintf(__( '貌似您已发表过重复的评论!', 'begin' )) . '');
+    err('<i class="be be-info"></i>' . sprintf(__( '貌似您已发表过重复的评论!', 'begin' )) . '');
 }
 
 // 检查评论太快功能
@@ -105,7 +105,7 @@ $time_lastcomment = mysql2date('U', $lasttime, false);
 $time_newcomment  = mysql2date('U', current_time('mysql', 1), false);
 $flood_die = apply_filters('comment_flood_filter', false, $time_lastcomment, $time_newcomment);
 if ( $flood_die ) {
-    err('<i class="fa fa-exclamation-circle"></i>' . sprintf(__( '您发表评论也太快了!', 'begin' )) . '');
+    err('<i class="be be-info"></i>' . sprintf(__( '您发表评论也太快了!', 'begin' )) . '');
 	}
 }
 
@@ -134,7 +134,7 @@ if ( $edit_id ) {
     if( ihacklog_user_can_edit_comment($commentdata,$comment_id) ){
         wp_update_comment( $commentdata );
     } else{
-        err( '<i class="fa fa-exclamation-circle"></i>您没有更改此评论的权限!' );
+        err( '<i class="be be-info"></i>您没有更改此评论的权限!' );
     }
 	}else{
 	$comment_id = wp_new_comment( $commentdata );
@@ -174,5 +174,5 @@ $tmp_c = get_comment($tmp_c->comment_parent);
 	</div>
 	<?php comment_text(); ?>
 	<?php if ( $comment->comment_approved == '0' ) : ?>
-		<div class="comment-awaiting-moderation"><i class="fa fa-exclamation-circle"></i><?php _e( '您的评论正在等待审核！', 'begin' ); ?></div>
+		<div class="comment-awaiting-moderation"><i class="be be-info"></i><?php _e( '您的评论正在等待审核！', 'begin' ); ?></div>
 	<?php endif; ?>

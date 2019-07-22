@@ -25,7 +25,7 @@ function auto_save_image($content) {
 	if(get_option('uploads_use_yearmonth_folders')) {
 		$upload_url_path .= '/'.date("Y",time()).'/'.date("m",time());
 	}
-	require_once ("../wp-includes/class-snoopy.php");
+	require_once (ABSPATH . "wp-includes/class-snoopy.php");
 	$snoopy_Auto_Save_Image = new Snoopy;
 	$img = array();
 

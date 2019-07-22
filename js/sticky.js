@@ -6,6 +6,7 @@
 
 $(document).ready(function() {
 	$('#content .all-sidebar').theiaStickySidebar({
-		additionalMarginTop: 95
+		additionalMarginTop: 12,
+		additionalMarginBottom:0
 	});
 });

@@ -163,23 +163,23 @@ function videos_thumbnail_h() {
 		$image = get_post_meta($post->ID, 'small', true);
 		echo '<span class="load"><a class="videos" href="'.get_permalink().'"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original=';
 		echo $image;
-		echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a></span>';
+		echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a></span>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			echo '<a class="videos" href="'.get_permalink().'">';
 			the_post_thumbnail('content', array('alt' => get_the_title()));
-			echo '<i class="fa fa-play-circle-o"></i></a>';
+			echo '<i class="be be-play"></i>';
 			} else {
 				$content = $post->post_content;
 				preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 				$n = count($strResult[1]);
 				if($n > 0){
 					echo '<span class="load"><a class="videos" href="'.get_permalink().'"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" ';
-					echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a></span>';
+					echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a></span>';
 					} else { 
 						$random = mt_rand(1, 20);
 						echo '<span class="load"><a class="videos" href="'.get_permalink().'"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original="'.get_template_directory_uri().'/img/random/'. $random .'.jpg" ';
-						echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a></span>';
+						echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a></span>';
 					}
 			}
 	}
@@ -191,52 +191,52 @@ function videos_thumbnail() {
 		$image = get_post_meta($post->ID, 'small', true);
 		echo '<a class="videos" href="'.get_permalink().'"><img src=';
 		echo $image;
-		echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+		echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			echo '<a class="videos" href="'.get_permalink().'">';
 			the_post_thumbnail('content', array('alt' => get_the_title()));
-	        echo '<i class="fa fa-play-circle-o"></i></a>';
+	        echo '<i class="be be-play"></i></a>';
 			} else {
 				$content = $post->post_content;
 				preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 				$n = count($strResult[1]);
 				if($n > 0){
 					echo '<a class="videos" href="'.get_permalink().'"><img src="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" ';
-					echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+					echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 					} else { 
 						$random = mt_rand(1, 20);
 						echo '<a class="videos" href="'.get_permalink().'"><img src="'.get_template_directory_uri().'/img/random/'. $random .'.jpg" ';
-						echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+						echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 					}
 			}
 	}
 }
 
-function video_thumbnail() {
+function videoe_thumbnail() {
 	global $post;
 	$img = get_post_meta($post->ID, 'big', true);
 	if ( get_post_meta($post->ID, 'small', true) ) {
 		$image = get_post_meta($post->ID, 'small', true);
 		echo '<a class="videos" href="'.$img.'"><img src=';
 		echo $image;
-		echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+		echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			echo '<a class="videos" href="'.$img.'">';
 			the_post_thumbnail('content', array('alt' => get_the_title()));
-			echo '<i class="fa fa-play-circle-o"></i></a>';
+			echo '<i class="be be-play"></i></a>';
 			} else {
 				$content = $post->post_content;
 				preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 				$n = count($strResult[1]);
 				if($n > 0){
 					echo '<a class="videos" href="'.$img.'"><img src="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" ';
-					echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+					echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 					} else { 
 						$random = mt_rand(1, 20);
 						echo '<a class="videos" href="'.$img.'"><img src="'.get_template_directory_uri().'/img/random/'. $random .'.jpg" ';
-						echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+						echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 					}
 			}
 	}
@@ -248,23 +248,23 @@ function videor_thumbnail_h() {
 		$image = get_post_meta($post->ID, 'small', true);
 		echo '<span class="load"><a class="videor" href="'.get_permalink().'"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original=';
 		echo $image;
-		echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a></span>';
+		echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a></span>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			echo '<a class="videor" href="'.get_permalink().'">';
 			the_post_thumbnail('content', array('alt' => get_the_title()));
-			echo '<i class="fa fa-play-circle-o"></i></a>';
+			echo '<i class="be be-play"></i></a>';
 			} else {
 				$content = $post->post_content;
 				preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 				$n = count($strResult[1]);
 				if($n > 0){
 					echo '<span class="load"><a class="videor" href="'.get_permalink().'"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" ';
-					echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a></span>';
+					echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a></span>';
 					} else { 
 						$random = mt_rand(1, 20);
 						echo '<span class="load"><a class="videor" href="'.get_permalink().'"><img src="' . get_template_directory_uri() . '/img/loading.png" data-original="'.get_template_directory_uri().'/img/random/'. $random .'.jpg" ';
-						echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a></span>';
+						echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a></span>';
 					}
 			}
 	}
@@ -276,23 +276,23 @@ function videor_thumbnail() {
 		$image = get_post_meta($post->ID, 'small', true);
 		echo '<a class="videor" href="'.get_permalink().'"><img src=';
 		echo $image;
-		echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+		echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 	} else {
 		if ( has_post_thumbnail() ) {
 			echo '<a class="videor" href="'.get_permalink().'">';
 			the_post_thumbnail('content', array('alt' => get_the_title()));
-			echo '<i class="fa fa-play-circle-o"></i></a>';
+			echo '<i class="be be-play"></i></a>';
 			} else {
 				$content = $post->post_content;
 				preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 				$n = count($strResult[1]);
 				if($n > 0){
 					echo '<a class="videor" href="'.get_permalink().'"><img src="'.get_template_directory_uri().'/timthumb.php?src='.$strResult[1][0].'&w='.zm_get_option('img_v_w').'&h='.zm_get_option('img_v_h').'&a='.zm_get_option('crop_top').'&zc=1" ';
-					echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+					echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 					} else { 
 						$random = mt_rand(1, 20);
 						echo '<a class="videor" href="'.get_permalink().'"><img src="'.get_template_directory_uri().'/img/random/'. $random .'.jpg" ';
-						echo ' alt="'.$post->post_title .'" /><i class="fa fa-play-circle-o"></i></a>';
+						echo ' alt="'.$post->post_title .'" /><i class="be be-play"></i></a>';
 					}
 			}
 	}

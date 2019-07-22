@@ -4,7 +4,7 @@
 	<div class="picture-h wow fadeInUp" data-wow-delay="0.3s">
 		<figure class="picture-h-img">
 			<?php if (zm_get_option('lazy_s')) { zm_thumbnail_h(); } else { zm_thumbnail(); } ?>
-			<h2 class="posting-title"><a href="<?php the_permalink() ?>" rel="bookmark"><?php echo wp_trim_words( get_the_title(), 36 ); ?></a></h2>
+			<h2 class="posting-title"><a href="<?php the_permalink() ?>" rel="bookmark"><?php echo wp_trim_words( get_the_title(), 24 ); ?></a></h2>
 		</figure>
 	</div>
 </div>

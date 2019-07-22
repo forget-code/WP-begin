@@ -92,6 +92,17 @@ Description: woocommerce商城插件配套样式.
 	overflow: hidden;
 }
 
+h2.woocommerce-loop-product__title {
+	height: 30px;
+	line-height: 30px;
+	margin: 5px 10px;
+	padding: 0 10px !important;
+	white-space: nowrap;
+	word-wrap: normal;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
 .woocommerce ul.products li.product .price {
 	color: #ff4400;
 	font-size: 1em;
@@ -484,4 +495,8 @@ ul.product_list_widget li del, ul.product_list_widget li ins {
 
 .woocommerce #respond input#submit {
 	width: 140px;
+}
+
+.woocommerce-Reviews .qaptcha {
+	float: right;
 }
